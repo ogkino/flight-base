@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CRUD 可视化设计器 - Flight Base</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .designer-container { display: flex; height: 100vh; }
+        
+        /* 拖拽样式 */
+        .sortable-ghost { opacity: 0.4; background-color: #f0f0f0; border: 1px dashed #ccc; }
+        .list-item-header { cursor: move; } /* Indicate draggable */
+
+        .designer-sidebar { width: 260px; background: #fff; border-right: 1px solid #eee; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.02); z-index: 10; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #f0f0f0; font-weight: bold; font-size: 16px; color: #333; display: flex; align-items: center; }
+        .sidebar-content { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .sidebar-footer { padding: 15px; border-top: 1px solid #f0f0f0; }
+        
+        .menu-item { padding: 12px 25px; cursor: pointer; transition: all 0.3s; color: #666; border-left: 4px solid transparent; display: flex; align-items: center; }
+        .menu-item:hover { background-color: #f8f9fa; color: #333; }
+        .menu-item.active { background-color: #e6f7ff; color: #1890ff; border-left-color: #1890ff; font-weight: 500; }
+        .menu-item .icon { margin-right: 12px; font-size: 16px; }
+        .menu-item .page-key { font-size: 12px; color: #999; margin-left: auto; }
+        .btn-delete-page { display: none; color: #ff4d4f; font-size: 14px; padding: 4px; border-radius: 4px; margin-left: 8px; transition: all 0.3s; z-index: 20; }
+        .menu-item:hover .btn-delete-page { display: block; }
+        .btn-delete-page:hover { background: #fff1f0; }
+        
+        /* 主内容区样式 */
+        .designer-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f8f9fa; }
+        .designer-header { height: 60px; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .designer-content { flex: 1; padding: 25px; overflow-y: auto; }
+        
+        /* 卡片样式优化 */
+        .layui-card { border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: none; margin-bottom: 20px; }
+        .layui-card-header { font-weight: 600; border-bottom: 1px solid #f6f6f6; padding: 0 20px; height: 50px; line-height: 50px; }
+        .layui-card-body { padding: 20px; }
+        
+        /* 列表项样式 */
+        .list-item-card { background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 15px; transition: all 0.3s; position: relative; }
+        .list-item-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #d9d9d9; transform: translateY(-2px); }
+        .list-item-header { padding: 12px 20px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .list-item-title { font-weight: 600; color: #333; font-size: 14px; }
+        .list-item-subtitle { color: #888; font-size: 12px; margin-left: 10px; font-weight: normal; }
+        .list-item-body { padding: 20px; display: none; overflow: visible; } /* 默认折叠，允许下拉框溢出 */
+        .list-item-body.show { display: block; animation: slideDown 0.3s ease-out; }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .item-actions { display: flex; gap: 10px; }
+        .btn-delete-item { color: #ff4d4f; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background 0.2s; }
+        .btn-delete-item:hover { background: #fff1f0; }
+        .btn-toggle-item { color: #1890ff; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background 0.2s; }
+        .btn-toggle-item:hover { background: #e6f7ff; }
+        
+        /* 表单样式优化 */
+        .layui-form-label { width: 110px; padding: 9px 15px; color: #666; }
+        .layui-input-block { margin-left: 140px; }
+        .layui-input, .layui-select, .layui-textarea { border-radius: 4px; border-color: #d9d9d9; transition: all 0.3s; }
+        .layui-input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+        
+        /* 修复下拉框被遮挡问题 */
+        .layui-form-item { position: relative; margin-bottom: 20px; }
+        .layui-form-select dl { z-index: 99999999 !important; max-height: 300px !important; }
+        .layui-layer-content .layui-form-select dl { z-index: 99999999 !important; max-height: 300px !important; }
+        
+        /* 弹窗内容区域确保有足够高度 */
+        .layui-layer-content { overflow: visible !important; }
+        
+        /* 隐藏 disabled 的下拉选项（占位符） */
+        .layui-form-select dl dd[lay-value=""] { display: none !important; }
+        .layui-form-select dl dd.layui-select-tips { display: none !important; }
+        .layui-form-select dl dd.layui-disabled { display: none !important; }
+        
+        /* Radio 样式优化 */
+        .layui-form-radio { margin-right: 15px; }
+        .layui-form-radio i { margin-right: 5px; }
+        
+        .empty-tip { text-align: center; padding: 50px 0; color: #999; }
+        .empty-tip i { font-size: 48px; display: block; margin-bottom: 15px; color: #e8e8e8; }
+        
+        /* 标签页样式 */
+        .layui-tab-brief > .layui-tab-title .layui-this { color: #1890ff; }
+        .layui-tab-brief > .layui-tab-more li.layui-this:after, 
+        .layui-tab-brief > .layui-tab-title .layui-this:after { border-bottom: 2px solid #1890ff; }
+        
+        .special-page-tip { text-align: center; padding: 100px 20px; background: #fff; border-radius: 8px; }
+        .special-page-tip i { font-size: 64px; color: #faad14; margin-bottom: 20px; }
+        .special-page-tip h3 { font-size: 18px; margin-bottom: 10px; }
+        .special-page-tip p { color: #999; line-height: 1.8; }
+        
+        /* 图标选择器样式 */
+        .icon-picker-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .icon-picker-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 1px solid #eee; border-radius: 4px; cursor: pointer; transition: all 0.3s; }
+        .icon-picker-item:hover { background: #e6f7ff; border-color: #1890ff; }
+        .icon-picker-item i { font-size: 24px; margin-bottom: 5px; }
+        .icon-picker-item span { font-size: 10px; color: #999; text-align: center; word-break: break-all; }
+        .icon-picker-item.selected { background: #e6f7ff; border-color: #1890ff; }
+    </style>
+</head>
+<body>
+
+<div class="designer-container">
+    <div class="designer-sidebar">
+        <div class="sidebar-header">
+            <i class="layui-icon layui-icon-layouts" style="margin-right: 10px; font-size: 20px; color: #1890ff;"></i>
+            CRUD 可视化设计器
+        </div>
+        <div class="sidebar-content">
+            <div class="menu-item" onclick="loadMenuEditor()" id="menu-editor-item">
+                <i class="layui-icon layui-icon-menu-fill icon"></i>
+                <span>菜单管理</span>
+            </div>
+            <div style="height: 1px; background: #f0f0f0; margin: 10px 0;"></div>
+            <div id="pageList"></div>
+        </div>
+        <div class="sidebar-footer">
+            <button class="layui-btn layui-btn-fluid layui-btn-primary layui-border-blue" onclick="createNewPage()">
+                <i class="layui-icon layui-icon-add-1"></i> 新增页面
+            </button>
+        </div>
+    </div>
+    
+    <div class="designer-main">
+        <div class="designer-header">
+            <div class="layui-breadcrumb" style="visibility: visible;">
+                <a><cite>CRUD 可视化设计器</cite></a>
+                <span lay-separator="">/</span>
+                <a id="currentPageTitle"><cite>请选择页面</cite></a>
+            </div>
+            <div>
+                <button class="layui-btn layui-btn-primary layui-border-green" id="btnRawJson">
+                    <i class="layui-icon layui-icon-code-circle"></i> 源码
+                </button>
+                <button class="layui-btn layui-btn-normal" id="btnSave">
+                    <i class="layui-icon layui-icon-release"></i> 保存配置
+                </button>
+            </div>
+        </div>
+        
+        <div class="designer-content" id="designerContent">
+            <div class="empty-tip">
+                <i class="layui-icon layui-icon-template-1"></i>
+                <p>请从左侧选择一个页面开始设计，或点击底部按钮新增页面</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模板：页面编辑 -->
+<script type="text/html" id="tplPageEditor">
+    <div class="layui-tab layui-tab-brief" lay-filter="configTab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>表格列 (Table)</li>
+            <li>搜索 (Search)</li>
+            <li>工具栏 (Toolbar)</li>
+            <li>行操作 (Actions)</li>
+            <li>表单 (Form)</li>
+            <li>API 接口</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-header">页面基础配置</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" lay-filter="formBasic">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面标识</label>
+                                <div class="layui-input-block">
+                                    <input type="text" class="layui-input layui-disabled" disabled value="{{d.key}}">
+                                    <div class="layui-form-mid layui-word-aux">对应 CrudConfig 方法名</div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面标题</label>
+                                <div class="layui-input-block">
+                                    <input type="text" class="layui-input" value="{{d.config.page.title || ''}}" placeholder="如：用户管理" onchange="updateConfigValue('page.title', this.value)">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">菜单图标</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-input-inline" style="width: 50%;">
+                                        <input type="text" id="page-icon-input" class="layui-input" value="{{d.config.page.icon || ''}}" placeholder="如：layui-icon-user" onchange="updateConfigValue('page.icon', this.value)">
+                                    </div>
+                                    <div class="layui-input-inline" style="width: 20%;">
+                                        <button type="button" class="layui-btn layui-btn-primary" onclick="openPageIconPicker()">
+                                            <i class="layui-icon layui-icon-cellphone"></i> 选择
+                                        </button>
+                                    </div>
+                                    <div class="layui-input-inline" style="width: auto;">
+                                        <i id="page-icon-preview" class="layui-icon {{d.config.page.icon || ''}}" style="font-size: 30px; line-height: 38px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addArrayItem('table.cols')">
+                    <i class="layui-icon layui-icon-add-1"></i> 添加列
+                </button>
+                <div id="container-table-cols" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addArrayItem('search')">
+                    <i class="layui-icon layui-icon-search"></i> 添加搜索项
+                </button>
+                <div id="container-search" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addArrayItem('toolbar')">
+                    <i class="layui-icon layui-icon-toolbar"></i> 添加按钮
+                </button>
+                <div id="container-toolbar" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <div class="layui-card" style="margin-bottom: 15px;">
+                    <div class="layui-card-body">
+                        <div class="layui-form-item" style="margin-bottom: 0;">
+                            <label class="layui-form-label">操作列宽</label>
+                            <div class="layui-input-inline">
+                                <input type="number" class="layui-input" value="{{d.config.table && d.config.table.actionsWidth || ''}}" placeholder="默认自动" onchange="updateConfigValue('table.actionsWidth', this.value)">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">px</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addArrayItem('actions')">
+                    <i class="layui-icon layui-icon-add-circle"></i> 添加行按钮
+                </button>
+                <div id="container-actions" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addArrayItem('form')">
+                    <i class="layui-icon layui-icon-form"></i> 添加表单字段
+                </button>
+                <div id="container-form" style="margin-top: 15px;"></div>
+            </div>
+            
+            <div class="layui-tab-item">
+                <div class="layui-card">
+                    <div class="layui-card-header">后端接口配置</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form">
+                            {{# layui.each(['list', 'add', 'edit', 'delete'], function(index, item){ }}
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">{{item}} 接口</label>
+                                <div class="layui-input-block">
+                                    <input type="text" class="layui-input" value="{{d.config.api && d.config.api[item] || ''}}" placeholder="/api/admin/..." onchange="updateConfigValue('api.{{item}}', this.value)">
+                                </div>
+                            </div>
+                            {{# }); }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- 模板：特殊页面提示 -->
+<script type="text/html" id="tplSpecialPage">
+    <div class="special-page-tip">
+        <i class="layui-icon layui-icon-tips"></i>
+        <h3>此页面不支持可视化编辑</h3>
+        <p>【{{d.title}}】是一个特殊页面（如：仪表盘、修改密码等），其配置结构与标准 CRUD 页面不同。<br>
+        如需修改，请直接编辑 <code>CrudConfig.php</code> 中的 <code>{{d.key}}()</code> 方法。</p>
+        <br>
+        <button class="layui-btn layui-btn-primary" onclick="viewRawConfig('{{d.key}}')">查看原始配置</button>
+    </div>
+</script>
+
+<!-- 模板：菜单管理器 -->
+<script type="text/html" id="tplMenuEditor">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <span>菜单分组管理</span>
+            <button class="layui-btn layui-btn-xs layui-btn-normal" style="float: right;" onclick="addMenuGroup()">
+                <i class="layui-icon layui-icon-add-1"></i> 新增分组
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <div id="menuGroupList"></div>
+        </div>
+    </div>
+</script>
+
+<script src="https://unpkg.com/layui@2.8.18/dist/layui.js"></script>
+<script src="assets/js/config.js"></script>
+<script>
+    let fullConfig = { menus: {}, pages: {} };
+    let currentPageKey = null;
+    let currentTabIndex = 0; // 记录当前标签页索引
+
+    // Layui 常用图标列表
+    const LAYUI_ICONS = [
+        'layui-icon-heart-fill', 'layui-icon-heart', 'layui-icon-praise', 'layui-icon-tread',
+        'layui-icon-male', 'layui-icon-female', 'layui-icon-camera', 'layui-icon-camera-fill',
+        'layui-icon-more', 'layui-icon-more-vertical', 'layui-icon-rmb', 'layui-icon-dollar',
+        'layui-icon-diamond', 'layui-icon-fire', 'layui-icon-return', 'layui-icon-location',
+        'layui-icon-read', 'layui-icon-survey', 'layui-icon-face-smile', 'layui-icon-face-cry',
+        'layui-icon-cart-simple', 'layui-icon-cart', 'layui-icon-next', 'layui-icon-prev',
+        'layui-icon-upload', 'layui-icon-download', 'layui-icon-play', 'layui-icon-pause',
+        'layui-icon-headset', 'layui-icon-video', 'layui-icon-voice', 'layui-icon-speaker',
+        'layui-icon-fonts-del', 'layui-icon-fonts-html', 'layui-icon-fonts-code', 'layui-icon-fonts-strong',
+        'layui-icon-unlink', 'layui-icon-picture', 'layui-icon-link', 'layui-icon-face-surprised',
+        'layui-icon-set', 'layui-icon-template-1', 'layui-icon-app', 'layui-icon-chart',
+        'layui-icon-chart-screen', 'layui-icon-engine', 'layui-icon-tabs', 'layui-icon-file',
+        'layui-icon-home', 'layui-icon-username', 'layui-icon-password', 'layui-icon-senior',
+        'layui-icon-refresh', 'layui-icon-refresh-1', 'layui-icon-flag', 'layui-icon-theme',
+        'layui-icon-notice', 'layui-icon-website', 'layui-icon-console', 'layui-icon-face-smile-b',
+        'layui-icon-logout', 'layui-icon-auz', 'layui-icon-shrink-right', 'layui-icon-spread-left',
+        'layui-icon-snowflake', 'layui-icon-tips', 'layui-icon-note', 'layui-icon-transfer',
+        'layui-icon-service', 'layui-icon-group', 'layui-icon-friends', 'layui-icon-reply',
+        'layui-icon-menu-fill', 'layui-icon-log', 'layui-icon-seek', 'layui-icon-image',
+        'layui-icon-user', 'layui-icon-loading', 'layui-icon-loading-1', 'layui-icon-add-1',
+        'layui-icon-close', 'layui-icon-close-fill', 'layui-icon-chart-screen', 'layui-icon-star',
+        'layui-icon-star-fill', 'layui-icon-circle-dot', 'layui-icon-search', 'layui-icon-share',
+        'layui-icon-set-fill', 'layui-icon-form', 'layui-icon-triangle-d', 'layui-icon-triangle-r',
+        'layui-icon-file-b', 'layui-icon-date', 'layui-icon-cols', 'layui-icon-upload-circle',
+        'layui-icon-tree', 'layui-icon-table', 'layui-icon-radio', 'layui-icon-ok',
+        'layui-icon-help', 'layui-icon-code-circle', 'layui-icon-edit', 'layui-icon-about',
+        'layui-icon-up', 'layui-icon-down', 'layui-icon-left', 'layui-icon-right',
+        'layui-icon-circle', 'layui-icon-delete', 'layui-icon-ok-circle', 'layui-icon-add-circle',
+        'layui-icon-release', 'layui-icon-list', 'layui-icon-util', 'layui-icon-layouts',
+        'layui-icon-rate', 'layui-icon-rate-solid', 'layui-icon-rate-half', 'layui-icon-cellphone',
+        'layui-icon-vercode', 'layui-icon-login-weibo', 'layui-icon-login-qq', 'layui-icon-login-wechat',
+        'layui-icon-camera', 'layui-icon-eye', 'layui-icon-eye-invisible', 'layui-icon-component',
+        'layui-icon-layer', 'layui-icon-export', 'layui-icon-fonts-u', 'layui-icon-fonts-i',
+        'layui-icon-fonts-clear', 'layui-icon-triangle-r', 'layui-icon-triangle-d', 'layui-icon-toolbar'
+    ];
+
+    // 字段配置模板（Schema）
+    const FIELD_SCHEMAS = {
+        'table.cols': {
+            title: { label: '列名', type: 'text', required: true, placeholder: '如：用户名' },
+            field: { label: '字段名', type: 'text', required: true, placeholder: '如：username' },
+            width: { label: '宽度', type: 'number', placeholder: '如：150' },
+            minWidth: { label: '最小宽度', type: 'number' },
+            sort: { label: '可排序', type: 'switch' },
+            //templet: { label: '自定义模板', type: 'text', placeholder: '如：#statusTpl （可在admin/index.html中自行修改或新增其他模板）' },
+            type: { label: '类型', type: 'radio', options: [
+                { value: 'auto', label: '自动识别' },
+                { value: '', label: '文本' },
+                { value: 'datetime', label: '时间' },
+                { value: 'date', label: '日期' },
+                { value: 'image', label: '图片' },
+                { value: 'file', label: '文件' },
+                { value: 'tags', label: '状态标签' },
+                { value: 'icon', label: '图标' },
+                { value: 'link', label: '超链接' },
+                { value: 'progress', label: '进度条' },
+                { value: 'rate', label: '评分' },
+                { value: 'switch', label: '开关' },
+                { value: 'select', label: '数据映射' }
+            ]},
+            options: { label: '映射/颜色', type: 'textarea', placeholder: '标签：1:启用:blue', hint: 'Tags: 值:标签:颜色\nSelect: 值:标签', depends: ['tags', 'select'] },
+            url: { label: '链接/数据源', type: 'text', placeholder: 'Link: /detail/{id} 或 API: /api/list', hint: '适用于：超链接、数据映射(远程)', depends: ['link'] },
+            valueField: { label: '值字段', type: 'text', placeholder: '如：id', hint: '默认为 id', depends: [] },
+            labelField: { label: '标签字段', type: 'text', placeholder: '如：name', hint: '默认为 name', depends: [] }
+        },
+        'search': {
+            type: { label: '类型', type: 'radio', options: [
+                { value: 'input', label: '输入框' },
+                { value: 'select', label: '下拉框' },
+                { value: 'date', label: '日期' }
+            ], required: true },
+            name: { label: '字段名', type: 'text', required: true, placeholder: '如：keyword' },
+            placeholder: { label: '占位文本', type: 'text', placeholder: '如：搜索关键词' },
+            width: { label: '宽度', type: 'number', placeholder: '如：200' },
+            options: { label: '静态选项', type: 'textarea', placeholder: '1:启用\n0:禁用', hint: '适用于：下拉框（静态数据）' },
+            url: { label: '动态数据源', type: 'text', placeholder: '如：/api/admin/roles', hint: '适用于：下拉框（动态数据）' },
+            valueField: { label: '值字段', type: 'text', placeholder: '如：id', hint: '默认为 id' },
+            labelField: { label: '标签字段', type: 'text', placeholder: '如：name', hint: '默认为 name' }
+        },
+        'toolbar': {
+            text: { label: '按钮文本', type: 'text', required: true, placeholder: '如：新增' },
+            action: { label: '操作标识', type: 'radio', options: [
+                { value: 'add', label: '新增' },
+                { value: 'export', label: '导出' }
+            ], allowCustom: true, required: true },
+            icon: { label: '图标', type: 'icon', placeholder: 'layui-icon-add-1' },
+            class: { label: '样式类', type: 'radio', options: [
+                { value: 'layui-btn-normal', label: '蓝色' },
+                { value: 'layui-btn-warm', label: '橙色' },
+                { value: 'layui-btn-danger', label: '红色' },
+                { value: 'layui-btn-primary', label: '白色' }
+            ]},
+            permission: { label: '权限标识', type: 'radio', options: [
+                { value: 'list', label: '查看' },
+                { value: 'create', label: '新增' },
+                { value: 'update', label: '编辑' },
+                { value: 'delete', label: '删除' },
+                { value: 'export', label: '导出' },
+                { value: 'custom', label: '自定义' }
+            ] },
+            type: { label: '弹窗类型', type: 'radio', options: [
+                { value: '', label: '默认' },
+                { value: 'iframe', label: '弹窗' },
+                { value: 'page', label: '新页面' }
+            ]},
+            url: { label: '链接地址', type: 'text', placeholder: '如：/articles', hint: '适用于：弹窗、新页面' },
+            width: { label: '弹窗宽度', type: 'text', placeholder: '如：800px', hint: '适用于：弹窗' },
+            height: { label: '弹窗高度', type: 'text', placeholder: '如：600px', hint: '适用于：弹窗' }
+        },
+        'actions': {
+            text: { label: '按钮文本', type: 'text', required: true, placeholder: '如：编辑' },
+            action: { label: '操作标识', type: 'radio', options: [
+                { value: 'edit', label: '编辑' },
+                { value: 'delete', label: '删除' },
+                { value: 'view', label: '查看' }
+            ], allowCustom: true, required: true },
+            icon: { label: '图标', type: 'icon', placeholder: 'layui-icon-edit' },
+            class: { label: '样式类', type: 'radio', options: [
+                { value: 'layui-btn-xs', label: '默认' },
+                { value: 'layui-btn-normal', label: '蓝色' },
+                { value: 'layui-btn-warm', label: '橙色' },
+                { value: 'layui-btn-danger', label: '红色' }
+            ]},
+            permission: { label: '权限标识', type: 'radio', options: [
+                { value: 'list', label: '查看' },
+                { value: 'create', label: '新增' },
+                { value: 'update', label: '编辑' },
+                { value: 'delete', label: '删除' },
+                { value: 'export', label: '导出' },
+                { value: 'custom', label: '自定义' }
+            ] },
+            type: { label: '弹窗类型', type: 'radio', options: [
+                { value: '', label: '默认' },
+                { value: 'iframe', label: '弹窗' },
+                { value: 'page', label: '新页面' }
+            ]},
+            url: { label: '链接地址', type: 'text', placeholder: '如：/article/{id}', hint: '适用于：弹窗、新页面' },
+            width: { label: '弹窗宽度', type: 'text', placeholder: '如：800px', hint: '适用于：弹窗' },
+            height: { label: '弹窗高度', type: 'text', placeholder: '如：600px', hint: '适用于：弹窗' }
+        },
+        'form': {
+            label: { label: '标签', type: 'text', required: true, placeholder: '如：用户名' },
+            name: { label: '字段名', type: 'text', required: true, placeholder: '如：username' },
+            placeholder: { label: '占位文本', type: 'text' },
+            tip: { label: '提示信息', type: 'text' },
+            default: { label: '默认值', type: 'text', placeholder: '如：1', depends: ['input', 'textarea', 'password', 'number', 'rate', 'slider', 'date', 'time', 'datetime', 'color', 'icon'] },
+            flags: { label: '属性设置', type: 'flags', options: [
+                { key: 'required_on_add', label: '新增必填' },
+                { key: 'required_on_edit', label: '编辑必填' },
+                { key: 'hidden_on_add', label: '新增隐藏' },
+                { key: 'hidden_on_edit', label: '编辑隐藏' },
+                { key: 'disabled_on_add', label: '新增禁用' },
+                { key: 'disabled_on_edit', label: '编辑禁用' }
+            ]},
+            verify: { label: '验证规则', type: 'checkbox', options: [
+                { value: 'phone', label: '手机号' },
+                { value: 'email', label: '邮箱' },
+                { value: 'url', label: '链接' },
+                { value: 'number', label: '数字' },
+                { value: 'date', label: '日期' },
+                { value: 'identity', label: '身份证' }
+            ], placeholder: '选择验证规则' },
+            type: { label: '字段类型', type: 'radio', options: [
+                { value: 'input', label: '输入框' },
+                { value: 'password', label: '密码' },
+                { value: 'textarea', label: '文本域' },
+                { value: 'select', label: '下拉框' },
+                { value: 'radio', label: '单选' },
+                { value: 'checkbox', label: '多选' },
+                { value: 'date', label: '日期' },
+                { value: 'time', label: '时间' },
+                { value: 'datetime', label: '日期时间' },
+                { value: 'timestamp', label: '时间戳' },
+                { value: 'image', label: '图片' },
+                { value: 'upload', label: '文件' },
+                { value: 'color', label: '颜色选择' },
+                { value: 'rate', label: '评分' },
+                { value: 'slider', label: '滑块' },
+                { value: 'icon', label: '图标选择' },
+                { value: 'tags', label: '标签输入' },
+                { value: 'editor', label: '富文本' },
+                { value: 'switch', label: '开关' }
+            ], required: true },
+            min: { label: '最小值', type: 'number', hint: '适用于：滑块', depends: ['slider'] },
+            max: { label: '最大值', type: 'number', hint: '适用于：滑块', depends: ['slider'] },
+            step: { label: '步长', type: 'number', hint: '适用于：滑块', depends: ['slider'] },
+            length: { label: '星星总数', type: 'number', hint: '适用于：评分', depends: ['rate'] },
+            theme: { label: '主题颜色', type: 'color', placeholder: '如：#1E9FFF', hint: '适用于：滑块/评分', depends: ['rate', 'slider'] },
+            height: { label: '高度', type: 'text', placeholder: '如：400px', hint: '适用于：文本域、富文本', depends: ['textarea', 'editor'] },
+            url: { label: '数据源', type: 'text', placeholder: '/api/admin/...', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
+            valueField: { label: '值字段', type: 'text', placeholder: '如：id', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
+            labelField: { label: '标签字段', type: 'text', placeholder: '如：name', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
+            options: { label: '静态数据', type: 'textarea', placeholder: '格式：值:标签\n如：\n1:启用\n0:禁用', hint: '适用于：下拉框、单选、多选（不填则使用数据源）', depends: ['select', 'radio', 'checkbox'] },
+            text: { label: '开关文本', type: 'text', placeholder: '如：启用|禁用', hint: '适用于：开关', depends: ['switch'] },
+            switch_default: { label: '默认状态', type: 'radio', options: [{value: 1, label: '开启'}, {value: 0, label: '关闭'}], depends: ['switch'] },
+            uploadUrl: { label: '上传地址', type: 'text', placeholder: '/api/admin/upload', hint: '适用于：图片/文件上传', depends: ['image', 'upload', 'editor'] },
+            exts: { label: '允许后缀', type: 'text', placeholder: '如：jpg|png|doc', hint: '适用于：图片/文件上传', depends: ['image', 'upload'] },
+            size: { label: '最大大小(KB)', type: 'number', placeholder: '如：2048', hint: '适用于：图片/文件上传', depends: ['image', 'upload'] }
+        }
+    };
+
+    layui.use(['layer', 'form', 'element', 'laytpl', 'colorpicker'], function(){
+        const layer = layui.layer;
+        const form = layui.form;
+        const element = layui.element;
+        const laytpl = layui.laytpl;
+        const colorpicker = layui.colorpicker;
+        const $ = layui.$;
+        
+        // 存储 Sortable 实例
+        let sortableInstances = {};
+
+        init();
+
+        // 监听 Tab 切换，记录当前索引
+        element.on('tab(configTab)', function(data){
+            currentTabIndex = data.index;
+        });
+
+        function init() {
+            let token = localStorage.getItem(TOKEN_KEY);
+            if (!token && window.parent && window.parent.localStorage) {
+                token = window.parent.localStorage.getItem(TOKEN_KEY);
+            }
+            
+            if (!token) {
+                if (window.parent && window.parent.location) {
+                     window.parent.location.href = 'login.html';
+                } else {
+                     location.href = 'login.html';
+                }
+                return;
+            }
+
+            $.ajax({
+                url: '/api/admin/crud-designer/config',
+                headers: { 'Authorization': token },
+                success: function(res) {
+                    if (res.code === 0) {
+                        fullConfig = res.data;
+                        renderSidebar();
+                    } else {
+                        layer.msg(res.msg || '加载配置失败', {icon: 2});
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 403) {
+                        layer.alert('只有超级管理员可以访问此页面');
+                    } else {
+                        layer.msg('请求失败', {icon: 2});
+                    }
+                }
+            });
+        }
+
+        function renderSidebar() {
+            // 隐藏的页面（特殊页面或固定配置页面）
+            const hiddenPages = ['dashboard', 'changePassword', 'admins'];
+            
+            let html = '';
+            for (let key in fullConfig.pages) {
+                if (hiddenPages.includes(key)) continue; // 跳过隐藏页面
+                
+                const page = fullConfig.pages[key];
+                const title = page.page && page.page.title ? page.page.title : key;
+                const icon = page.page && page.page.icon ? page.page.icon : 'layui-icon-file';
+                
+                html += `<div class="menu-item" onclick="loadPage('${key}')" id="menu-${key}">
+                            <i class="layui-icon ${icon} icon"></i>
+                            <span>${title}</span>
+                            <span class="page-key">${key}</span>
+                            <i class="layui-icon layui-icon-delete btn-delete-page" onclick="deletePage(event, '${key}')" title="删除页面"></i>
+                         </div>`;
+            }
+            
+            if (html === '') {
+                html = '<div style="padding:20px; text-align:center; color:#999;">暂无可编辑页面</div>';
+            }
+            
+            $('#pageList').html(html);
+        }
+
+        window.deletePage = function(event, key) {
+            event.stopPropagation(); // 阻止冒泡
+            
+            layer.confirm(`确定要删除页面 "${key}" 吗？<br><span style="color:red;font-size:12px;">注意：这将从配置中移除该页面及其菜单入口，但不会删除对应的数据库表和控制器文件。</span>`, {icon: 3, title: '删除确认'}, function(index){
+                layer.close(index);
+                
+                // 1. 删除 pages 中的配置
+                if (fullConfig.pages[key]) {
+                    delete fullConfig.pages[key];
+                }
+                
+                // 2. 删除 menus 中的入口
+                for (let group in fullConfig.menus) {
+                    if (Array.isArray(fullConfig.menus[group])) {
+                        fullConfig.menus[group] = fullConfig.menus[group].filter(item => item.value !== key);
+                    }
+                }
+                
+                // 3. 更新 UI (不立即保存)
+                // 如果删除的是当前页面，清空内容区
+                if (currentPageKey === key) {
+                     $('#designerContent').html('<div class="empty-tip"><i class="layui-icon layui-icon-layouts"></i><p>请选择左侧页面进行编辑</p></div>');
+                     currentPageKey = null;
+                }
+                renderSidebar();
+                
+                layer.msg('页面已移除，点击"保存配置"按钮以生效', {icon: 0, time: 3000});
+            });
+        }
+
+        window.loadPage = function(key, keepTab = false) {
+            currentPageKey = key;
+            $('.menu-item').removeClass('active');
+            $(`#menu-${key}`).addClass('active');
+            
+            const pageConfig = fullConfig.pages[key];
+            const title = pageConfig.page && pageConfig.page.title ? pageConfig.page.title : key;
+            $('#currentPageTitle cite').text(title);
+            
+            // 检查是否为特殊页面（非标准 CRUD）
+            const isSpecialPage = !pageConfig.table || !pageConfig.form || pageConfig.page.type === 'form';
+            
+            if (isSpecialPage) {
+                const tpl = $('#tplSpecialPage').html();
+                laytpl(tpl).render({ key: key, title: title }, function(html){
+                    $('#designerContent').html(html);
+                });
+                return;
+            }
+            
+            const data = { key: key, config: pageConfig };
+            const tpl = $('#tplPageEditor').html();
+            laytpl(tpl).render(data, function(html){
+                $('#designerContent').html(html);
+                
+                element.render('tab');
+                form.render();
+                
+                // 渲染各个数组列表
+                renderArrayList('table.cols', pageConfig.table.cols || []);
+                renderArrayList('search', pageConfig.search || []);
+                renderArrayList('toolbar', pageConfig.toolbar || []);
+                renderArrayList('actions', pageConfig.actions || []);
+                renderArrayList('form', pageConfig.form || []);
+                
+                // 延迟切换 tab，确保 DOM 已完全渲染
+                setTimeout(() => {
+                    if (keepTab) {
+                        // 保持当前 tab
+                        element.tabChange('configTab', currentTabIndex);
+                    } else {
+                        // 首次加载时激活第一个 tab
+                        element.tabChange('configTab', 0);
+                        currentTabIndex = 0;
+                    }
+                }, 50);
+            });
+        }
+
+        // 根据 Schema 渲染数组列表
+        function renderArrayList(type, list, forceExpandIndex = -1) {
+            const containerId = 'container-' + type.replace('.', '-');
+            const schema = FIELD_SCHEMAS[type];
+            
+            // 销毁旧的 Sortable 实例
+            if (sortableInstances[containerId]) {
+                sortableInstances[containerId].destroy();
+                delete sortableInstances[containerId];
+            }
+            
+            // 记录当前已展开的项
+            const expandedIndices = [];
+            $(`#${containerId} .list-item-body.show`).each(function() {
+                expandedIndices.push($(this).data('index'));
+            });
+            
+            if (forceExpandIndex !== -1 && !expandedIndices.includes(forceExpandIndex)) {
+                expandedIndices.push(forceExpandIndex);
+            }
+
+            if (!list || list.length === 0) {
+                $(`#${containerId}`).html('<div class="empty-tip"><i class="layui-icon layui-icon-face-surprised"></i><p>暂无配置项，请点击上方按钮添加</p></div>');
+                return;
+            }
+            
+            let html = '';
+            list.forEach((item, index) => {
+                // 优先使用 label (表单字段) 或 title (表格列)，其次是 text (按钮/开关文本)
+                const titleVal = item.title || item.label || item.text || item.name || item.field || '未命名项';
+                const subtitleVal = item.field || item.name || item.action || '';
+                const isNew = item._isNew;
+                const isExpanded = isNew || expandedIndices.includes(index);
+                
+                html += `<div class="list-item-card">
+                            <div class="list-item-header" onclick="toggleItem(this)">
+                                <div>
+                                    <span class="list-item-title">${titleVal}</span>
+                                    <span class="list-item-subtitle">${subtitleVal}</span>
+                                </div>
+                                <div class="item-actions">
+                                    <span class="btn-toggle-item"><i class="layui-icon ${isExpanded ? 'layui-icon-up' : 'layui-icon-down'}"></i></span>
+                                    <span class="btn-delete-item" onclick="event.stopPropagation(); removeArrayItem('${type}', ${index})">
+                                        <i class="layui-icon layui-icon-delete"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="list-item-body ${isExpanded ? 'show' : ''}" data-index="${index}">
+                                <form class="layui-form">`;
+                
+                // 根据 Schema 渲染字段
+                for (let fieldName in schema) {
+                    const fieldDef = schema[fieldName];
+
+                    // 检查依赖可见性
+                    if (fieldDef.depends) {
+                         const currentType = item.type !== undefined ? item.type : '';
+                         if (!fieldDef.depends.includes(currentType)) {
+                            continue;
+                         }
+                    }
+                    
+                    const value = item[fieldName] !== undefined ? item[fieldName] : '';
+                    const required = fieldDef.required ? '<span style="color:red;">*</span>' : '';
+                    const hint = fieldDef.hint ? `<div class="layui-form-mid layui-word-aux" style="padding-left: 10px;">${fieldDef.hint}</div>` : '';
+                    const inlineClass = fieldDef.inline ? 'layui-inline' : '';
+                    const labelStyle = fieldDef.inline ? 'width: auto; padding: 9px 10px;' : '';
+                    const inputBlockStyle = fieldDef.inline ? 'margin-left: 0;' : '';
+                    
+                    html += `<div class="layui-form-item ${inlineClass}">
+                                <label class="layui-form-label" style="${labelStyle}">${required}${fieldDef.label}</label>
+                                <div class="layui-input-block" style="${inputBlockStyle}">`;
+                    
+                    if (fieldDef.type === 'color') {
+                        // 颜色选择器
+                        html += `<div class="layui-input-inline" style="width: auto;">
+                                    <input type="text" class="layui-input" id="color-input-${type}-${index}-${fieldName}" value="${value}" placeholder="${fieldDef.placeholder || ''}" 
+                                        onchange="updateArrayItem('${type}', ${index}, '${fieldName}', this.value)" style="width: 150px; display: inline-block; margin-right: 10px;">
+                                    <div id="color-picker-${type}-${index}-${fieldName}" style="display: inline-block; vertical-align: middle;"></div>
+                                 </div>${hint}`;
+                    } else if (fieldDef.type === 'icon') {
+                        // 图标选择器
+                        html += `<div class="layui-input-inline" style="width: 50%;">
+                                    <input type="text" class="layui-input" id="icon-input-${type}-${index}" value="${value}" placeholder="${fieldDef.placeholder || ''}" 
+                                        onchange="updateArrayItem('${type}', ${index}, '${fieldName}', this.value)">
+                                 </div>
+                                 <div class="layui-input-inline" style="width: 20%;">
+                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="openIconPicker('${type}', ${index}, '${fieldName}')">
+                                        <i class="layui-icon layui-icon-cellphone"></i> 选择
+                                    </button>
+                                 </div>
+                                 <div class="layui-input-inline" style="width: auto;">
+                                    <i class="layui-icon ${value}" style="font-size: 24px; line-height: 38px;"></i>
+                                 </div>${hint}`;
+                    } else if (fieldDef.type === 'text' || fieldDef.type === 'number') {
+                        html += `<input type="${fieldDef.type}" class="layui-input" value="${value}" placeholder="${fieldDef.placeholder || ''}" 
+                                    onchange="updateArrayItem('${type}', ${index}, '${fieldName}', this.value)">${hint}`;
+                    } else if (fieldDef.type === 'textarea') {
+                        let displayValue = value;
+                        // 特殊处理 options 数组转字符串
+                        if (Array.isArray(value)) {
+                            displayValue = value.map(opt => {
+                                let line = `${opt.value}:${opt.label || opt.title}`;
+                                if (opt.color) {
+                                    line += `:${opt.color}`;
+                                }
+                                return line;
+                            }).join('\n');
+                        }
+                        html += `<textarea class="layui-textarea" placeholder="${fieldDef.placeholder || ''}" 
+                                    onchange="updateArrayItem('${type}', ${index}, '${fieldName}', this.value)">${displayValue}</textarea>${hint}`;
+                    } else if (fieldDef.type === 'radio') {
+                        // Radio 单选按钮
+                        const hasCustom = fieldDef.allowCustom === true;
+                        (fieldDef.options || []).forEach((opt, optIdx) => {
+                            const checked = value === opt.value ? 'checked' : '';
+                            const radioId = `radio-${type}-${index}-${fieldName}-${optIdx}`;
+                            html += `<input type="radio" name="${type}-${index}-${fieldName}" value="${opt.value}" 
+                                        lay-filter="radio-${type}-${index}-${fieldName}"
+                                        id="${radioId}" title="${opt.label}" ${checked}>`;
+                        });
+                        // 如果有 allowCustom，增加自定义输入框
+                        if (hasCustom) {
+                            const isCustomValue = !fieldDef.options.some(opt => opt.value === value);
+                            const customChecked = isCustomValue ? 'checked' : '';
+                            const inputDisplay = isCustomValue ? 'inline-block' : 'none';
+                            html += `<br><div style="display: flex; align-items: center; margin-top: 5px;">
+                                        <input type="radio" name="${type}-${index}-${fieldName}" value="__custom__" 
+                                            lay-filter="radio-${type}-${index}-${fieldName}"
+                                            id="radio-${type}-${index}-${fieldName}-custom" title="自定义" ${customChecked}>
+                                        <input type="text" id="custom-input-${type}-${index}-${fieldName}" class="layui-input" 
+                                            style="width: 200px; display: ${inputDisplay}; margin-left: 10px;" 
+                                            value="${isCustomValue ? value : ''}" placeholder="输入自定义标识"
+                                            oninput="updateArrayItem('${type}', ${index}, '${fieldName}', this.value)">
+                                     </div>`;
+                        }
+                        html += hint;
+                    } else if (fieldDef.type === 'checkbox') {
+                        // Checkbox 多选框
+                        const currentValues = value ? String(value).split('|') : [];
+                        (fieldDef.options || []).forEach((opt, optIdx) => {
+                            const checked = currentValues.includes(opt.value) ? 'checked' : '';
+                            html += `<input type="checkbox" name="${type}-${index}-${fieldName}" value="${opt.value}" 
+                                        lay-filter="checkbox-${type}-${index}-${fieldName}"
+                                        title="${opt.label}" ${checked}>`;
+                        });
+                        html += hint;
+                    } else if (fieldDef.type === 'flags') {
+                        fieldDef.options.forEach(opt => {
+                            const checked = item[opt.key] === true ? 'checked' : '';
+                            const filter = `flags-${type}-${index}-${opt.key}`;
+                            html += `<input type="checkbox" name="${filter}" title="${opt.label}" lay-skin="primary" 
+                                        lay-filter="${filter}" ${checked}>`;
+                        });
+                        html += hint;
+                    } else if (fieldDef.type === 'switch') {
+                        const checked = value === true || value === 1 || value === '1' ? 'checked' : '';
+                        html += `<input type="checkbox" name="switch-${type}-${index}-${fieldName}" lay-skin="switch" lay-filter="switch-${type}-${index}-${fieldName}" ${checked}>${hint}`;
+                    } else {
+                        // 兜底显示：如果类型未匹配，显示文本框方便调试
+                        html += `<input type="text" class="layui-input" value="${value}" placeholder="未匹配类型: ${fieldDef.type}" readonly>${hint}`;
+                    }
+                    
+                    html += `</div></div>`;
+                }
+                
+                html += `       </form>
+                            </div>
+                         </div>`;
+            });
+            
+            $(`#${containerId}`).html(html);
+            
+            // 延迟渲染表单并绑定事件，确保 DOM 已更新
+            setTimeout(() => {
+                form.render();
+
+                // 初始化拖拽排序
+                const el = document.getElementById(containerId);
+                if (el) {
+                    sortableInstances[containerId] = new Sortable(el, {
+                        animation: 150,
+                        handle: '.list-item-header',
+                        ghostClass: 'sortable-ghost',
+                        onEnd: function (evt) {
+                            if (evt.newIndex === evt.oldIndex) return;
+                            
+                            // 获取当前列表
+                            let configList = fullConfig.pages[currentPageKey];
+                            const parts = type.split('.');
+                            for (let part of parts) {
+                                if (!configList[part]) configList[part] = [];
+                                configList = configList[part];
+                            }
+                            
+                            // 移动元素
+                            const item = configList.splice(evt.oldIndex, 1)[0];
+                            configList.splice(evt.newIndex, 0, item);
+                            
+                            // 重新渲染列表以更新索引
+                            renderArrayList(type, configList);
+                        }
+                    });
+                }
+                
+                // 绑定 radio 事件
+                list.forEach((item, index) => {
+                    for (let fieldName in schema) {
+                        const fieldDef = schema[fieldName];
+                        
+                        if (fieldDef.type === 'radio') {
+                            form.on(`radio(radio-${type}-${index}-${fieldName})`, function(data){
+                                const val = data.value;
+                                if (val === '__custom__') {
+                                    const inputId = `#custom-input-${type}-${index}-${fieldName}`;
+                                    // 切换到自定义时，如果有值则保持，否则清空
+                                    const currentInputVal = $(inputId).val();
+                                    updateArrayItem(type, index, fieldName, currentInputVal);
+                                    $(inputId).show().focus();
+                                } else {
+                                    $(`#custom-input-${type}-${index}-${fieldName}`).hide();
+                                    if (fieldName === 'type') {
+                                        updateArrayItemAndRefresh(type, index, fieldName, val);
+                                    } else {
+                                        updateArrayItem(type, index, fieldName, val);
+                                    }
+                                }
+                            });
+                        } else if (fieldDef.type === 'checkbox') {
+                            form.on(`checkbox(checkbox-${type}-${index}-${fieldName})`, function(data){
+                                const checkedValues = [];
+                                $(`input[name="${type}-${index}-${fieldName}"]:checked`).each(function(){
+                                    checkedValues.push($(this).val());
+                                });
+                                updateArrayItem(type, index, fieldName, checkedValues.join('|'));
+                            });
+                        } else if (fieldDef.type === 'flags') {
+                            fieldDef.options.forEach(opt => {
+                                const filter = `flags-${type}-${index}-${opt.key}`;
+                                form.on(`checkbox(${filter})`, function(data){
+                                    updateArrayItem(type, index, opt.key, data.elem.checked);
+                                });
+                            });
+                        } else if (fieldDef.type === 'switch') {
+                            form.on(`switch(switch-${type}-${index}-${fieldName})`, function(data){
+                                updateArrayItem(type, index, fieldName, data.elem.checked);
+                            });
+                        } else if (fieldDef.type === 'color') {
+                            // 初始化颜色选择器
+                            layui.colorpicker.render({
+                                elem: `#color-picker-${type}-${index}-${fieldName}`,
+                                color: item[fieldName] || '',
+                                done: function(color){
+                                    $(`#color-input-${type}-${index}-${fieldName}`).val(color);
+                                    updateArrayItem(type, index, fieldName, color);
+                                }
+                            });
+                        }
+                    }
+                });
+            }, 10);
+        }
+        
+        window.toggleItem = function(header) {
+            const body = $(header).next('.list-item-body');
+            const icon = $(header).find('.btn-toggle-item i');
+            
+            if (body.hasClass('show')) {
+                body.removeClass('show');
+                icon.removeClass('layui-icon-up').addClass('layui-icon-down');
+            } else {
+                body.addClass('show');
+                icon.removeClass('layui-icon-down').addClass('layui-icon-up');
+            }
+        }
+
+        window.updateConfigValue = function(path, value) {
+            if (!currentPageKey) return;
+            const parts = path.split('.');
+            let obj = fullConfig.pages[currentPageKey];
+            for (let i = 0; i < parts.length - 1; i++) {
+                if (!obj[parts[i]]) obj[parts[i]] = {};
+                obj = obj[parts[i]];
+            }
+            obj[parts[parts.length - 1]] = value;
+            
+            if (path === 'page.title') {
+                $('#currentPageTitle cite').text(value);
+            }
+        }
+
+        window.updateArrayItem = function(type, index, key, value) {
+            if (!currentPageKey) return;
+            
+            let list = fullConfig.pages[currentPageKey];
+            const parts = type.split('.');
+            for (let part of parts) {
+                if (!list[part]) list[part] = [];
+                list = list[part];
+            }
+            
+            // 类型转换
+            if (typeof value === 'string') {
+                if (value === 'true') value = true;
+                else if (value === 'false') value = false;
+                else if (!isNaN(Number(value)) && value !== '' && key !== 'value') value = Number(value); // key !== 'value' 防止将选项值误转为数字
+            }
+
+            // 特殊处理 options 字段
+            if (key === 'options' && typeof value === 'string') {
+                 const lines = value.split('\n');
+                 const opts = [];
+                 lines.forEach(line => {
+                     if (!line.trim()) return;
+                     // 支持中英文冒号
+                    const parts = line.split(/[:：]/);
+                    if (parts.length >= 1) {
+                        const val = parts[0].trim();
+                        const label = parts[1] ? parts[1].trim() : val;
+                        const color = parts[2] ? parts[2].trim() : '';
+                        const opt = {
+                            value: val,
+                            label: label
+                        };
+                        if (color) opt.color = color;
+                        opts.push(opt);
+                    }
+                 });
+                 if (opts.length > 0) {
+                     value = opts;
+                 }
+            }
+
+            list[index][key] = value;
+        }
+        
+        // 更新数组项并刷新列表（用于需要显示/隐藏字段的情况，如 type 改变）
+        window.updateArrayItemAndRefresh = function(type, index, key, value) {
+            updateArrayItem(type, index, key, value);
+            
+            // 重新渲染列表
+            let list = fullConfig.pages[currentPageKey];
+            const parts = type.split('.');
+            for (let part of parts) {
+                list = list[part];
+            }
+            renderArrayList(type, list, index);
+        }
+
+        window.removeArrayItem = function(type, index) {
+            layer.confirm('确定要删除此项吗？', function(i){
+                let list = fullConfig.pages[currentPageKey];
+                const parts = type.split('.');
+                for (let part of parts) {
+                    list = list[part];
+                }
+                list.splice(index, 1);
+                layer.close(i);
+                
+                // 只重新渲染对应的列表，不重新加载整个页面
+                const pageConfig = fullConfig.pages[currentPageKey];
+                renderArrayList(type, list);
+            });
+        }
+
+        window.addArrayItem = function(type) {
+            let list = fullConfig.pages[currentPageKey];
+            const parts = type.split('.');
+            for (let part of parts) {
+                if (!list[part]) list[part] = [];
+                list = list[part];
+            }
+            
+            const schema = FIELD_SCHEMAS[type];
+            let newItem = { _isNew: true };
+            
+            // 根据 schema 生成默认值
+            for (let fieldName in schema) {
+                const fieldDef = schema[fieldName];
+                if (fieldName === 'type' && type === 'table.cols') {
+                     // 表格列类型默认为 'auto'
+                     newItem[fieldName] = 'auto';
+                } else if (fieldDef.required) {
+                    if (fieldDef.type === 'radio' && fieldDef.options) {
+                        newItem[fieldName] = fieldDef.options[0].value;
+                    } else if (fieldDef.type === 'select' && fieldDef.options) {
+                        newItem[fieldName] = fieldDef.options[0];
+                    } else {
+                        newItem[fieldName] = '';
+                    }
+                }
+            }
+            
+            list.push(newItem);
+            
+            // 只重新渲染对应的列表，不重新加载整个页面
+            renderArrayList(type, list);
+        }
+
+        // 保存配置到服务器
+        function saveConfigToServer(callback) {
+            const token = localStorage.getItem(TOKEN_KEY) || (window.parent && window.parent.localStorage.getItem(TOKEN_KEY));
+            
+            const cleanConfig = JSON.parse(JSON.stringify(fullConfig));
+            
+            // 清理内部标记
+            for(let p in cleanConfig.pages) {
+                const page = cleanConfig.pages[p];
+                ['table', 'search', 'toolbar', 'actions', 'form'].forEach(key => {
+                    let list = null;
+                    if (key === 'table' && page.table && page.table.cols) {
+                        list = page.table.cols;
+                    } else if (page[key]) {
+                        list = page[key];
+                    }
+                    
+                    if(list && Array.isArray(list)) {
+                        list.forEach(item => delete item._isNew);
+                    }
+                });
+            }
+
+            // 将 menus 对象转为有序数组（解决 JS 对象数字键排序问题）
+            const menusArray = [];
+            for (let groupName in cleanConfig.menus) {
+                menusArray.push({
+                    name: groupName,
+                    config: cleanConfig.menus[groupName]
+                });
+            }
+            cleanConfig.menusArray = menusArray;
+
+            $.ajax({
+                url: '/api/admin/crud-designer/save',
+                type: 'POST',
+                headers: { 'Authorization': token },
+                contentType: 'application/json',
+                data: JSON.stringify(cleanConfig),
+                success: function(res) {
+                    if (res.code === 0) {
+                        if (callback) callback(true);
+                        else layer.msg('保存成功', {icon: 1});
+                    } else {
+                        layer.alert(res.msg, {icon: 2});
+                        if (callback) callback(false);
+                    }
+                },
+                error: function(xhr) {
+                    layer.msg('保存失败: ' + (xhr.responseJSON?.msg || '网络错误'), {icon: 2});
+                    if (callback) callback(false);
+                }
+            });
+        }
+
+        $('#btnSave').click(function() {
+            saveConfigToServer();
+        });
+        
+        $('#btnRawJson').click(function() {
+            viewRawConfig(currentPageKey);
+        });
+        
+        window.viewRawConfig = function(key) {
+            const cleanConfig = JSON.parse(JSON.stringify(fullConfig));
+            const targetConfig = key ? { [key]: cleanConfig.pages[key] } : cleanConfig;
+            
+            layer.open({
+                type: 1,
+                title: '原始 JSON 配置',
+                area: ['800px', '600px'],
+                content: '<textarea class="layui-textarea" style="height: 100%; font-family: monospace; font-size: 12px;">' + JSON.stringify(targetConfig, null, 4) + '</textarea>'
+            });
+        }
+        
+        window.createNewPage = function() {
+            layer.prompt({title: '请输入新页面标识 (英文，如 products)', formType: 0}, function(value, index){
+                if (fullConfig.pages[value]) {
+                    layer.msg('该页面已存在', {icon: 2});
+                    return;
+                }
+                
+                fullConfig.pages[value] = {
+                    page: { title: '新页面', page: value, icon: 'layui-icon-file' },
+                    table: { url: '/api/admin/' + value, cols: [] },
+                    search: [],
+                    toolbar: [],
+                    actions: [],
+                    form: [],
+                    api: {
+                        list: '/api/admin/' + value,
+                        add: '/api/admin/' + value,
+                        edit: '/api/admin/' + value + '/{id}',
+                        delete: '/api/admin/' + value + '/{id}'
+                    }
+                };
+                
+                layer.close(index);
+                renderSidebar();
+                loadPage(value);
+            });
+        }
+        
+        // 打开图标选择器
+        window.openIconPicker = function(type, index, fieldName) {
+            let html = '<div class="icon-picker-grid">';
+            LAYUI_ICONS.forEach(icon => {
+                const iconName = icon.replace('layui-icon-', '');
+                html += `<div class="icon-picker-item" onclick="selectIcon('${icon}', '${type}', ${index}, '${fieldName}')">
+                            <i class="layui-icon ${icon}"></i>
+                            <span>${iconName}</span>
+                         </div>`;
+            });
+            html += '</div>';
+            
+            layer.open({
+                type: 1,
+                title: '选择图标',
+                area: ['800px', '600px'],
+                scrollbar: false,
+                content: html,
+                success: function(layero, index) {
+                    // $(layero).css('z-index', 19891016);
+                }
+            });
+        }
+        
+        // 选择图标
+        window.selectIcon = function(icon, type, index, fieldName) {
+            updateArrayItem(type, index, fieldName, icon);
+            
+            // 更新输入框和预览图标
+            $(`#icon-input-${type}-${index}`).val(icon).next().next().find('i').attr('class', 'layui-icon ' + icon);
+            
+            layer.closeAll();
+        }
+        
+        // 打开页面图标选择器
+        window.openPageIconPicker = function() {
+            let html = '<div class="icon-picker-grid">';
+            LAYUI_ICONS.forEach(icon => {
+                const iconName = icon.replace('layui-icon-', '');
+                html += `<div class="icon-picker-item" onclick="selectPageIcon('${icon}')">
+                            <i class="layui-icon ${icon}"></i>
+                            <span>${iconName}</span>
+                         </div>`;
+            });
+            html += '</div>';
+            
+            layer.open({
+                type: 1,
+                title: '选择图标',
+                area: ['800px', '600px'],
+                scrollbar: false,
+                content: html,
+                success: function(layero, index) {
+                    // $(layero).css('z-index', 19891016);
+                }
+            });
+        }
+        
+        // 选择页面图标
+        window.selectPageIcon = function(icon) {
+            updateConfigValue('page.icon', icon);
+            $('#page-icon-input').val(icon);
+            $('#page-icon-preview').attr('class', 'layui-icon ' + icon);
+            layer.closeAll();
+        }
+        
+        // 加载菜单编辑器
+        window.loadMenuEditor = function() {
+            currentPageKey = null;
+            $('.menu-item').removeClass('active');
+            $('#menu-editor-item').addClass('active');
+            $('#currentPageTitle cite').text('菜单管理');
+            
+            const tpl = $('#tplMenuEditor').html();
+            laytpl(tpl).render({}, function(html){
+                $('#designerContent').html(html);
+                renderMenuGroups();
+            });
+        }
+        
+        // 渲染菜单分组列表
+        function renderMenuGroups() {
+            // 1. 保存当前展开状态
+            const expandedGroups = {};
+            $('.list-item-card').each(function() {
+                const groupName = $(this).attr('data-group-name');
+                const isExpanded = $(this).find('.list-item-body').hasClass('show');
+                if (groupName && isExpanded) {
+                    expandedGroups[groupName] = true;
+                }
+            });
+
+            let html = '';
+            let groupIndex = 0;
+            
+            for (let groupName in fullConfig.menus) {
+                const groupConfig = fullConfig.menus[groupName];
+                const items = groupConfig.items || groupConfig;
+                const groupIcon = groupConfig.icon || 'layui-icon-template-1';
+                
+                // 2. 恢复展开状态
+                const isExpanded = expandedGroups[groupName] || false;
+                const bodyClass = isExpanded ? 'list-item-body show' : 'list-item-body';
+                const iconClass = isExpanded ? 'layui-icon-up' : 'layui-icon-down';
+
+                html += `<div class="list-item-card" data-group-name="${groupName}">
+                            <div class="list-item-header" onclick="toggleItem(this)" style="cursor: move;">
+                                <div>
+                                    <i class="layui-icon ${groupIcon}" style="margin-right: 8px;"></i>
+                                    <span class="list-item-title">${groupName}</span>
+                                    <span class="list-item-subtitle">${Array.isArray(items) ? items.length : items.length} 项</span>
+                                </div>
+                                    <div class="item-actions">
+                                    <span class="btn-toggle-item"><i class="layui-icon ${iconClass}"></i></span>
+                                    <span class="btn-delete-item" onclick="event.stopPropagation(); removeMenuGroup('${groupName}')">
+                                        <i class="layui-icon layui-icon-delete"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="${bodyClass}">
+                                <form class="layui-form">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">分组名称</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" class="layui-input" value="${groupName}" onchange="renameMenuGroup('${groupName}', this.value)">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">分组图标</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-input-inline" style="width: 50%;">
+                                                <input type="text" id="menu-group-icon-${groupIndex}" class="layui-input" value="${groupIcon}" onchange="updateMenuGroupIcon('${groupName}', this.value)">
+                                            </div>
+                                            <div class="layui-input-inline" style="width: 20%;">
+                                                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="openMenuGroupIconPicker('${groupName}', ${groupIndex})">
+                                                    <i class="layui-icon layui-icon-cellphone"></i> 选择
+                                                </button>
+                                            </div>
+                                            <div class="layui-input-inline" style="width: auto;">
+                                                <i class="layui-icon ${groupIcon}" style="font-size: 24px; line-height: 38px;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">菜单项</label>
+                                        <div class="layui-input-block">
+                                            <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="addMenuItemToGroup('${groupName}')">
+                                                <i class="layui-icon layui-icon-add-1"></i> 添加菜单项
+                                            </button>
+                                            <div id="menu-items-${groupIndex}" style="margin-top: 10px;" data-group-name="${groupName}">`;
+                
+                // 渲染菜单项
+                const itemList = Array.isArray(items) ? items : items;
+                itemList.forEach((menuItem, itemIdx) => {
+                    const pageKey = menuItem.page || '';
+                    html += `<div style="background: #f8f9fa; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; cursor: move;" data-index="${itemIdx}">
+                                <div style="flex: 1;">
+                                    <div style="margin-bottom: 5px;">
+                                        <span style="font-weight: 600;">${menuItem.name || '未命名'}</span>
+                                        <span style="color: #999; font-size: 12px; margin-left: 10px;">${pageKey}</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #666;">
+                                        <i class="layui-icon ${menuItem.icon || ''}"></i> ${menuItem.icon || '无图标'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="editMenuItem('${groupName}', ${itemIdx})">编辑</button>
+                                    <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="removeMenuItem('${groupName}', ${itemIdx})">删除</button>
+                                </div>
+                             </div>`;
+                });
+                
+                html += `           </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                         </div>`;
+                groupIndex++;
+            }
+            
+            if (!html) {
+                html = '<div class="empty-tip"><i class="layui-icon layui-icon-face-surprised"></i><p>暂无菜单分组，请点击右上角添加</p></div>';
+            }
+            
+            $('#menuGroupList').html(html);
+
+            // 初始化分组拖拽
+            new Sortable(document.getElementById('menuGroupList'), {
+                animation: 150,
+                handle: '.list-item-header',
+                onEnd: function (evt) {
+                    const newMenus = {};
+                    const items = evt.to.children;
+                    for (let i = 0; i < items.length; i++) {
+                        const groupName = $(items[i]).attr('data-group-name');
+                        if (groupName && fullConfig.menus[groupName]) {
+                            newMenus[groupName] = fullConfig.menus[groupName];
+                        }
+                    }
+                    fullConfig.menus = newMenus;
+                }
+            });
+
+            // 初始化菜单项拖拽
+            for (let i = 0; i < groupIndex; i++) {
+                const el = document.getElementById(`menu-items-${i}`);
+                if (el) {
+                    new Sortable(el, {
+                        animation: 150,
+                        onEnd: function (evt) {
+                            const groupName = $(evt.to).attr('data-group-name');
+                            const oldIndex = evt.oldIndex;
+                            const newIndex = evt.newIndex;
+                            
+                            if (oldIndex === newIndex) return;
+
+                            const groupConfig = fullConfig.menus[groupName];
+                            
+                            // 统一处理新旧格式
+                            let items;
+                            if (Array.isArray(groupConfig)) {
+                                items = groupConfig;
+                            } else {
+                                if (!groupConfig.items) {
+                                    groupConfig.items = [];
+                                }
+                                items = groupConfig.items;
+                            }
+                            
+                            // 移动数组元素
+                            const item = items.splice(oldIndex, 1)[0];
+                            items.splice(newIndex, 0, item);
+                            
+                            // 确保更新到配置中
+                            if (!Array.isArray(groupConfig)) {
+                                groupConfig.items = items;
+                            }
+                            
+                            console.log(`菜单项移动: ${groupName}, ${oldIndex} -> ${newIndex}`, items);
+                        }
+                    });
+                }
+            }
+        }
+        
+        // 添加菜单分组
+        window.addMenuGroup = function() {
+            layer.prompt({title: '请输入分组名称（如：内容管理）', formType: 0}, function(value, index){
+                if (fullConfig.menus[value]) {
+                    layer.msg('该分组已存在', {icon: 2});
+                    return;
+                }
+                
+                fullConfig.menus[value] = {
+                    icon: 'layui-icon-template-1',
+                    items: []
+                };
+                
+                layer.close(index);
+                renderMenuGroups();
+            });
+        }
+        
+        // 删除菜单分组
+        window.removeMenuGroup = function(groupName) {
+            layer.confirm(`确定要删除分组【${groupName}】吗？`, function(i){
+                delete fullConfig.menus[groupName];
+                layer.close(i);
+                renderMenuGroups();
+            });
+        }
+        
+        // 重命名菜单分组
+        window.renameMenuGroup = function(oldName, newName) {
+            if (oldName === newName) return;
+            if (fullConfig.menus[newName]) {
+                layer.msg('分组名称已存在', {icon: 2});
+                return;
+            }
+            
+            // 保持对象键顺序
+            const newMenus = {};
+            for (let key in fullConfig.menus) {
+                if (key === oldName) {
+                    newMenus[newName] = fullConfig.menus[oldName];
+                } else {
+                    newMenus[key] = fullConfig.menus[key];
+                }
+            }
+            
+            fullConfig.menus = newMenus;
+            renderMenuGroups();
+        }
+        
+        // 更新菜单分组图标
+        window.updateMenuGroupIcon = function(groupName, icon) {
+            const groupConfig = fullConfig.menus[groupName];
+            if (groupConfig.items) {
+                groupConfig.icon = icon;
+            } else {
+                // 旧格式，转换为新格式
+                fullConfig.menus[groupName] = {
+                    icon: icon,
+                    items: groupConfig
+                };
+            }
+        }
+        
+        // 打开菜单分组图标选择器
+        window.openMenuGroupIconPicker = function(groupName, groupIndex) {
+            let html = '<div class="icon-picker-grid">';
+            LAYUI_ICONS.forEach(icon => {
+                const iconName = icon.replace('layui-icon-', '');
+                html += `<div class="icon-picker-item" onclick="selectMenuGroupIcon('${groupName}', ${groupIndex}, '${icon}')">
+                            <i class="layui-icon ${icon}"></i>
+                            <span>${iconName}</span>
+                         </div>`;
+            });
+            html += '</div>';
+            
+            layer.open({
+                type: 1,
+                title: '选择分组图标',
+                area: ['800px', '600px'],
+                scrollbar: false,
+                content: html,
+                success: function(layero, index) {
+                    // $(layero).css('z-index', 19891016);
+                }
+            });
+        }
+        
+        window.selectMenuGroupIcon = function(groupName, groupIndex, icon) {
+            updateMenuGroupIcon(groupName, icon);
+            $(`#menu-group-icon-${groupIndex}`).val(icon).next().next().find('i').attr('class', 'layui-icon ' + icon);
+            layer.closeAll();
+            renderMenuGroups();
+        }
+        
+        // 添加菜单项到分组
+        window.addMenuItemToGroup = function(groupName) {
+            // 获取所有可用页面
+            const availablePages = [];
+            for (let key in fullConfig.pages) {
+                const page = fullConfig.pages[key];
+                const title = page.page && page.page.title ? page.page.title : key;
+                availablePages.push({ key: key, title: title });
+            }
+            
+            if (availablePages.length === 0) {
+                layer.msg('暂无可用页面，请先创建页面', {icon: 2});
+                return;
+            }
+            
+            // 构建选择列表
+            let options = '<option value="" disabled selected hidden>请选择页面</option>';
+            availablePages.forEach(p => {
+                options += `<option value="${p.key}">${p.title} (${p.key})</option>`;
+            });
+            
+            layer.open({
+                type: 1,
+                title: '添加菜单项',
+                area: ['500px', '550px'],
+                scrollbar: false,
+                content: `<div style="padding: 20px; padding-bottom: 80px;">
+                            <form class="layui-form" lay-filter="addMenuItemForm">
+                                <div class="layui-form-item" style="margin-bottom: 40px; z-index: 2000;">
+                                    <label class="layui-form-label">选择页面</label>
+                                    <div class="layui-input-block">
+                                        <select id="selectMenuPage" lay-filter="selectMenuPage">
+                                            ${options}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">菜单名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="inputMenuName" class="layui-input" placeholder="如：商品管理">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">菜单图标</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="inputMenuIcon" class="layui-input" value="layui-icon-file">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" style="position: absolute; bottom: 20px; left: 110px; right: 20px;">
+                                    <div class="layui-input-block" style="margin-left: 0;">
+                                        <button type="button" class="layui-btn layui-btn-normal" onclick="confirmAddMenuItem('${groupName}')">确定</button>
+                                        <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll()">取消</button>
+                                    </div>
+                                </div>
+                            </form>
+                          </div>`,
+                success: function(layero, index) {
+                    form.render();
+                    
+                    // 监听页面选择，自动填充名称和图标
+                    form.on('select(selectMenuPage)', function(data){
+                        const pageKey = data.value;
+                        if (pageKey && fullConfig.pages[pageKey]) {
+                            const page = fullConfig.pages[pageKey];
+                            $('#inputMenuName').val(page.page.title || pageKey);
+                            $('#inputMenuIcon').val(page.page.icon || 'layui-icon-file');
+                        }
+                    });
+                }
+            });
+        }
+        
+        window.confirmAddMenuItem = function(groupName) {
+            const pageKey = $('#selectMenuPage').val();
+            const menuName = $('#inputMenuName').val();
+            const menuIcon = $('#inputMenuIcon').val();
+            
+            if (!pageKey) {
+                layer.msg('请选择页面', {icon: 2});
+                return;
+            }
+            if (!menuName) {
+                layer.msg('请输入菜单名称', {icon: 2});
+                return;
+            }
+            
+            const groupConfig = fullConfig.menus[groupName];
+            const items = groupConfig.items || groupConfig;
+            
+            // 检查是否已存在
+            const exists = items.some(item => item.page === pageKey);
+            if (exists) {
+                layer.msg('该页面已在此分组中', {icon: 2});
+                return;
+            }
+            
+            // 添加菜单项
+            const newItem = {
+                name: menuName,
+                page: pageKey,
+                icon: menuIcon
+            };
+            
+            if (groupConfig.items) {
+                groupConfig.items.push(newItem);
+            } else {
+                // 旧格式转新格式
+                fullConfig.menus[groupName] = {
+                    icon: groupIcon,
+                    items: [...items, newItem]
+                };
+            }
+            
+            layer.closeAll();
+            renderMenuGroups();
+            layer.msg('添加成功', {icon: 1});
+        }
+        
+        // 编辑菜单项
+        window.editMenuItem = function(groupName, itemIndex) {
+            const groupConfig = fullConfig.menus[groupName];
+            const items = groupConfig.items || groupConfig;
+            const menuItem = items[itemIndex];
+            
+            layer.open({
+                type: 1,
+                title: '编辑菜单项',
+                area: ['500px', '400px'],
+                scrollbar: false,
+                content: `<div style="padding: 20px; padding-bottom: 80px;">
+                            <form class="layui-form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">页面标识</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" class="layui-input layui-disabled" disabled value="${menuItem.page}">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">菜单名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="editMenuName" class="layui-input" value="${menuItem.name}">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">菜单图标</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="editMenuIcon" class="layui-input" value="${menuItem.icon || ''}">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" style="position: absolute; bottom: 20px; left: 110px; right: 20px;">
+                                    <div class="layui-input-block" style="margin-left: 0;">
+                                        <button type="button" class="layui-btn layui-btn-normal" onclick="confirmEditMenuItem('${groupName}', ${itemIndex})">保存</button>
+                                        <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll()">取消</button>
+                                    </div>
+                                </div>
+                            </form>
+                          </div>`,
+                success: function(layero, index) {
+                    // $(layero).css('z-index', 19891015);
+                }
+            });
+        }
+        
+        window.confirmEditMenuItem = function(groupName, itemIndex) {
+            const groupConfig = fullConfig.menus[groupName];
+            const items = groupConfig.items || groupConfig;
+            
+            items[itemIndex].name = $('#editMenuName').val();
+            items[itemIndex].icon = $('#editMenuIcon').val();
+            
+            layer.closeAll();
+            renderMenuGroups();
+            layer.msg('保存成功', {icon: 1});
+        }
+        
+        // 删除菜单项
+        window.removeMenuItem = function(groupName, itemIndex) {
+            layer.confirm('确定要删除此菜单项吗？', function(i){
+                const groupConfig = fullConfig.menus[groupName];
+                const items = groupConfig.items || groupConfig;
+                
+                if (groupConfig.items) {
+                    groupConfig.items.splice(itemIndex, 1);
+                } else {
+                    // 旧格式
+                    items.splice(itemIndex, 1);
+                }
+                
+                layer.close(i);
+                renderMenuGroups();
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

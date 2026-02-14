@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理员登录 - Flight Base</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=2.2.0">
+</head>
+<body class="login-container">
+    <div class="login-left">
+        <div class="login-info">
+            <div class="logo">
+                <i class="layui-icon layui-icon-engine"></i>
+                <span>Flight Base</span>
+            </div>
+            <div class="title">新一代轻量级 PHP 开发框架</div>
+            <div class="desc">
+                极简架构 · 配置驱动 · 高效开发
+                <br>
+                专注于业务逻辑，拒绝过度封装
+            </div>
+        </div>
+        <div class="login-bg-pattern"></div>
+    </div>
+    <div class="login-right">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>欢迎登录</h2>
+                <p>请输入您的账号信息进行管理</p>
+            </div>
+            <div class="login-form-box">
+                <form class="layui-form login-form" lay-filter="loginForm">
+                    <div class="layui-form-item">
+                        <label class="login-label">账号</label>
+                        <div class="input-group">
+                            <input type="text" name="username" required lay-verify="required" 
+                                   placeholder="请输入用户名" autocomplete="off" class="layui-input" value="admin">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="login-label">密码</label>
+                        <div class="input-group">
+                            <input type="password" name="password" required lay-verify="required" 
+                                   placeholder="请输入密码" autocomplete="off" class="layui-input" value="password">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="login-label">验证码</label>
+                        <div class="input-group captcha-row">
+                             <input type="text" name="captcha" required lay-verify="required" 
+                                    placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                            <div class="captcha-img-box" title="点击刷新验证码">
+                                <img src="/api/captcha" id="captchaImg">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="type" value="admin">
+                    <div class="layui-form-item" style="margin-top: 40px;">
+                        <button class="layui-btn login-btn" lay-submit lay-filter="login">立即登录</button>
+                    </div>
+                </form>
+            </div>
+             <div class="login-footer">
+                <div class="copyright">Powered by Flight Base © 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/layui@2.8.18/dist/layui.js"></script>
+    <script src="assets/js/config.js?v=2.2.2"></script>
+    <script src="assets/js/common.js?v=2.2.2"></script>
+    <script>
+        layui.use(['form', 'layer'], function(){
+            const form = layui.form;
+            const layer = layui.layer;
+            
+            // 如果已登录，跳转到主页
+            if (getToken()) {
+                request(ADMIN_API_PREFIX + '/info').then(res => {
+                    if (res.code === 0) {
+                        location.href = 'index.html';
+                    }
+                });
+            }
+            
+            // 刷新验证码
+            window.refreshCaptcha = function() {
+                document.getElementById('captchaImg').src = '/api/captcha?t=' + new Date().getTime();
+            }
+            
+            document.getElementById('captchaImg').onclick = refreshCaptcha;
+            
+            // 监听登录提交
+            form.on('submit(login)', function(data){
+                const loadIndex = loading();
+                
+                request(ADMIN_API_PREFIX + '/login', {
+                    method: 'POST',
+                    data: data.field
+                }).then(res => {
+                    closeLoading(loadIndex);
+                    
+                    if (res.code === 0) {
+                        setToken(res.data.token);
+                        
+                        // 保存超管标记
+                        if (res.data.is_super_admin) {
+                            localStorage.setItem('is_super_admin', '1');
+                        } else {
+                            localStorage.removeItem('is_super_admin');
+                        }
+
+                        // 保存权限数据
+                        if (res.data.permissions) {
+                            localStorage.setItem('admin_permissions', JSON.stringify(res.data.permissions));
+                        } else {
+                            localStorage.removeItem('admin_permissions');
+                        }
+                        
+                        successMsg('登录成功', function(){
+                            location.href = 'index.html';
+                        });
+                    } else {
+                        errorMsg(res.msg || '登录失败');
+                        refreshCaptcha();
+                    }
+                });
+                
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

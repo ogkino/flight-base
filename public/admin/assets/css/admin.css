@@ -1,0 +1,711 @@
+/**
+ * 后台管理样式 - 现代化大气风格
+ * 配色方案：Ant Design 风格
+ * 侧边栏：#001529 (深蓝)
+ * 头部：#ffffff (白)
+ * 主体：#f0f2f5 (浅灰)
+ * 主色：#1890ff (蓝)
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f0f2f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    color: rgba(0, 0, 0, 0.85);
+}
+
+/* 头部样式 - 白色悬浮风格 */
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: 220px; /* 侧边栏宽度 */
+    right: 0;
+    height: 64px;
+    background: #fff;
+    color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 1000;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    transition: all 0.2s;
+}
+
+/* 侧边栏 - 深蓝沉浸风格 */
+.admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 220px;
+    background: #001529;
+    box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+    overflow-y: auto;
+    z-index: 1001;
+    transition: all 0.2s;
+}
+
+/* 侧边栏Logo区 */
+.admin-sidebar .sidebar-logo {
+    height: 64px;
+    line-height: 64px;
+    background: #002140;
+    padding-left: 24px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.admin-sidebar .sidebar-logo i {
+    color: #1890ff;
+    font-size: 24px;
+    margin-right: 12px;
+}
+
+.admin-sidebar .sidebar-logo span {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+/* 隐藏原有Header的Logo */
+.admin-header .logo {
+    display: none;
+}
+
+/* Header用户信息 */
+.admin-header .user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-header .user-info .username {
+    font-size: 14px;
+    color: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+}
+
+.admin-header .user-info .username::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: #e6f7ff;
+    border-radius: 50%;
+    margin-right: 8px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%231890ff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>');
+}
+
+/* 侧边栏菜单样式优化 */
+.layui-nav-tree {
+    background: transparent !important;
+    width: 100% !important;
+}
+
+.layui-nav-tree .layui-nav-bar {
+    background-color: #1890ff !important; /* 强制覆盖 Layui 默认绿色 */
+}
+
+.layui-nav-tree .layui-nav-item {
+    line-height: 40px;
+}
+
+.layui-nav-tree .layui-nav-item a {
+    height: 40px !important;
+    line-height: 40px !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    padding-left: 24px !important;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.layui-nav-tree .layui-nav-item a:hover {
+    color: #fff !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-this {
+    background-color: #1890ff !important;
+}
+
+.layui-nav-tree .layui-this > a {
+    color: white !important;
+    background-color: #1890ff !important; /* 确保背景也是蓝色 */
+}
+
+.layui-nav-tree .layui-nav-child {
+    background-color: #000c17 !important;
+}
+
+.layui-nav-tree .layui-nav-child a {
+    padding-left: 48px !important;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this a {
+    background-color: #1890ff !important;
+    color: #fff !important;
+}
+
+.layui-nav-tree .layui-this::after {
+    display: none;
+}
+
+/* 主内容区 - 增加间距 */
+.admin-content {
+    margin-left: 220px;
+    margin-top: 64px;
+    padding: 24px;
+    min-height: calc(100vh - 64px);
+    width: calc(100% - 220px);
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+/* 搜索栏 - 卡片化 */
+.search-bar {
+    background: white;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 4px; /* 改为圆角 */
+    box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09); /* 增强阴影 */
+}
+
+/* 表格容器 - 卡片化 */
+.table-container {
+    background: white;
+    padding: 0;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    width: 100%;
+    overflow: hidden; /* 防止圆角溢出 */
+}
+
+/* 表格工具栏 */
+.table-toolbar {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Layui 表格样式重构 */
+.layui-table-view {
+    margin: 0 !important;
+    border: none !important;
+}
+
+.layui-table-header {
+    background-color: #fafafa;
+    border: none;
+}
+
+.layui-table th {
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    background: #fafafa;
+    border-color: #f0f0f0;
+    height: 54px; /* 增加表头高度 */
+}
+
+.layui-table td {
+    border-color: #f0f0f0;
+    color: rgba(0, 0, 0, 0.65);
+    height: 54px; /* 增加行高 */
+}
+
+.layui-table-view .layui-table td, 
+.layui-table-view .layui-table th {
+    border-right: none !important; /* 去除竖线 */
+    border-left: none !important;
+}
+
+.layui-table-page {
+    border: none !important;
+    padding: 16px 24px !important;
+    text-align: right;
+}
+
+/* 按钮优化 - 鲜活大气色号 */
+.layui-btn {
+    border-radius: 4px; /* 增加圆角 */
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.015);
+    background-color: #13c2c2; /* 默认青色 - 清新 */
+    transition: all 0.3s;
+}
+
+.layui-btn:hover {
+    opacity: 0.85;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.layui-btn-primary {
+    border-color: #d9d9d9;
+    background-color: #fff;
+    color: rgba(0,0,0,0.65);
+}
+
+.layui-btn-primary:hover {
+    border-color: #1677ff;
+    color: #1677ff;
+    background-color: #fff;
+}
+
+.layui-btn-normal {
+    background-color: #1677ff; /* 品牌蓝 - 鲜亮 */
+}
+
+.layui-btn-danger {
+    background-color: #ff4d4f; /* 警示红 - 柔和 */
+}
+
+.layui-btn-warm {
+    background-color: #faad14; /* 警告黄 - 明亮 */
+}
+
+.layui-btn-disabled, 
+.layui-btn-disabled:hover, 
+.layui-btn-disabled:active {
+    background-color: #f5f5f5;
+    color: rgba(0,0,0,0.25);
+    border-color: #d9d9d9;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 徽章背景色优化 */
+.layui-bg-red { background-color: #ff4d4f !important; }
+.layui-bg-orange { background-color: #faad14 !important; }
+.layui-bg-green { background-color: #52c41a !important; } /* 成功绿 */
+.layui-bg-cyan { background-color: #13c2c2 !important; }
+.layui-bg-blue { background-color: #1677ff !important; }
+.layui-bg-black { background-color: #001529 !important; }
+.layui-bg-gray { background-color: #bfbfbf !important; }
+
+/* 卡片样式 */
+.card {
+    background: white;
+    padding: 24px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    margin-bottom: 24px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.85);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* 统计卡片 */
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stat-card .icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stat-card .icon.blue {
+    background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+    box-shadow: 0 4px 10px rgba(24, 144, 255, 0.3);
+}
+
+.stat-card .icon.green {
+    background: linear-gradient(135deg, #52c41a 0%, #95de64 100%);
+    box-shadow: 0 4px 10px rgba(82, 196, 26, 0.3);
+}
+
+.stat-card .icon.orange {
+    background: linear-gradient(135deg, #fa8c16 0%, #ffc069 100%);
+    box-shadow: 0 4px 10px rgba(250, 140, 22, 0.3);
+}
+
+.stat-card .icon.purple {
+    background: linear-gradient(135deg, #722ed1 0%, #b37feb 100%);
+    box-shadow: 0 4px 10px rgba(114, 46, 209, 0.3);
+}
+
+.stat-card .content {
+    flex: 1;
+}
+
+.stat-card .title {
+    font-size: 14px;
+    color: rgba(0,0,0,0.45);
+    margin-bottom: 8px;
+}
+
+.stat-card .value {
+    font-size: 30px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.85);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        left: -220px;
+    }
+    
+    .admin-header {
+        left: 0;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+    }
+}
+
+/* Layui 默认色深度覆盖 - 全面去土气 */
+
+/* 1. 复选框 Checkbox 优化 */
+.layui-form-checked[lay-skin=primary] i {
+    border-color: #1677ff !important;
+    background-color: #1677ff !important;
+}
+.layui-form-checked i, .layui-form-checked:hover i {
+    color: #1677ff !important;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i {
+    border-color: #1677ff !important;
+}
+
+/* 2. 开关 Switch 优化 - 默认绿色改为品牌青/蓝 */
+.layui-form-onswitch {
+    border-color: #52c41a !important; /* 开启状态改为鲜亮绿 */
+    background-color: #52c41a !important;
+}
+/* 开关内部圆点 */
+.layui-form-switch em {
+    color: #999 !important;
+}
+.layui-form-onswitch em {
+    color: #fff !important;
+}
+
+/* 3. 单选框 Radio 优化 */
+.layui-form-radio>i:hover, .layui-form-radioed>i {
+    color: #1677ff !important;
+}
+
+/* 4. 分页 Pagination 优化 */
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background-color: #1677ff !important; /* 选中页码改为蓝色 */
+}
+.layui-laypage a:hover {
+    color: #1677ff !important;
+    border-color: #1677ff !important;
+}
+
+/* 5. 选项卡 Tab 优化 */
+.layui-tab-brief>.layui-tab-title .layui-this {
+    color: #1677ff !important;
+}
+.layui-tab-brief>.layui-tab-more li.layui-this:after, 
+.layui-tab-brief>.layui-tab-title .layui-this:after {
+    border-bottom: 2px solid #1677ff !important;
+}
+
+/* 6. 表单聚焦颜色 - 统一为蓝色 */
+.layui-input:focus, .layui-textarea:focus {
+    border-color: #1677ff !important;
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2) !important; /* 增加 AntD 风格的光晕 */
+}
+
+/* 7. 弹窗 Layer 按钮优化 */
+.layui-layer-btn .layui-layer-btn0 {
+    background-color: #1677ff !important;
+    border-color: #1677ff !important;
+}
+
+/* 8. 下拉选择框 Select 优化 */
+.layui-form-select dl dd.layui-this {
+    background-color: #e6f7ff !important; /* 选中项背景改为浅蓝 */
+    color: #1677ff !important; /* 文字改为深蓝 */
+}
+.layui-form-select dl dd:hover {
+    background-color: #f5f5f5 !important;
+}
+
+/* 9. 日期选择器 Datepicker 优化 */
+.layui-laydate .layui-this {
+    background-color: #1677ff !important !important;
+}
+.layui-laydate-footer span:hover {
+    color: #1677ff !important;
+}
+
+/* 10. 表格 Table 优化 */
+/* 排序图标 */
+.layui-table-sort .layui-table-sort-asc:hover, .layui-table-sort .layui-table-sort-desc:hover {
+    border-bottom-color: #1677ff !important;
+}
+/* 表格复选框选中颜色 */
+.layui-table-checked .layui-form-checkbox[lay-skin=primary] i {
+    border-color: #1677ff !important;
+    background-color: #1677ff !important;
+}
+
+/* 登录页面样式 - 左右分栏大气风格 */
+.login-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* 左侧品牌区 */
+.login-left {
+    flex: 1;
+    background: linear-gradient(135deg, #102a5e 0%, #1848a0 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 100px;
+    color: white;
+    overflow: hidden;
+}
+
+/* 背景装饰纹理 */
+.login-left::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+    transform: rotate(30deg);
+}
+
+.login-left::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: -10%;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTAgMGgxMDB2MTAwSDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgMTAwTDkwIDAgMTAwIDEwMHoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=') no-repeat;
+    background-size: cover;
+    opacity: 0.1;
+}
+
+.login-info {
+    position: relative;
+    z-index: 2;
+}
+
+.login-left .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.login-left .logo i {
+    font-size: 40px;
+    margin-right: 15px;
+}
+
+.login-left .title {
+    font-size: 48px;
+    font-weight: 300;
+    margin-bottom: 30px;
+    line-height: 1.2;
+}
+
+.login-left .desc {
+    font-size: 18px;
+    opacity: 0.8;
+    line-height: 1.8;
+    max-width: 600px;
+}
+
+/* 右侧登录区 */
+.login-right {
+    width: 550px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 380px;
+    padding: 0 20px;
+}
+
+.login-header {
+    margin-bottom: 50px;
+}
+
+.login-header h2 {
+    font-size: 32px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #999;
+    font-size: 14px;
+}
+
+.login-form .layui-form-item {
+    margin-bottom: 25px;
+}
+
+.login-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.layui-input {
+    height: 48px;
+    line-height: 48px;
+    border: 1px solid #eee;
+    background-color: #f7f8fa;
+    border-radius: 4px;
+    padding-left: 15px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.layui-input:focus {
+    border-color: #1848a0;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(24, 72, 160, 0.1);
+}
+
+.captcha-row {
+    display: flex;
+    gap: 15px;
+}
+
+.captcha-row .layui-input {
+    flex: 1;
+}
+
+.captcha-img-box {
+    width: 140px;
+    height: 48px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.captcha-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.login-btn {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    background: linear-gradient(90deg, #102a5e 0%, #1848a0 100%);
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 20px rgba(24, 72, 160, 0.2);
+    transition: all 0.3s;
+    border: none;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(24, 72, 160, 0.3);
+    opacity: 1;
+}
+
+.login-footer {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-footer .copyright {
+    color: #ccc;
+    font-size: 12px;
+}
+
+/* 响应式适配 */
+@media (max-width: 1000px) {
+    .login-left {
+        display: none;
+    }
+    
+    .login-right {
+        width: 100%;
+    }
+    
+    .login-container {
+        background: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg') no-repeat center center;
+        background-size: cover;
+    }
+}
+

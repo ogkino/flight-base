@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>后台管理 - Flight Base</title>
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=2.2.0">
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="admin-header">
+        <div class="logo">
+            <i class="layui-icon layui-icon-website"></i>
+            <span id="admin-title">管理后台</span>
+        </div>
+        <div class="user-info">
+            <span class="username" id="username">管理员</span>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="logout()">
+                <i class="layui-icon layui-icon-logout"></i> 退出
+            </button>
+        </div>
+    </div>
+
+    <!-- 侧边栏（动态生成） -->
+    <div class="admin-sidebar">
+        <div class="sidebar-logo">
+            <i class="layui-icon layui-icon-engine"></i>
+            <span id="sidebar-title">Flight Base</span>
+        </div>
+        <ul class="layui-nav layui-nav-tree" lay-filter="nav" id="nav-menu">
+            <!-- 菜单将自动从后端加载 -->
+        </ul>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="admin-content">
+        <!-- 仪表盘 -->
+        <div id="dashboard-content">
+            <!-- 统计卡片 -->
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="icon blue">
+                        <i class="layui-icon layui-icon-user"></i>
+                    </div>
+                    <div class="content">
+                        <div class="title">用户总数</div>
+                        <div class="value" id="stat-users">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon green">
+                        <i class="layui-icon layui-icon-chart"></i>
+                    </div>
+                    <div class="content">
+                        <div class="title">今日访问</div>
+                        <div class="value" id="stat-visits">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon orange">
+                        <i class="layui-icon layui-icon-file"></i>
+                    </div>
+                    <div class="content">
+                        <div class="title">数据总量</div>
+                        <div class="value" id="stat-data">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon purple">
+                        <i class="layui-icon layui-icon-diamond"></i>
+                    </div>
+                    <div class="content">
+                        <div class="title">系统状态</div>
+                        <div class="value" style="font-size: 18px; color: #52c41a;">运行中</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 欢迎卡片 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="layui-icon layui-icon-tips"></i> 欢迎使用
+                </div>
+                <p>这是一个基于 <strong>Flight + Medoo + Layui</strong> 的轻量级后台管理系统框架。</p>
+                <br>
+                <p><strong>✨ 核心特性（配置驱动）：</strong></p>
+                <ul style="padding-left: 20px; line-height: 2;">
+                    <li>✅ <strong>零手写代码</strong>：后端配置 → 前端自动渲染</li>
+                    <li>✅ <strong>AI 极度友好</strong>：配置即代码，AI 轻松生成</li>
+                    <li>✅ <strong>超级轻量</strong>：核心代码不到 500 行</li>
+                    <li>✅ <strong>无需打包</strong>：修改即生效，开发体验极致</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 动态内容区（配置驱动自动渲染）-->
+        <div id="dynamic-content" style="display: none;"></div>
+
+        <!-- iframe 内容区（用于 CRUD 设计器等） -->
+        <div id="iframe-content" style="display: none; height: calc(100vh - 80px); margin: -20px;">
+            <iframe id="content-iframe" src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+        </div>
+    </div>
+
+    <!-- 状态模板 -->
+    <script type="text/html" id="statusTpl">
+        {{# if (d.status == 1) { }}
+            <span class="layui-badge layui-bg-green">正常</span>
+        {{# } else { }}
+            <span class="layui-badge layui-bg-gray">禁用</span>
+        {{# } }}
+    </script>
+    <!-- 状态模板 -->
+
+    <script src="https://unpkg.com/layui@2.8.18/dist/layui.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- wangEditor 富文本编辑器 v5 -->
+    <link href="https://unpkg.com/@wangeditor/editor@5.1.23/dist/css/style.css" rel="stylesheet">
+    <script src="https://unpkg.com/@wangeditor/editor@5.1.23/dist/index.js"></script>
+    <script src="assets/js/config.js?v=2.3.7"></script>
+    <script src="assets/js/common.js?v=2.3.7"></script>
+    <script src="assets/js/crud-renderer.js?v=2.3.7"></script>
+    <script>
+        // 检查登录
+        checkLogin();
+        
+        // 加载管理员信息
+        loadAdminInfo();
+        
+        // 当前渲染器实例
+        let currentRenderer = null;
+        
+        // 页面切换
+        function showPage(pageName) {
+            const dashboard = document.getElementById('dashboard-content');
+            const dynamic = document.getElementById('dynamic-content');
+            const iframeContent = document.getElementById('iframe-content');
+            const iframe = document.getElementById('content-iframe');
+            
+            // 隐藏所有
+            dashboard.style.display = 'none';
+            dynamic.style.display = 'none';
+            iframeContent.style.display = 'none';
+            
+            if (pageName === 'dashboard') {
+                dashboard.style.display = 'block';
+                loadStats();
+            } else if (pageName === 'crud_designer') {
+                // CRUD 设计器
+                iframeContent.style.display = 'block';
+                if (iframe.src.indexOf('crud-designer.html') === -1) {
+                    iframe.src = 'crud-designer.html';
+                }
+            } else {
+                dynamic.style.display = 'block';
+                
+                // 加载页面配置并渲染
+                loadPageConfig(pageName);
+            }
+        }
+        
+        // 加载页面配置
+        function loadPageConfig(pageName) {
+            request(ADMIN_API_PREFIX + '/config?page=' + pageName, {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    // 使用配置渲染页面
+                    currentRenderer = renderCrudPage(res.data, 'dynamic-content');
+                } else {
+                    layer.msg('加载配置失败：' + res.msg, { icon: 2 });
+                }
+            });
+        }
+        
+        // 加载系统配置
+        function loadSystemConfig() {
+            request(ADMIN_API_PREFIX + '/system', {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    const adminName = res.data.admin_name || '管理后台';
+                    document.getElementById('admin-title').textContent = adminName;
+                    document.title = adminName;
+                    
+                    // 更新侧边栏标题
+                    const appName = res.data.name || 'Flight Base';
+                    const sidebarTitle = document.getElementById('sidebar-title');
+                    if (sidebarTitle) {
+                        sidebarTitle.textContent = appName;
+                    }
+                    
+                    console.log('系统名称已更新为：', adminName);
+                }
+            }).catch(err => {
+                console.error('加载系统配置失败：', err);
+            });
+        }
+        
+        // 加载菜单配置
+        function loadMenus() {
+            request(ADMIN_API_PREFIX + '/menus', {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    renderMenus(res.data);
+                }
+            });
+        }
+        
+        // 渲染菜单
+        function renderMenus(menus) {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.innerHTML = '';
+            
+            let isFirst = true;
+            
+            Object.keys(menus).forEach((groupName) => {
+                let groupConfig = menus[groupName];
+                let items = [];
+                let groupIcon = 'layui-icon-template-1';
+                
+                // 兼容两种配置格式
+                if (Array.isArray(groupConfig)) {
+                    // 旧格式：直接是数组
+                    items = groupConfig;
+                    groupIcon = items[0]?.icon || 'layui-icon-template-1';
+                } else if (groupConfig.items) {
+                    // 新格式：包含 icon 和 items
+                    items = groupConfig.items;
+                    groupIcon = groupConfig.icon || items[0]?.icon || 'layui-icon-template-1';
+                }
+                
+                const li = document.createElement('li');
+                
+                if (items.length === 1) {
+                    // 只有一项，直接显示为一级菜单（不下拉）
+                    const item = items[0];
+                    li.className = 'layui-nav-item' + (isFirst ? ' layui-this' : '');
+                    
+                    if (item.url) {
+                        li.innerHTML = `
+                            <a href="${item.url}" target="_blank">
+                                <i class="layui-icon ${item.icon}"></i> ${item.name}
+                            </a>
+                        `;
+                    } else {
+                        li.innerHTML = `
+                            <a href="javascript:;" data-page="${item.page}">
+                                <i class="layui-icon ${item.icon}"></i> ${item.name}
+                            </a>
+                        `;
+                    }
+                } else {
+                    // 多个项，显示为分组菜单（有下拉）
+                    li.className = 'layui-nav-item';
+                    let html = `
+                        <a href="javascript:;">
+                            <i class="layui-icon ${groupIcon}"></i> ${groupName}
+                        </a>
+                        <dl class="layui-nav-child">
+                    `;
+                    
+                    items.forEach(item => {
+                        if (item.url) {
+                            html += `<dd><a href="${item.url}" target="_blank"><i class="layui-icon ${item.icon}"></i> ${item.name}</a></dd>`;
+                        } else {
+                            html += `<dd><a href="javascript:;" data-page="${item.page}"><i class="layui-icon ${item.icon}"></i> ${item.name}</a></dd>`;
+                        }
+                    });
+                    
+                    html += '</dl>';
+                    li.innerHTML = html;
+                }
+                
+                navMenu.appendChild(li);
+                
+                if (isFirst) {
+                    isFirst = false;
+                }
+            });
+            
+            // 绑定菜单点击事件
+            document.querySelectorAll('[data-page]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageName = this.dataset.page;
+                    showPage(pageName);
+                });
+            });
+            
+            // 重新渲染 Layui 导航
+            layui.use('element', function(){
+                var element = layui.element;
+                element.render('nav');
+            });
+        }
+        
+        // 加载统计数据
+        function loadStats() {
+            // 用户总数
+            request(ADMIN_API_PREFIX + '/stats/users', {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    document.getElementById('stat-users').textContent = res.data.count || 0;
+                }
+            });
+            
+            // 访问总数（文章浏览量）
+            request(ADMIN_API_PREFIX + '/stats/views', {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    document.getElementById('stat-visits').textContent = res.data.count || 0;
+                }
+            });
+            
+            // 文章总数
+            request(ADMIN_API_PREFIX + '/stats/articles', {
+                method: 'GET'
+            }).then(res => {
+                if (res.code === 0) {
+                    document.getElementById('stat-data').textContent = res.data.count || 0;
+                }
+            });
+        }
+        
+        // 初始化
+        loadSystemConfig();  // 加载系统配置
+        loadMenus();         // 加载菜单
+        loadStats();         // 加载统计数据
+    </script>
+</body>
+</html>

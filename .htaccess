@@ -1,0 +1,17 @@
+# Apache 重写规则（如果使用 Apache）
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 如果请求的是真实文件或目录，直接访问
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # 否则转发到 index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# 防止目录浏览
+Options -Indexes
+
+# 设置默认字符集
+AddDefaultCharset UTF-8
