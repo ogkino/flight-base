@@ -85,7 +85,7 @@ flight-base/
 ├── .env                          # 环境变量配置（需创建）
 ├── .gitignore                    # Git 忽略文件
 ├── composer.json                 # Composer 配置
-├── database.sql                  # 数据库初始化脚本
+├── example_db.sql                  # 数据库初始化脚本
 ├── docs/                         # 📖 文档目录
 │   ├── QUICKSTART.md             # 快速部署
 │   ├── ARCHITECTURE.md           # 架构说明（必读！）
@@ -142,7 +142,7 @@ JWT_SECRET=your-secret-key-change-this
 
 ### 3. 导入数据库
 
-在 MySQL 中执行 `database.sql` 文件创建数据表。
+在 MySQL 中执行 `example_db.sql` 文件创建数据表。
 
 ```sql
 -- 包含以下表：
@@ -155,10 +155,10 @@ JWT_SECRET=your-secret-key-change-this
 
 **⚠️ 重要**：Flight 框架需要配置 URL 重写（伪静态）才能正常工作！
 
-#### phpstudy 配置（推荐，最简单）
+#### phpstudy 配置（测试用，实际以线上环境为主）
 
 1. 打开 phpstudy → 网站管理 → 创建网站
-2. **根目录**：`d:\phpstudy_pro\WWW\other\flight_base\public`（重要！指向 public 目录）
+2. **根目录**：`d:\phpstudy\WWW\flight_base\public`（重要！指向 public 目录）
 3. **域名**：`flight-base.test`
 4. **PHP 版本**：7.4 或 8.x
 5. 保存（phpstudy 会自动配置伪静态）
@@ -796,7 +796,7 @@ cd your_project_name
 ### 2. 修改配置
 
 - 修改 `.env` 文件
-- 修改 `database.sql` 创建你的数据表
+- 修改 `example_db.sql` 创建你的数据表
 - 删除示例模块（保留或修改 `articles`, `users`）
 
 ### 3. 开发新功能
