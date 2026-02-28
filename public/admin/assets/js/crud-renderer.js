@@ -637,11 +637,14 @@ class CrudRenderer {
             // 移除旧的 toolbar 列（如果有）
             const cleanCols = cols.filter(c => !c.toolbar);
             
-            // 获取操作列宽度配置，默认为 200
-            const actionsWidth = this.config.table.actionsWidth || 200;
+            // 获取操作列宽度配置，默认为 200；移动端缩小宽度且不 sticky
+            const isMobile = window.innerWidth <= 768;
+            const actionsWidth = isMobile
+                ? Math.min(this.config.actions.length * 58, 160)
+                : (this.config.table.actionsWidth || 200);
             
             cleanCols.push({
-                fixed: 'right',
+                fixed: isMobile ? '' : 'right',
                 title: '操作',
                 width: actionsWidth,
                 templet: (d) => {
@@ -678,35 +681,40 @@ class CrudRenderer {
         // ========== 表格列宽自适应处理 ==========
         // 扁平化列数组
         const flatCols = finalCols[0];
-        
-        // 定义主要字段候选列表 (优先级从高到低)
+
+        // 主要字段候选列表（优先级从高到低）
         const mainFields = ['title', 'name', 'username', 'nickname', 'description', 'content', 'email', 'remark'];
         let adaptiveColFound = false;
-        
-        // 1. 尝试找到主要字段，移除其固定宽度，使其自适应
+
+        // 辅助：判断列是否适合作为自适应列（非固定、非操作、非ID、非多选）
+        const isAdaptable = (col) =>
+            !col.fixed && col.title !== '操作' && col.field !== 'id' &&
+            col.type !== 'checkbox' && col.type !== 'switch';
+
+        // 1. 优先找 mainFields 中【没有配置 width 的列】→ 让它自适应
         for (const field of mainFields) {
-            const col = flatCols.find(c => c.field === field);
+            const col = flatCols.find(c => c.field === field && !c.width && isAdaptable(c));
             if (col) {
-                delete col.width; // 移除宽度，Layui 会自动填充剩余空间
-                col.minWidth = 200; // 设置最小宽度防止过窄
+                col.minWidth = col.minWidth || 200;
                 adaptiveColFound = true;
                 break;
             }
         }
-        
-        // 2. 如果没找到主要字段，尝试让最后一个非固定、非操作列自适应
+
+        // 2. 找其他【没有配置 width 的合适列】→ 让它自适应
         if (!adaptiveColFound) {
             for (let i = flatCols.length - 1; i >= 0; i--) {
                 const col = flatCols[i];
-                // 跳过固定列(fixed)、操作列(title='操作')、ID列、多选框
-                if (!col.fixed && col.title !== '操作' && col.field !== 'id' && col.type !== 'checkbox' && col.type !== 'switch') {
-                    delete col.width;
-                    col.minWidth = 150;
+                if (isAdaptable(col) && !col.width) {
+                    col.minWidth = col.minWidth || 150;
                     adaptiveColFound = true;
                     break;
                 }
             }
         }
+
+        // 如果用户给所有列都配了宽度，则尊重配置，
+        // 不强制覆盖任何 width，由 Layui 自然处理布局。
         // ======================================
 
         this.tableIns = table.render({

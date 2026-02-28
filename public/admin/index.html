@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>后台管理 - Flight Base</title>
     <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
-    <link rel="stylesheet" href="assets/css/admin.css?v=2.2.0">
+    <link rel="stylesheet" href="assets/css/admin.css?v=3.3.0">
 </head>
 <body>
+    <!-- 移动端侧边栏遮罩 -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- 头部 -->
     <div class="admin-header">
+        <!-- 移动端汉堡按钮 -->
+        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleSidebar()">
+            <i class="layui-icon layui-icon-align-justify"></i>
+        </button>
         <div class="logo">
-            <i class="layui-icon layui-icon-website"></i>
-            <span id="admin-title">管理后台</span>
         </div>
         <div class="user-info">
             <span class="username" id="username">管理员</span>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="logout()">
+            <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="logout()">
                 <i class="layui-icon layui-icon-logout"></i> 退出
             </button>
         </div>
     </div>
 
     <!-- 侧边栏（动态生成） -->
-    <div class="admin-sidebar">
+    <div class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-logo">
             <i class="layui-icon layui-icon-engine"></i>
             <span id="sidebar-title">Flight Base</span>
@@ -72,7 +77,7 @@
                     </div>
                     <div class="content">
                         <div class="title">系统状态</div>
-                        <div class="value" style="font-size: 18px; color: #52c41a;">运行中</div>
+                        <div class="value" style="font-size: 18px; color: #0dab61;">运行中</div>
                     </div>
                 </div>
             </div>
@@ -120,7 +125,7 @@
     <script src="https://unpkg.com/@wangeditor/editor@5.1.23/dist/index.js"></script>
     <script src="assets/js/config.js?v=2.3.7"></script>
     <script src="assets/js/common.js?v=2.3.7"></script>
-    <script src="assets/js/crud-renderer.js?v=2.3.7"></script>
+    <script src="assets/js/crud-renderer.js?v=2.4.2"></script>
     <script>
         // 检查登录
         checkLogin();
@@ -181,7 +186,7 @@
             }).then(res => {
                 if (res.code === 0) {
                     const adminName = res.data.admin_name || '管理后台';
-                    document.getElementById('admin-title').textContent = adminName;
+                    //document.getElementById('admin-title').textContent = adminName;
                     document.title = adminName;
                     
                     // 更新侧边栏标题
@@ -214,86 +219,64 @@
             const navMenu = document.getElementById('nav-menu');
             navMenu.innerHTML = '';
             
-            let isFirst = true;
+            let isFirstItem = true;
+            let isFirstGroup = true;
             
             Object.keys(menus).forEach((groupName) => {
                 let groupConfig = menus[groupName];
                 let items = [];
-                let groupIcon = 'layui-icon-template-1';
                 
-                // 兼容两种配置格式
                 if (Array.isArray(groupConfig)) {
-                    // 旧格式：直接是数组
                     items = groupConfig;
-                    groupIcon = items[0]?.icon || 'layui-icon-template-1';
                 } else if (groupConfig.items) {
-                    // 新格式：包含 icon 和 items
                     items = groupConfig.items;
-                    groupIcon = groupConfig.icon || items[0]?.icon || 'layui-icon-template-1';
                 }
+                
+                if (items.length === 0) return;
                 
                 const li = document.createElement('li');
+                // 第一个分组默认展开，其余默认收起，让 Layui 接管展开/收起状态
+                li.className = 'layui-nav-item' + (isFirstGroup ? ' layui-nav-itemed' : '');
+                isFirstGroup = false;
                 
-                if (items.length === 1) {
-                    // 只有一项，直接显示为一级菜单（不下拉）
-                    const item = items[0];
-                    li.className = 'layui-nav-item' + (isFirst ? ' layui-this' : '');
+                let html = `<a href="javascript:;">${groupName}</a>`;
+                html += `<dl class="layui-nav-child">`;
+                
+                items.forEach((item) => {
+                    const activeClass = isFirstItem ? 'layui-this' : '';
+                    if (isFirstItem) isFirstItem = false;
                     
+                    const icon = item.icon || 'layui-icon-file';
                     if (item.url) {
-                        li.innerHTML = `
-                            <a href="${item.url}" target="_blank">
-                                <i class="layui-icon ${item.icon}"></i> ${item.name}
-                            </a>
-                        `;
+                        html += `<dd class="${activeClass}"><a href="${item.url}" target="_blank"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     } else {
-                        li.innerHTML = `
-                            <a href="javascript:;" data-page="${item.page}">
-                                <i class="layui-icon ${item.icon}"></i> ${item.name}
-                            </a>
-                        `;
+                        html += `<dd class="${activeClass}"><a href="javascript:;" data-page="${item.page}"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     }
-                } else {
-                    // 多个项，显示为分组菜单（有下拉）
-                    li.className = 'layui-nav-item';
-                    let html = `
-                        <a href="javascript:;">
-                            <i class="layui-icon ${groupIcon}"></i> ${groupName}
-                        </a>
-                        <dl class="layui-nav-child">
-                    `;
-                    
-                    items.forEach(item => {
-                        if (item.url) {
-                            html += `<dd><a href="${item.url}" target="_blank"><i class="layui-icon ${item.icon}"></i> ${item.name}</a></dd>`;
-                        } else {
-                            html += `<dd><a href="javascript:;" data-page="${item.page}"><i class="layui-icon ${item.icon}"></i> ${item.name}</a></dd>`;
-                        }
-                    });
-                    
-                    html += '</dl>';
-                    li.innerHTML = html;
-                }
-                
-                navMenu.appendChild(li);
-                
-                if (isFirst) {
-                    isFirst = false;
-                }
-            });
-            
-            // 绑定菜单点击事件
-            document.querySelectorAll('[data-page]').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const pageName = this.dataset.page;
-                    showPage(pageName);
                 });
+                
+                html += `</dl>`;
+                li.innerHTML = html;
+                navMenu.appendChild(li);
             });
             
-            // 重新渲染 Layui 导航
+            // 重新渲染 Layui 导航（Layui 接管展开/收起逻辑）
             layui.use('element', function(){
                 var element = layui.element;
                 element.render('nav');
+                
+                // 绑定菜单点击事件（在 element.render 后注册，避免被覆盖）
+                navMenu.querySelectorAll('[data-page]').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const pageName = this.dataset.page;
+                        
+                        // 更新激活状态
+                        navMenu.querySelectorAll('.layui-nav-child dd').forEach(dd => dd.classList.remove('layui-this'));
+                        this.closest('dd').classList.add('layui-this');
+                        
+                        showPage(pageName);
+                    });
+                });
             });
         }
         
@@ -331,6 +314,36 @@
         loadSystemConfig();  // 加载系统配置
         loadMenus();         // 加载菜单
         loadStats();         // 加载统计数据
+
+        // ── 移动端侧边栏控制 ──────────────────────────
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isOpen = sidebar.classList.contains('sidebar-open');
+            if (isOpen) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('sidebar-open');
+                overlay.classList.add('active');
+                document.body.classList.add('sidebar-open-body');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open-body');
+        }
+
+        // 移动端菜单点击后自动关闭侧边栏
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('[data-page]');
+            if (link && window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
     </script>
 </body>
 </html>

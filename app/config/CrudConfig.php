@@ -3,7 +3,7 @@
  * CRUD 配置驱动生成器
  * 
  * 由 CRUD 可视化设计器自动生成
- * 生成时间: 2026-02-13 17:50:02
+ * 生成时间: 2026-02-28 16:36:13
  */
 class CrudConfig
 {
@@ -153,13 +153,13 @@ class CrudConfig
                     [
                         'field' => 'username',
                         'title' => '用户名',
-                        'width' => 150,
+                        'width' => '',
                         'sort' => true,
                     ],
                     [
                         'field' => 'nickname',
                         'title' => '昵称',
-                        'width' => 150,
+                        'width' => '',
                     ],
                     [
                         'field' => 'email',
