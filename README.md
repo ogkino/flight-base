@@ -10,6 +10,7 @@
 
 - ✅ **配置驱动**：后端配置 → 前端自动渲染 CRUD（零手写代码）
 - ✅ **可视化设计**：内置 CRUD 设计器，拖拽生成代码，零代码开发 (v2.3)
+- ✅ **自定义视图**：View 模式支持完全自定义的后台管理页面，Cookie 鉴权，无缝嵌入主框架 (v2.5)
 - ✅ **自动菜单**：菜单自动从配置生成，支持父级图标、智能分组
 - ✅ **权限系统**：基于 JSON 的轻量级权限管理，精确到 CRUD 操作，自动过滤菜单
 - ✅ **AI 极度友好**：结构化配置，AI 轻松生成完整功能模块
@@ -61,7 +62,11 @@ flight-base/
 │   ├── middleware/               # 中间件
 │   │   ├── AuthMiddleware.php    # 权限验证中间件
 │   │   └── CorsMiddleware.php    # 跨域中间件
-│   └── views/                    # 视图模板（可选，用于非 API 页面）
+│   └── views/                    # 视图模板
+│       ├── admin/                # 🔥 后台自定义视图（View 模式）
+│       │   ├── _head.php         # 公共头部片段（引入 CSS/JS）
+│       │   ├── _foot.php         # 公共底部片段（引入 JS 库）
+│       │   └── example.php       # 示例自定义视图页面
 │       ├── articles/             # 文章页面示例
 │       ├── errors/               # 错误页面
 │       └── home/                 # 首页
@@ -74,6 +79,7 @@ flight-base/
 │   │   │       ├── common.js     # 公共函数
 │   │   │       ├── config.js     # 前端配置
 │   │   │       └── crud-renderer.js  # 🔥 通用渲染器（配置驱动核心）
+│   │   ├── crud-designer.html    # CRUD 可视化设计器
 │   │   ├── index.html            # 后台主页（单页应用）
 │   │   └── login.html            # 登录页
 │   ├── uploads/                  # 上传文件目录
@@ -430,6 +436,142 @@ Flight::route('DELETE /api/admin/product/@id', function($id){
 
 ---
 
+---
+
+## 🖥️ View 模式：完全自定义后台页面（v2.5 新增）
+
+当 CRUD 配置驱动无法满足需求时（如复杂的统计图表、多步骤向导、自定义工作流等），可使用 **View 模式**。此模式下，页面由开发者完全自主开发，以 iframe 嵌入后台主框架，自动应用 `admin.css` 主题风格。
+
+### 工作原理
+
+```
+菜单点击（type: 'view'）
+    ↓
+index.html 检测到 data-view 属性
+    ↓
+iframe 加载 GET /admin/view/{viewName}
+    ↓
+AdminViewController 从 Cookie 读取 Token 完成鉴权
+    ↓
+include app/views/admin/{viewName}.php
+    ↓
+渲染自定义 PHP 页面（可使用 $currentAdmin 变量）
+```
+
+### 鉴权说明
+
+- Token 存储在 `localStorage`（AJAX 用）和浏览器 Cookie `admin_token`（PHP 视图页用）
+- `config.js` 的 `setToken()` / `clearToken()` 已自动同步两处
+- Cookie 使用 `SameSite=Strict`，无 HttpOnly（JS 需要写入），安全性满足后台使用场景
+- **绝不在 URL 参数中传递 Token**
+
+### 快速创建自定义视图
+
+#### 第 1 步：创建视图文件
+
+新建 `app/views/admin/my-page.php`：
+
+```php
+<?php
+$pageTitle = '我的自定义页面';
+include __DIR__ . '/_head.php';   // 引入 Layui CSS + admin.css
+?>
+
+<div class="view-container">
+
+    <div class="view-toolbar">
+        <div class="view-title">
+            <i class="layui-icon layui-icon-set"></i> 系统设置
+        </div>
+        <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="save()">
+            保存设置
+        </button>
+    </div>
+
+    <div class="card">
+        <!-- 在这里写你的完全自定义 HTML -->
+        <p>当前管理员：<?= htmlspecialchars($currentAdmin['username']) ?></p>
+    </div>
+
+</div>
+
+<?php include __DIR__ . '/_foot.php'; ?>  <!-- 引入 Layui JS + config.js + common.js -->
+
+<script>
+layui.use(['layer', 'form'], function() {
+    var layer = layui.layer;
+
+    window.save = function() {
+        // request() 来自 config.js，自动附带 Token
+        request('/api/admin/your-api', {
+            method: 'POST',
+            data: { key: 'value' }
+        }).then(res => {
+            if (res.code === 0) successMsg('保存成功');
+            else errorMsg(res.msg);
+        });
+    };
+});
+</script>
+</body>
+</html>
+```
+
+#### 第 2 步：在 CRUD 设计器中配置菜单
+
+打开后台 → **CRUD 设计器** → 菜单管理 → 添加菜单项：
+
+- **菜单类型**：选择「自定义视图」
+- **视图名称**：填写 `my-page`（对应 `my-page.php` 文件名，不含扩展名）
+- **菜单名称**：如「系统设置」
+- **菜单图标**：如 `layui-icon-set`
+
+#### 或者直接在 `CrudConfig.php` 配置
+
+```php
+public static function getMenus(): array
+{
+    return [
+        '系统管理' => [
+            'icon' => 'layui-icon-set',
+            'items' => [
+                // CRUD 页面（普通模式）
+                ['name' => '管理员列表', 'page' => 'admins', 'icon' => 'layui-icon-user'],
+
+                // 自定义视图（View 模式）
+                ['name' => '系统设置', 'type' => 'view', 'view' => 'my-page', 'icon' => 'layui-icon-set'],
+            ]
+        ]
+    ];
+}
+```
+
+### View 模式 vs CRUD 模式
+
+| 对比项 | CRUD 模式 | View 模式 |
+|--------|-----------|-----------|
+| **适用场景** | 标准增删改查页面 | 复杂自定义页面 |
+| **开发方式** | PHP 配置数组 | PHP + HTML + CSS + JS |
+| **渲染方式** | 前端 crud-renderer.js | PHP 服务端渲染 |
+| **鉴权方式** | AJAX 带 Token Header | Cookie（PHP 读取） |
+| **加载方式** | 动态注入 `dynamic-content` | iframe 嵌入 |
+| **admin.css** | ✅ 自动应用 | ✅ 自动应用 |
+| **Layui / jQuery** | ✅ 继承主框架 | ✅ _foot.php 引入 |
+| **$currentAdmin** | ❌ 不可用（前端渲染） | ✅ PHP 变量直接可用 |
+| **自由度** | 受配置结构约束 | 完全自由 |
+
+### 内置辅助片段
+
+| 文件 | 说明 |
+|------|------|
+| `app/views/admin/_head.php` | 引入 Layui CSS、admin.css，提供 `.view-container` 布局 |
+| `app/views/admin/_foot.php` | 引入 Layui JS、jQuery、config.js、common.js |
+| `app/views/admin/example.php` | 完整示例，含 API 调用演示 |
+
+> **访问示例**：部署后访问 `/admin/view/example` 即可看到示例页面效果。
+
+---
+
 ## 🎨 支持的字段类型（15+ 种）
 
 | 类型 | 说明 | 配置示例 |
@@ -606,17 +748,20 @@ $db->action(function($db) {
 前端刷新显示
 ```
 
-### 2. 三层架构
+### 2. 架构层次
 
-| 层次 | 文件 | 作用 |
-|------|------|------|
-| **配置层** | `CrudConfig.php` | 定义 UI 如何显示 |
-| **渲染层** | `crud-renderer.js` | 自动生成 HTML/JS |
-| **业务层** | `XxxController.php` | 处理业务逻辑 |
+| 层次 | 模式 | 文件 | 作用 |
+|------|------|------|------|
+| **配置层** | CRUD | `CrudConfig.php` | 定义 UI 如何显示 |
+| **渲染层** | CRUD | `crud-renderer.js` | 自动生成 HTML/JS |
+| **业务层** | CRUD | `XxxController.php` | 处理业务逻辑 |
+| **视图层** | View | `app/views/admin/*.php` | 完全自定义 PHP 页面 |
+| **视图控制器** | View | `AdminViewController.php` | 鉴权 + 渲染视图文件 |
 
 **关键理解**：
-- ✅ 配置只影响**前端 UI**
-- ✅ 控制器可以写**任何复杂逻辑**
+- ✅ CRUD 模式：配置驱动，零手写代码
+- ✅ View 模式：完全自由，适合复杂业务页面
+- ✅ 两种模式在同一套菜单体系中无缝共存
 - ✅ 轻量级 ≠ 功能弱！
 
 ---
@@ -643,7 +788,16 @@ $db->action(function($db) {
   - 控制器：`app/api/admin/ArticleController.php`
   - 路由：`public/index.php`（搜索 `/api/admin/articles`）
 
-### 3. 前端 Views（可选示例）
+### 3. 后台自定义视图（View 模式示例）
+
+- **位置**：访问 `/admin/view/example`（需登录）
+- **功能**：展示如何使用 View 模式开发完全自定义的后台管理页面
+- **文件**：
+  - 控制器：`app/api/admin/AdminViewController.php`
+  - 视图：`app/views/admin/example.php`
+  - 路由：`public/index.php`（搜索 `/admin/view/`）
+
+### 4. 前端 Views（可选示例）
 
 - **位置**：访问首页 `/`
 - **功能**：展示如何使用 Views 渲染 HTML 页面
@@ -812,12 +966,13 @@ cd your_project_name
 
 ## 🎉 总结
 
-### Flight Base 2.0 = 完美组合！
+### Flight Base 2.5 = 完美组合！
 
 ```
 ✅ 轻量级       - 核心代码 < 1000 行
 ✅ AI 友好      - 结构化配置，AI 轻松生成
-✅ 配置驱动     - 零手写代码，节省 80%
+✅ 配置驱动     - 零手写代码，节省 80%（CRUD 模式）
+✅ 自定义视图   - 完全自由开发，适合复杂页面（View 模式）
 ✅ 安全完善     - 10+ 安全措施，生产可用
 ✅ 功能强大     - 支持任何复杂业务（JOIN、事务等）
 ✅ 易于扩展     - 5 分钟添加新模块

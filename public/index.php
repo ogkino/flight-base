@@ -287,6 +287,13 @@ Flight::route('POST /api/admin/crud-designer/save', function(){
     \App\Api\Admin\CrudDesignerController::saveConfig();
 });
 
+// ========== 管理后台自定义视图页面（View 模式）==========
+// 通过 Cookie 认证，以 iframe 嵌入后台主框架
+// 视图文件位于 app/views/admin/{viewName}.php
+Flight::route('GET /admin/view/@viewName', function($viewName){
+    \App\Api\Admin\AdminViewController::render($viewName);
+});
+
 // ========== 404 处理 ==========
 Flight::map('notFound', function(){
     error('接口不存在', 404);

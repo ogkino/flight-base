@@ -1326,15 +1326,25 @@
                 // 渲染菜单项
                 const itemList = Array.isArray(items) ? items : items;
                 itemList.forEach((menuItem, itemIdx) => {
-                    const pageKey = menuItem.page || '';
+                    const isViewType = menuItem.type === 'view';
+                    // 徽章：区分 CRUD 页面与自定义视图
+                    const typeBadge = isViewType
+                        ? `<span style="background:#1890ff;color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:6px;">视图</span>`
+                        : `<span style="background:#5cb85c;color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:6px;">CRUD</span>`;
+                    // 标识信息：视图名 or 页面 key
+                    const identityText = isViewType
+                        ? `<i class="layui-icon layui-icon-template" style="font-size:12px;"></i> ${menuItem.view || ''}`
+                        : `<i class="layui-icon layui-icon-table" style="font-size:12px;"></i> ${menuItem.page || ''}`;
+
                     html += `<div style="background: #f8f9fa; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; cursor: move;" data-index="${itemIdx}">
                                 <div style="flex: 1;">
                                     <div style="margin-bottom: 5px;">
                                         <span style="font-weight: 600;">${menuItem.name || '未命名'}</span>
-                                        <span style="color: #999; font-size: 12px; margin-left: 10px;">${pageKey}</span>
+                                        ${typeBadge}
                                     </div>
+                                    <div style="font-size: 12px; color: #999; margin-bottom: 3px;">${identityText}</div>
                                     <div style="font-size: 12px; color: #666;">
-                                        <i class="layui-icon ${menuItem.icon || ''}"></i> ${menuItem.icon || '无图标'}
+                                        <i class="layui-icon ${menuItem.icon || 'layui-icon-file'}"></i> ${menuItem.icon || '无图标'}
                                     </div>
                                 </div>
                                 <div>
@@ -1514,33 +1524,39 @@
         
         // 添加菜单项到分组
         window.addMenuItemToGroup = function(groupName) {
-            // 获取所有可用页面
+            // 获取所有可用 CRUD 页面
             const availablePages = [];
             for (let key in fullConfig.pages) {
                 const page = fullConfig.pages[key];
                 const title = page.page && page.page.title ? page.page.title : key;
                 availablePages.push({ key: key, title: title });
             }
-            
-            if (availablePages.length === 0) {
-                layer.msg('暂无可用页面，请先创建页面', {icon: 2});
-                return;
-            }
-            
-            // 构建选择列表
-            let options = '<option value="" disabled selected hidden>请选择页面</option>';
+
+            // 构建 CRUD 页面选项
+            let options = '<option value="" disabled selected hidden>请选择 CRUD 页面</option>';
             availablePages.forEach(p => {
                 options += `<option value="${p.key}">${p.title} (${p.key})</option>`;
             });
-            
+
             layer.open({
                 type: 1,
                 title: '添加菜单项',
-                area: ['500px', '550px'],
+                area: ['520px', '580px'],
                 scrollbar: false,
                 content: `<div style="padding: 20px; padding-bottom: 80px;">
                             <form class="layui-form" lay-filter="addMenuItemForm">
-                                <div class="layui-form-item" style="margin-bottom: 40px; z-index: 2000;">
+
+                                <!-- 菜单类型切换 -->
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">菜单类型</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="addMenuType" value="crud" title="CRUD 页面" checked lay-filter="addMenuType">
+                                        <input type="radio" name="addMenuType" value="view" title="自定义视图" lay-filter="addMenuType">
+                                    </div>
+                                </div>
+
+                                <!-- CRUD 模式：选择页面 -->
+                                <div class="layui-form-item" id="addCrudBlock" style="z-index: 2000;">
                                     <label class="layui-form-label">选择页面</label>
                                     <div class="layui-input-block">
                                         <select id="selectMenuPage" lay-filter="selectMenuPage">
@@ -1548,18 +1564,28 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <!-- View 模式：填写视图名称 -->
+                                <div class="layui-form-item" id="addViewBlock" style="display:none;">
+                                    <label class="layui-form-label">视图名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="inputViewName" class="layui-input" placeholder="如：system-settings（对应 app/views/admin/system-settings.php）">
+                                    </div>
+                                </div>
+
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">菜单名称</label>
                                     <div class="layui-input-block">
-                                        <input type="text" id="inputMenuName" class="layui-input" placeholder="如：商品管理">
+                                        <input type="text" id="inputMenuName" class="layui-input" placeholder="如：系统设置">
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">菜单图标</label>
                                     <div class="layui-input-block">
-                                        <input type="text" id="inputMenuIcon" class="layui-input" value="layui-icon-file">
+                                        <input type="text" id="inputMenuIcon" class="layui-input" value="layui-icon-file" placeholder="layui-icon-set">
                                     </div>
                                 </div>
+
                                 <div class="layui-form-item" style="position: absolute; bottom: 20px; left: 110px; right: 20px;">
                                     <div class="layui-input-block" style="margin-left: 0;">
                                         <button type="button" class="layui-btn layui-btn-normal" onclick="confirmAddMenuItem('${groupName}')">确定</button>
@@ -1570,8 +1596,19 @@
                           </div>`,
                 success: function(layero, index) {
                     form.render();
-                    
-                    // 监听页面选择，自动填充名称和图标
+
+                    // 切换菜单类型时显隐对应区域
+                    form.on('radio(addMenuType)', function(data) {
+                        if (data.value === 'view') {
+                            $('#addCrudBlock').hide();
+                            $('#addViewBlock').show();
+                        } else {
+                            $('#addCrudBlock').show();
+                            $('#addViewBlock').hide();
+                        }
+                    });
+
+                    // 选择 CRUD 页面时自动填充名称和图标
                     form.on('select(selectMenuPage)', function(data){
                         const pageKey = data.value;
                         if (pageKey && fullConfig.pages[pageKey]) {
@@ -1583,48 +1620,56 @@
                 }
             });
         }
-        
+
         window.confirmAddMenuItem = function(groupName) {
-            const pageKey = $('#selectMenuPage').val();
-            const menuName = $('#inputMenuName').val();
-            const menuIcon = $('#inputMenuIcon').val();
-            
-            if (!pageKey) {
-                layer.msg('请选择页面', {icon: 2});
-                return;
-            }
+            const menuType = $('input[name="addMenuType"]:checked').val() || 'crud';
+            const menuName = $('#inputMenuName').val().trim();
+            const menuIcon = $('#inputMenuIcon').val().trim() || 'layui-icon-file';
+
             if (!menuName) {
                 layer.msg('请输入菜单名称', {icon: 2});
                 return;
             }
-            
+
             const groupConfig = fullConfig.menus[groupName];
             const items = groupConfig.items || groupConfig;
-            
-            // 检查是否已存在
-            const exists = items.some(item => item.page === pageKey);
-            if (exists) {
-                layer.msg('该页面已在此分组中', {icon: 2});
-                return;
+
+            let newItem;
+
+            if (menuType === 'view') {
+                // 自定义视图模式
+                const viewName = $('#inputViewName').val().trim();
+                if (!viewName) {
+                    layer.msg('请填写视图名称', {icon: 2});
+                    return;
+                }
+                // 防止重复
+                if (items.some(item => item.type === 'view' && item.view === viewName)) {
+                    layer.msg('该视图已在此分组中', {icon: 2});
+                    return;
+                }
+                newItem = { name: menuName, type: 'view', view: viewName, icon: menuIcon };
+
+            } else {
+                // CRUD 页面模式
+                const pageKey = $('#selectMenuPage').val();
+                if (!pageKey) {
+                    layer.msg('请选择页面', {icon: 2});
+                    return;
+                }
+                if (items.some(item => item.page === pageKey)) {
+                    layer.msg('该页面已在此分组中', {icon: 2});
+                    return;
+                }
+                newItem = { name: menuName, page: pageKey, icon: menuIcon };
             }
-            
-            // 添加菜单项
-            const newItem = {
-                name: menuName,
-                page: pageKey,
-                icon: menuIcon
-            };
-            
+
             if (groupConfig.items) {
                 groupConfig.items.push(newItem);
             } else {
-                // 旧格式转新格式
-                fullConfig.menus[groupName] = {
-                    icon: groupIcon,
-                    items: [...items, newItem]
-                };
+                fullConfig.menus[groupName] = { items: [...items, newItem] };
             }
-            
+
             layer.closeAll();
             renderMenuGroups();
             layer.msg('添加成功', {icon: 1});
@@ -1635,20 +1680,43 @@
             const groupConfig = fullConfig.menus[groupName];
             const items = groupConfig.items || groupConfig;
             const menuItem = items[itemIndex];
-            
+            const isView = menuItem.type === 'view';
+
+            // 根据类型生成标识行
+            const identityRow = isView
+                ? `<div class="layui-form-item">
+                       <label class="layui-form-label">类型</label>
+                       <div class="layui-input-block" style="padding-top:9px;">
+                           <span class="layui-badge layui-bg-blue" style="font-size:12px;">自定义视图</span>
+                       </div>
+                   </div>
+                   <div class="layui-form-item">
+                       <label class="layui-form-label">视图名称</label>
+                       <div class="layui-input-block">
+                           <input type="text" id="editViewName" class="layui-input" value="${menuItem.view || ''}">
+                       </div>
+                   </div>`
+                : `<div class="layui-form-item">
+                       <label class="layui-form-label">类型</label>
+                       <div class="layui-input-block" style="padding-top:9px;">
+                           <span class="layui-badge layui-bg-green" style="font-size:12px;">CRUD 页面</span>
+                       </div>
+                   </div>
+                   <div class="layui-form-item">
+                       <label class="layui-form-label">页面标识</label>
+                       <div class="layui-input-block">
+                           <input type="text" class="layui-input layui-disabled" disabled value="${menuItem.page || ''}">
+                       </div>
+                   </div>`;
+
             layer.open({
                 type: 1,
                 title: '编辑菜单项',
-                area: ['500px', '400px'],
+                area: ['500px', '420px'],
                 scrollbar: false,
                 content: `<div style="padding: 20px; padding-bottom: 80px;">
                             <form class="layui-form">
-                                <div class="layui-form-item">
-                                    <label class="layui-form-label">页面标识</label>
-                                    <div class="layui-input-block">
-                                        <input type="text" class="layui-input layui-disabled" disabled value="${menuItem.page}">
-                                    </div>
-                                </div>
+                                ${identityRow}
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">菜单名称</label>
                                     <div class="layui-input-block">
@@ -1658,7 +1726,7 @@
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">菜单图标</label>
                                     <div class="layui-input-block">
-                                        <input type="text" id="editMenuIcon" class="layui-input" value="${menuItem.icon || ''}">
+                                        <input type="text" id="editMenuIcon" class="layui-input" value="${menuItem.icon || 'layui-icon-file'}">
                                     </div>
                                 </div>
                                 <div class="layui-form-item" style="position: absolute; bottom: 20px; left: 110px; right: 20px;">
@@ -1668,20 +1736,28 @@
                                     </div>
                                 </div>
                             </form>
-                          </div>`,
-                success: function(layero, index) {
-                    // $(layero).css('z-index', 19891015);
-                }
+                          </div>`
             });
         }
-        
+
         window.confirmEditMenuItem = function(groupName, itemIndex) {
             const groupConfig = fullConfig.menus[groupName];
             const items = groupConfig.items || groupConfig;
-            
-            items[itemIndex].name = $('#editMenuName').val();
-            items[itemIndex].icon = $('#editMenuIcon').val();
-            
+            const menuItem = items[itemIndex];
+
+            menuItem.name = $('#editMenuName').val().trim();
+            menuItem.icon = $('#editMenuIcon').val().trim() || 'layui-icon-file';
+
+            // 视图模式：同步更新 view 字段
+            if (menuItem.type === 'view') {
+                const newView = $('#editViewName').val().trim();
+                if (!newView) {
+                    layer.msg('视图名称不能为空', {icon: 2});
+                    return;
+                }
+                menuItem.view = newView;
+            }
+
             layer.closeAll();
             renderMenuGroups();
             layer.msg('保存成功', {icon: 1});

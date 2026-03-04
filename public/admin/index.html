@@ -152,11 +152,9 @@
                 dashboard.style.display = 'block';
                 loadStats();
             } else if (pageName === 'crud_designer') {
-                // CRUD 设计器
+                // CRUD 设计器（加时间戳防止 iframe 缓存旧版本）
                 iframeContent.style.display = 'block';
-                if (iframe.src.indexOf('crud-designer.html') === -1) {
-                    iframe.src = 'crud-designer.html';
-                }
+                iframe.src = 'crud-designer.html?v=' + Date.now();
             } else {
                 dynamic.style.display = 'block';
                 
@@ -165,6 +163,27 @@
             }
         }
         
+        /**
+         * 显示自定义视图页面（View 模式）
+         * 通过 iframe 加载 /admin/view/{viewName}，由 PHP 控制器渲染
+         */
+        function showView(viewName) {
+            const dashboard   = document.getElementById('dashboard-content');
+            const dynamic     = document.getElementById('dynamic-content');
+            const iframeContent = document.getElementById('iframe-content');
+            const iframe      = document.getElementById('content-iframe');
+
+            dashboard.style.display    = 'none';
+            dynamic.style.display      = 'none';
+            iframeContent.style.display = 'block';
+
+            // 每次切换都重新加载，保证视图内容最新
+            const viewUrl = '/admin/view/' + encodeURIComponent(viewName);
+            if (iframe.src !== location.origin + viewUrl) {
+                iframe.src = viewUrl;
+            }
+        }
+
         // 加载页面配置
         function loadPageConfig(pageName) {
             request(ADMIN_API_PREFIX + '/config?page=' + pageName, {
@@ -248,8 +267,13 @@
                     
                     const icon = item.icon || 'layui-icon-file';
                     if (item.url) {
+                        // 外链：直接新标签页打开
                         html += `<dd class="${activeClass}"><a href="${item.url}" target="_blank"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
+                    } else if (item.type === 'view') {
+                        // 自定义视图模式：通过 iframe 加载 PHP 渲染页面
+                        html += `<dd class="${activeClass}"><a href="javascript:;" data-view="${item.view}"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     } else {
+                        // 普通 CRUD 页面
                         html += `<dd class="${activeClass}"><a href="javascript:;" data-page="${item.page}"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     }
                 });
@@ -264,17 +288,29 @@
                 var element = layui.element;
                 element.render('nav');
                 
-                // 绑定菜单点击事件（在 element.render 后注册，避免被覆盖）
+                // 绑定普通 CRUD 页面点击事件
                 navMenu.querySelectorAll('[data-page]').forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         const pageName = this.dataset.page;
                         
-                        // 更新激活状态
                         navMenu.querySelectorAll('.layui-nav-child dd').forEach(dd => dd.classList.remove('layui-this'));
                         this.closest('dd').classList.add('layui-this');
                         
                         showPage(pageName);
+                    });
+                });
+
+                // 绑定自定义视图页面点击事件
+                navMenu.querySelectorAll('[data-view]').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const viewName = this.dataset.view;
+                        
+                        navMenu.querySelectorAll('.layui-nav-child dd').forEach(dd => dd.classList.remove('layui-this'));
+                        this.closest('dd').classList.add('layui-this');
+                        
+                        showView(viewName);
                     });
                 });
             });
@@ -337,9 +373,9 @@
             document.body.classList.remove('sidebar-open-body');
         }
 
-        // 移动端菜单点击后自动关闭侧边栏
+        // 移动端菜单点击后自动关闭侧边栏（CRUD 页面和自定义视图均适用）
         document.addEventListener('click', function(e) {
-            const link = e.target.closest('[data-page]');
+            const link = e.target.closest('[data-page], [data-view]');
             if (link && window.innerWidth <= 768) {
                 closeSidebar();
             }
