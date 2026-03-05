@@ -69,8 +69,20 @@ class ConfigController
             $filteredItems = [];
             
             foreach ($items as $item) {
-                $page = $item['page'];
-                
+                // ── 自定义视图类型（type = 'view'）──
+                if (isset($item['type']) && $item['type'] === 'view') {
+                    $viewKey = 'view_' . ($item['view'] ?? '');
+                    // 检查是否有该视图的访问权限
+                    if (isset($permissions[$viewKey]) && in_array('access', $permissions[$viewKey])) {
+                        $filteredItems[] = $item;
+                    }
+                    continue;
+                }
+
+                // ── 普通 CRUD 页面 ──
+                $page = $item['page'] ?? '';
+                if (empty($page)) continue;
+
                 // CRUD 设计器仅超级管理员可见（已在外层判断，这里为安全起见再次排除）
                 if ($page === 'crud_designer') {
                     continue;
@@ -90,16 +102,14 @@ class ConfigController
             
             // 如果该分组还有菜单项，添加到结果中
             if (!empty($filteredItems)) {
-                if ($groupIcon) {
-                    // 新格式
-                    $filteredMenus[$groupName] = [
-                        'icon' => $groupIcon,
-                        'items' => $filteredItems
-                    ];
-                } else {
-                    // 旧格式
-                    $filteredMenus[$groupName] = $filteredItems;
-                }
+                // 统一输出新格式，确保 expanded 字段始终存在。
+                // 旧格式（无 icon）同样需要携带 expanded，否则前端会错误地使用
+                // isFirstGroup 回退逻辑，导致第一个分组始终强制展开。
+                $filteredMenus[$groupName] = [
+                    'icon'     => $groupIcon ?: null,
+                    'expanded' => isset($groupConfig['expanded']) ? (bool)$groupConfig['expanded'] : false,
+                    'items'    => $filteredItems,
+                ];
             }
         }
         

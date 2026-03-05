@@ -261,24 +261,26 @@
                 isFirstGroup = false;
                 
                 const li = document.createElement('li');
+                // data-expanded 记录配置意图，供 setTimeout 强制修正时使用（不受 Layui 自动行为干扰）
+                li.dataset.expanded = shouldExpand ? 'true' : 'false';
                 li.className = 'layui-nav-item' + (shouldExpand ? ' layui-nav-itemed' : '');
                 
                 let html = `<a href="javascript:;">${groupName}</a>`;
                 html += `<dl class="layui-nav-child">`;
                 
                 items.forEach((item) => {
+                    // layui-this 始终加在全局第一个菜单项（不管其分组是否展开）。
+                    // Layui render('nav') 可能因此强制展开该分组，
+                    // 但 setTimeout 会根据 data-expanded 将其强制还原。
                     const activeClass = isFirstItem ? 'layui-this' : '';
                     if (isFirstItem) isFirstItem = false;
                     
                     const icon = item.icon || 'layui-icon-file';
                     if (item.url) {
-                        // 外链：直接新标签页打开
                         html += `<dd class="${activeClass}"><a href="${item.url}" target="_blank"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     } else if (item.type === 'view') {
-                        // 自定义视图模式：通过 iframe 加载 PHP 渲染页面
                         html += `<dd class="${activeClass}"><a href="javascript:;" data-view="${item.view}"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     } else {
-                        // 普通 CRUD 页面
                         html += `<dd class="${activeClass}"><a href="javascript:;" data-page="${item.page}"><i class="layui-icon ${icon}"></i> ${item.name}</a></dd>`;
                     }
                 });
@@ -292,6 +294,24 @@
             layui.use('element', function(){
                 var element = layui.element;
                 element.render('nav');
+
+                // Layui render('nav') 会自动展开含有 layui-this 子项的分组，
+                // 这里以 data-expanded（配置意图）为最终权威，强制修正所有分组的展开/收起状态。
+                setTimeout(function() {
+                    navMenu.querySelectorAll('li.layui-nav-item').forEach(function(li) {
+                        var child = li.querySelector('dl.layui-nav-child');
+                        if (!child) return;
+                        var shouldBeExpanded = li.dataset.expanded === 'true';
+                        if (shouldBeExpanded) {
+                            li.classList.add('layui-nav-itemed');
+                            child.style.display = 'block';
+                        } else {
+                            // 移除 Layui 可能因 layui-this 子项而自动加上的 layui-nav-itemed
+                            li.classList.remove('layui-nav-itemed');
+                            child.style.display = 'none';
+                        }
+                    });
+                }, 0);
                 
                 // 绑定普通 CRUD 页面点击事件
                 navMenu.querySelectorAll('[data-page]').forEach(link => {

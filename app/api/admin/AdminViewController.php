@@ -47,6 +47,16 @@ class AdminViewController
             return;
         }
 
+        // ── 视图访问权限校验（超管跳过，普通管理员必须有 view_{name}.access 权限）──
+        $adminId = \Flight::get('admin_id');
+        if ($adminId != 1) {
+            require_once __DIR__ . '/../../helpers/permission.php';
+            if (!hasPermission($adminId, 'view_' . $safe, 'access')) {
+                self::renderError(403, '您没有访问此页面的权限，请联系超级管理员授权。');
+                return;
+            }
+        }
+
         // ── 将当前管理员信息注入视图 ──
         $currentAdmin = \Flight::get('currentUser');
 

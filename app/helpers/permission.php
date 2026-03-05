@@ -96,8 +96,24 @@ function getAllPermissions()
         $items = isset($groupConfig['items']) ? $groupConfig['items'] : $groupConfig;
         
         foreach ($items as $item) {
-            $page = $item['page'];
-            
+            // ── 自定义视图类型（type = 'view'）──
+            if (isset($item['type']) && $item['type'] === 'view') {
+                if (empty($item['view'])) continue;
+                $moduleKey = 'view_' . $item['view'];
+                $permissions[$moduleKey] = [
+                    'name' => $item['name'],
+                    'type' => 'view',
+                    'actions' => [
+                        'access' => '访问权限'
+                    ]
+                ];
+                continue;
+            }
+
+            // ── 普通 CRUD 页面 ──
+            $page = $item['page'] ?? '';
+            if (empty($page)) continue;
+
             // 排除特殊页面
             if (in_array($page, ['dashboard', 'changePassword', 'crud_designer'])) {
                 continue;

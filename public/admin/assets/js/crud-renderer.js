@@ -2214,10 +2214,16 @@ function renderPermissions(containerId, allPermissions, currentValue) {
         const perm = allPermissions[module];
         const modulePermissions = currentPermissions[module] || [];
         
+        const isViewType = perm.type === 'view';
+        const moduleIcon = isViewType ? 'layui-icon-template' : 'layui-icon-app';
+        const moduleTag  = isViewType
+            ? `<span style="background:#1890ff;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;">视图</span>`
+            : '';
+
         html += `
             <div class="permission-module" style="margin-bottom: 20px; padding: 15px; background: #f8f8f8; border-radius: 4px;">
                 <div style="font-weight: 600; margin-bottom: 10px; color: #333;">
-                    <i class="layui-icon layui-icon-app"></i> ${perm.name}
+                    <i class="layui-icon ${moduleIcon}"></i> ${perm.name}${moduleTag}
                 </div>
                 <div class="permission-actions">
         `;
