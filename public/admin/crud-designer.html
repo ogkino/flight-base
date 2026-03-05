@@ -523,6 +523,14 @@
 
         init();
 
+        // 监听菜单分组「默认展开」开关（Layui switch 必须用 form.on，不能用 onchange）
+        form.on('switch(menuGroupExpanded)', function(data) {
+            const groupName = data.elem.getAttribute('data-group');
+            if (groupName) {
+                updateMenuGroupExpanded(groupName, data.elem.checked);
+            }
+        });
+
         // 监听 Tab 切换，记录当前索引
         element.on('tab(configTab)', function(data){
             currentTabIndex = data.index;
@@ -1316,6 +1324,16 @@
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
+                                        <label class="layui-form-label">默认展开</label>
+                                        <div class="layui-input-block" style="padding-top: 8px;">
+                                            <input type="checkbox"
+                                                lay-skin="switch" lay-text="展开|收起"
+                                                ${groupConfig.expanded ? 'checked' : ''}
+                                                lay-filter="menuGroupExpanded"
+                                                data-group="${groupName}">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
                                         <label class="layui-form-label">菜单项</label>
                                         <div class="layui-input-block">
                                             <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="addMenuItemToGroup('${groupName}')">
@@ -1368,6 +1386,9 @@
             }
             
             $('#menuGroupList').html(html);
+
+            // 渲染 Layui 表单组件（含开关）
+            form.render();
 
             // 初始化分组拖拽
             new Sortable(document.getElementById('menuGroupList'), {
@@ -1438,6 +1459,7 @@
                 
                 fullConfig.menus[value] = {
                     icon: 'layui-icon-template-1',
+                    expanded: false,
                     items: []
                 };
                 
@@ -1486,6 +1508,20 @@
                 // 旧格式，转换为新格式
                 fullConfig.menus[groupName] = {
                     icon: icon,
+                    items: groupConfig
+                };
+            }
+        }
+
+        // 更新菜单分组默认展开状态
+        window.updateMenuGroupExpanded = function(groupName, expanded) {
+            const groupConfig = fullConfig.menus[groupName];
+            if (groupConfig.items) {
+                groupConfig.expanded = expanded;
+            } else {
+                fullConfig.menus[groupName] = {
+                    icon: groupConfig.icon || 'layui-icon-template-1',
+                    expanded: expanded,
                     items: groupConfig
                 };
             }

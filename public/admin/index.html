@@ -252,11 +252,16 @@
                 }
                 
                 if (items.length === 0) return;
+
+                // 优先使用设计器配置的 expanded 字段；
+                // 若未配置（旧数据），则第一个分组默认展开
+                const shouldExpand = (typeof groupConfig.expanded !== 'undefined')
+                    ? groupConfig.expanded
+                    : isFirstGroup;
+                isFirstGroup = false;
                 
                 const li = document.createElement('li');
-                // 第一个分组默认展开，其余默认收起，让 Layui 接管展开/收起状态
-                li.className = 'layui-nav-item' + (isFirstGroup ? ' layui-nav-itemed' : '');
-                isFirstGroup = false;
+                li.className = 'layui-nav-item' + (shouldExpand ? ' layui-nav-itemed' : '');
                 
                 let html = `<a href="javascript:;">${groupName}</a>`;
                 html += `<dl class="layui-nav-child">`;

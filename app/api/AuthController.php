@@ -1,6 +1,8 @@
 <?php
 namespace App\Api;
 
+use App\Middleware\AuthMiddleware;
+
 /**
  * 认证控制器
  */
@@ -84,6 +86,7 @@ class AuthController
      */
     public static function info()
     {
+        AuthMiddleware::check();
         $user = currentUser();
         
         success([
@@ -102,6 +105,7 @@ class AuthController
      */
     public static function logout()
     {
+        AuthMiddleware::check();
         $user = currentUser();
         writeLog("用户 {$user['username']} 退出登录", 'info');
         

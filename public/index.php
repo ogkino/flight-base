@@ -29,14 +29,7 @@ if (!function_exists('hasPermission')) {
 }
 
 use Medoo\Medoo;
-use App\Middleware\AuthMiddleware;
 use App\Middleware\CorsMiddleware;
-use App\Middleware\CaptchaMiddleware;
-use App\Api\HealthController;
-use App\Api\AuthController;
-use App\Api\CaptchaController;
-use App\Api\Admin\AuthController as AdminAuthController;
-use App\Api\Admin\UserController as AdminUserController;
 
 // ==================== 基础配置 ====================
 $appConfig = require __DIR__ . '/../app/config/app.php';
@@ -106,31 +99,29 @@ Flight::route('GET /', function(){
 
 // 健康检查
 Flight::route('GET /api/health', function(){
-    HealthController::check();
+    \App\Api\HealthController::check();
 });
 
 // 验证码接口
 Flight::route('GET /api/captcha', function(){
-    CaptchaController::generate();
+    \App\Api\CaptchaController::generate();
 });
 
 // ========== 前端业务接口 ==========
 
 // 用户登录
 Flight::route('POST /api/login', function(){
-    AuthController::login();
+    \App\Api\AuthController::login();
 });
 
 // 获取当前用户信息（需要登录）
 Flight::route('GET /api/info', function(){
-    AuthMiddleware::check();
-    AuthController::info();
+    \App\Api\AuthController::info();
 });
 
 // 退出登录
 Flight::route('POST /api/logout', function(){
-    AuthMiddleware::check();
-    AuthController::logout();
+    \App\Api\AuthController::logout();
 });
 
 // ========== 前端页面路由（Views）==========
@@ -159,23 +150,22 @@ Flight::route('GET /api/article/@id', function($id){
 
 // 管理员登录
 Flight::route('POST /api/admin/login', function(){
-    CaptchaMiddleware::handle();
-    AdminAuthController::login();
+    \App\Api\Admin\AuthController::login();
 });
 
 // 管理员信息
 Flight::route('GET /api/admin/info', function(){
-    AdminAuthController::info();
+    \App\Api\Admin\AuthController::info();
 });
 
 // 管理员退出
 Flight::route('POST /api/admin/logout', function(){
-    AdminAuthController::logout();
+    \App\Api\Admin\AuthController::logout();
 });
 
 // 修改密码
 Flight::route('POST /api/admin/change-password', function(){
-    AdminAuthController::changePassword();
+    \App\Api\Admin\AuthController::changePassword();
 });
 
 // 获取页面配置（配置驱动）
@@ -217,22 +207,22 @@ Flight::route('POST /api/admin/upload', function(){
 
 // 用户列表
 Flight::route('GET /api/admin/users', function(){
-    AdminUserController::list();
+    \App\Api\Admin\UserController::list();
 });
 
 // 创建用户
 Flight::route('POST /api/admin/user', function(){
-    AdminUserController::create();
+    \App\Api\Admin\UserController::create();
 });
 
 // 更新用户（改为 POST，和文章管理保持一致）
 Flight::route('POST /api/admin/user/@id', function($id){
-    AdminUserController::update($id);
+    \App\Api\Admin\UserController::update($id);
 });
 
 // 删除用户
 Flight::route('DELETE /api/admin/user/@id', function($id){
-    AdminUserController::delete($id);
+    \App\Api\Admin\UserController::delete($id);
 });
 
 // 文章管理

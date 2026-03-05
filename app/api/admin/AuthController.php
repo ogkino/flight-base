@@ -2,6 +2,7 @@
 namespace App\Api\Admin;
 
 use App\Middleware\AuthMiddleware;
+use App\Middleware\CaptchaMiddleware;
 
 /**
  * 管理员认证控制器
@@ -13,6 +14,8 @@ class AuthController
      */
     public static function login()
     {
+        CaptchaMiddleware::handle();
+
         $username = getPost('username');
         $password = getPost('password');
         

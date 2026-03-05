@@ -12,6 +12,14 @@ const ADMIN_API_PREFIX = '/api/admin';
 const TOKEN_KEY = 'admin_token';
 
 /**
+ * Cookie 域名手动覆盖（正常情况留空，自动检测）
+ * 仅当使用 .com.cn / .co.uk 等二级公共后缀时需要手动填写，例如：
+ *   COOKIE_DOMAIN = '.myapp.com.cn';   // 三端分离
+ *   COOKIE_DOMAIN = '';                // 自动检测（默认）
+ */
+const COOKIE_DOMAIN = '';
+
+/**
  * 获取 Cookie 的 domain 属性值
  *
  * 规则：
@@ -23,6 +31,8 @@ const TOKEN_KEY = 'admin_token';
  *   admin.myapp.com  |  api.myapp.com  |  www.myapp.com  → 父域 .myapp.com
  */
 function getCookieDomain() {
+    // 手动覆盖优先（用于 .com.cn / .co.uk 等二级公共后缀）
+    if (COOKIE_DOMAIN !== '') return COOKIE_DOMAIN;
     const hostname = location.hostname;
     // localhost 或 IPv4/IPv6 地址：单机模式，无需设 domain
     if (hostname === 'localhost' || /^[\d.:]+$/.test(hostname)) {

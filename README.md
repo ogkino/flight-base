@@ -1,4 +1,4 @@
-# Flight Base 框架 v2.0
+# Flight Base 框架 v2.5
 
 > **轻量级 · 配置驱动 · AI 友好 · 快速开发**
 
