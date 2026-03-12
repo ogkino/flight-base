@@ -314,7 +314,7 @@ export const fetchArticles = async () => {
 如果您想继续使用 Flight 的 Views 功能，可以将 `app/views/` 和相关路由保留在 API 端：
 
 ```php
-// public/index.php
+// app/bootstrap.php
 
 // 前端页面路由（返回 HTML）
 Flight::route('GET /', function(){

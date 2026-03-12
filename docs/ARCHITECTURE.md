@@ -258,7 +258,7 @@ class ProductController
 }
 ```
 
-#### 3️⃣ 注册路由 `public/index.php`
+#### 3️⃣ 注册路由 `app/bootstrap.php`
 
 ```php
 Flight::route('GET /api/admin/products', function(){

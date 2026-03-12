@@ -146,16 +146,16 @@ function getAllPermissions()
 function checkPermission($module, $action)
 {
     $adminId = Flight::get('admin_id');
-    
+
     if (!$adminId) {
         error('请先登录', 401);
-        Flight::stop();
-        exit;
+        // error() 内部会调用 terminateRequest()，以下代码不会执行
+        // 保留 terminateRequest() 作为防御性保证（静态分析友好）
+        terminateRequest();
     }
-    
+
     if (!hasPermission($adminId, $module, $action)) {
         error('无权限访问', 403);
-        Flight::stop();
-        exit;
+        terminateRequest();
     }
 }

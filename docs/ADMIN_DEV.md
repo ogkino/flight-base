@@ -644,7 +644,7 @@ class ProductController
 }
 ```
 
-#### 3. 注册路由 `public/index.php`
+#### 3. 注册路由 `app/bootstrap.php`
 
 ```php
 // 商品管理
@@ -1451,7 +1451,7 @@ class DashboardController
 **步骤 2：注册路由**
 
 ```php
-// public/index.php
+// app/bootstrap.php
 
 Flight::route('GET /api/admin/stats/users', function(){
     \App\Api\Admin\DashboardController::getUsersCount();

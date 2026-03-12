@@ -141,7 +141,7 @@ class ProductController
 
 ### 步骤 4：添加路由
 
-编辑 `public/index.php`，添加路由：
+编辑 `app/bootstrap.php`，添加路由：
 
 ```php
 Flight::route('GET /api/admin/products', function(){
@@ -481,7 +481,7 @@ error('文章不存在', 404);
 
 #### 3. 路由定义
 
-**文件**：`public/index.php`
+**文件**：`app/bootstrap.php`
 
 ```php
 // GET 请求

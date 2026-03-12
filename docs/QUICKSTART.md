@@ -246,7 +246,7 @@ class ProductController
 
 #### 3. 添加路由
 
-在 `public/index.php` 中添加：
+在 `app/bootstrap.php` 中添加：
 
 ```php
 // 商品管理
@@ -493,7 +493,7 @@ class ArticleController
 
 #### 3. 配置视图路径
 
-在 `public/index.php` 中添加视图路径配置：
+在 `app/bootstrap.php` 中添加视图路径配置：
 
 ```php
 // ==================== 基础配置 ====================
@@ -509,7 +509,7 @@ Flight::set('flight.views.path', __DIR__ . '/../app/views');
 
 #### 4. 添加路由
 
-在 `public/index.php` 中添加路由：
+在 `app/bootstrap.php` 中添加路由：
 
 ```php
 // ========== 前端页面路由 ==========
@@ -583,7 +583,7 @@ composer require twig/twig
 
 #### 配置 Twig
 
-在 `public/index.php` 中：
+在 `app/bootstrap.php` 中：
 
 ```php
 use Twig\Loader\FilesystemLoader;

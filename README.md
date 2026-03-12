@@ -1,4 +1,4 @@
-# Flight Base 框架 v2.5
+# Flight Base 框架 v2.6
 
 > **轻量级 · 配置驱动 · AI 友好 · 快速开发**
 
@@ -11,6 +11,7 @@
 - ✅ **配置驱动**：后端配置 → 前端自动渲染 CRUD（零手写代码）
 - ✅ **可视化设计**：内置 CRUD 设计器，拖拽生成代码，零代码开发 (v2.3)
 - ✅ **自定义视图**：View 模式支持完全自定义的后台管理页面，Cookie 鉴权，无缝嵌入主框架 (v2.5)
+- ✅ **多运行模式**：同一套代码，无缝支持 PHP-FPM、FrankenPHP Classic、FrankenPHP Worker 三种模式，切换只需改服务器配置 (v2.6)
 - ✅ **自动菜单**：菜单自动从配置生成，支持父级图标、智能分组
 - ✅ **权限系统**：基于 JSON 的轻量级权限管理，精确到 CRUD 操作，自动过滤菜单
 - ✅ **AI 极度友好**：结构化配置，AI 轻松生成完整功能模块
@@ -55,13 +56,17 @@ flight-base/
 │   │   ├── cors.php              # 跨域配置
 │   │   ├── CrudConfig.php        # 🔥 CRUD 配置（配置驱动核心）
 │   │   └── database.php          # 数据库配置
+│   ├── Exceptions/               # 异常类
+│   │   └── RequestTerminatedException.php  # 请求终止异常（Worker 模式）
 │   ├── helpers/                  # 辅助函数
 │   │   ├── env.php               # 环境变量读取
-│   │   ├── functions.php         # 全局函数
+│   │   ├── functions.php         # 全局函数（含 terminateRequest）
+│   │   ├── permission.php        # 权限验证函数
 │   │   └── security.php          # 安全函数（XSS、CSRF、限流等）
 │   ├── middleware/               # 中间件
 │   │   ├── AuthMiddleware.php    # 权限验证中间件
 │   │   └── CorsMiddleware.php    # 跨域中间件
+│   ├── bootstrap.php             # 🔥 共享启动文件（初始化 + 所有路由定义）
 │   └── views/                    # 视图模板
 │       ├── admin/                # 🔥 后台自定义视图（View 模式）
 │       │   ├── _head.php         # 公共头部片段（引入 CSS/JS）
@@ -83,15 +88,15 @@ flight-base/
 │   │   ├── index.html            # 后台主页（单页应用）
 │   │   └── login.html            # 登录页
 │   ├── uploads/                  # 上传文件目录
-│   ├── index.php                 # 🔥 主入口文件（路由定义）
-│   └── .htaccess                 # Apache 伪静态配置
+│   ├── index.php                 # 入口文件（PHP-FPM / FrankenPHP Classic）
+│   └── worker.php                # 入口文件（FrankenPHP Worker 模式）
 ├── runtime/                      # 运行时目录
 │   └── logs/                     # 日志文件
 ├── vendor/                       # Composer 依赖
 ├── .env                          # 环境变量配置（需创建）
 ├── .gitignore                    # Git 忽略文件
 ├── composer.json                 # Composer 配置
-├── example_db.sql                  # 数据库初始化脚本
+├── example_db.sql                # 数据库初始化脚本
 ├── docs/                         # 📖 文档目录
 │   ├── QUICKSTART.md             # 快速部署
 │   ├── ARCHITECTURE.md           # 架构说明（必读！）
@@ -101,7 +106,8 @@ flight-base/
 │   ├── COMPLEX_QUERY.md          # 复杂查询示例
 │   ├── DEPLOY.md                 # 生产部署（单体）
 │   ├── SEPARATION_DEPLOY.md      # 三端分离部署
-│   ├── SERVER_CONFIG.md          # 服务器配置
+│   ├── SERVER_CONFIG.md          # 服务器配置（Nginx/Apache）
+│   ├── SERVER_MODES.md           # 🔥 运行模式说明（FPM/Classic/Worker）
 │   ├── DATABASE_UPGRADE.md       # 数据库升级说明
 │   ├── BUGFIX_2.1.4.md           # Bug 修复说明
 │   └── CHANGELOG.md              # 更新日志
@@ -399,7 +405,7 @@ class ProductController
 }
 ```
 
-#### 3. 注册路由 `public/index.php`
+#### 3. 注册路由 `app/bootstrap.php`
 
 ```php
 Flight::route('GET /api/admin/products', function(){
@@ -699,8 +705,6 @@ $db->action(function($db) {
 
 | 文档 | 说明 | 适用场景 |
 |------|------|----------|
-| 文档 | 说明 | 适用场景 |
-|------|------|----------|
 | [README.md](README.md) | **本文档** - 快速开始、基础使用 | 第一次使用 |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | **必读！** 架构原理、工作流程、文件关系 | 理解框架设计 |
 | [EXAMPLES.md](docs/EXAMPLES.md) | **完整示例** - 浏览量统计、分页、API 等 | 学习开发 |
@@ -714,6 +718,7 @@ $db->action(function($db) {
 | [DEPLOY.md](docs/DEPLOY.md) | 生产环境部署指南（单体部署） | 生产部署 |
 | [SEPARATION_DEPLOY.md](docs/SEPARATION_DEPLOY.md) | **三端分离部署指南** - API/管理/客户端分离 | 分离部署 |
 | [SERVER_CONFIG.md](docs/SERVER_CONFIG.md) | Nginx/Apache 伪静态配置 | 服务器配置 |
+| [SERVER_MODES.md](docs/SERVER_MODES.md) | **🔥 运行模式指南** - PHP-FPM / FrankenPHP Classic / Worker | 切换运行模式 |
 | [DATABASE_UPGRADE.md](docs/DATABASE_UPGRADE.md) | 数据库升级说明（v2.1.3）| 数据库升级 |
 | [CHANGELOG.md](docs/CHANGELOG.md) | 版本更新日志 | 了解更新 |
 
@@ -723,6 +728,7 @@ $db->action(function($db) {
 2. **开发后台功能**：ADMIN_DEV.md
 3. **处理复杂业务**：COMPLEX_QUERY.md
 4. **部署上线**：SECURITY.md → DEPLOY.md（单体）/ SEPARATION_DEPLOY.md（分离）
+5. **高性能部署**：SERVER_MODES.md（FrankenPHP Worker 模式）
 
 ---
 
@@ -739,7 +745,7 @@ $db->action(function($db) {
     ↓
 用户操作（新增/编辑/删除）
     ↓
-调用 API（index.php 路由）
+调用 API（bootstrap.php 路由）
     ↓
 执行业务逻辑（Controller）
     ↓
@@ -777,7 +783,7 @@ $db->action(function($db) {
 - **文件**：
   - 配置：`app/config/CrudConfig.php::users()`
   - 控制器：`app/api/admin/UserController.php`
-  - 路由：`public/index.php`（搜索 `/api/admin/users`）
+  - 路由：`app/bootstrap.php`（搜索 `/api/admin/users`）
 
 ### 2. 文章管理（高级示例）
 
@@ -786,7 +792,7 @@ $db->action(function($db) {
 - **文件**：
   - 配置：`app/config/CrudConfig.php::articles()`
   - 控制器：`app/api/admin/ArticleController.php`
-  - 路由：`public/index.php`（搜索 `/api/admin/articles`）
+  - 路由：`app/bootstrap.php`（搜索 `/api/admin/articles`）
 
 ### 3. 后台自定义视图（View 模式示例）
 
@@ -795,7 +801,7 @@ $db->action(function($db) {
 - **文件**：
   - 控制器：`app/api/admin/AdminViewController.php`
   - 视图：`app/views/admin/example.php`
-  - 路由：`public/index.php`（搜索 `/admin/view/`）
+  - 路由：`app/bootstrap.php`（搜索 `/admin/view/`）
 
 ### 4. 前端 Views（可选示例）
 
@@ -804,7 +810,7 @@ $db->action(function($db) {
 - **文件**：
   - 控制器：`app/api/ArticleController.php`
   - 视图：`app/views/articles/`, `app/views/home/`
-  - 路由：`public/index.php`（搜索 `Flight::render`）
+  - 路由：`app/bootstrap.php`（搜索 `Flight::render`）
 
 ---
 
@@ -956,8 +962,8 @@ cd your_project_name
 ### 3. 开发新功能
 
 1. 在 `app/config/CrudConfig.php` 添加配置
-2. 在 `app/api/admin/` 创建控制器
-3. 在 `public/index.php` 注册路由
+2. 在`app/api/admin/` 创建控制器
+3. 在 `app/bootstrap.php` 注册路由
 4. 在 `app/config/CrudConfig.php` 的 getMenus() 里添加菜单
 
 **详细步骤**：查看 [ADMIN_DEV.md](docs/ADMIN_DEV.md)
@@ -973,6 +979,7 @@ cd your_project_name
 ✅ AI 友好      - 结构化配置，AI 轻松生成
 ✅ 配置驱动     - 零手写代码，节省 80%（CRUD 模式）
 ✅ 自定义视图   - 完全自由开发，适合复杂页面（View 模式）
+✅ 多运行模式   - PHP-FPM / FrankenPHP Classic / Worker，一套代码全支持
 ✅ 安全完善     - 10+ 安全措施，生产可用
 ✅ 功能强大     - 支持任何复杂业务（JOIN、事务等）
 ✅ 易于扩展     - 5 分钟添加新模块

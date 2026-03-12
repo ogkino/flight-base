@@ -49,14 +49,12 @@ function validatePassword($password)
 }
 
 /**
- * 启动 Session (如果未启动)
- */
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-/**
  * 生成 CSRF Token
+ *
+ * 注意：session_start() 已从文件顶层移除。
+ * - FPM/Classic 模式：index.php 每次请求都 require 此文件，无需在此启动 session
+ * - Worker 模式：worker.php 在每次请求回调的开头负责调用 session_start()
+ * 两个函数内部都有防重复启动保护，因此直接调用是安全的。
  */
 function generateCsrfToken()
 {

@@ -199,9 +199,19 @@ chmod -R 775 public/uploads
 chmod -R 775 runtime/logs
 ```
 
-### 6. 配置 Web 服务器
+### 6. 选择并配置运行模式
 
-参考 [SERVER_CONFIG.md](SERVER_CONFIG.md) 配置 Nginx 或 Apache。
+Flight Base 支持三种运行模式，按需选择：
+
+| 模式 | 性能 | 适用场景 |
+|------|------|---------|
+| **PHP-FPM** | 基准 | 传统 Nginx + PHP-FPM，稳定可靠 |
+| **FrankenPHP Classic** | 略高 | 无需 Nginx，一个二进制搞定 |
+| **FrankenPHP Worker** | 高 3~10 倍 | 追求极致性能的生产环境 |
+
+**PHP-FPM 模式**：参考 [SERVER_CONFIG.md](SERVER_CONFIG.md) 配置 Nginx 或 Apache。
+
+**FrankenPHP 模式**：参考 [SERVER_MODES.md](SERVER_MODES.md) 配置 Caddyfile。
 
 ### 7. 测试部署
 
@@ -362,10 +372,11 @@ composer update --no-dev
 
 **优化**：
 1. 启用 OPcache
-2. 使用 Redis/Memcached 缓存
-3. 优化数据库查询
-4. 使用 CDN 加速静态资源
-5. 启用 Gzip 压缩
+2. 切换到 **FrankenPHP Worker 模式**（最简单最有效，详见 [SERVER_MODES.md](SERVER_MODES.md)）
+3. 使用 Redis/Memcached 缓存
+4. 优化数据库查询
+5. 使用 CDN 加速静态资源
+6. 启用 Gzip 压缩
 
 ### 问题 3：内存不足
 
@@ -398,5 +409,6 @@ gunzip < /var/backups/flight_base/db_YYYYMMDD_HHMMSS.sql.gz | mysql -u user -p d
 ✅ 配置数据库备份  
 ✅ 隐藏敏感文件  
 ✅ 定期查看日志  
+✅ 按需选择运行模式（高性能推荐 FrankenPHP Worker，详见 [SERVER_MODES.md](SERVER_MODES.md)）
 
 按照本文档操作，可以安全地将 Flight Base 部署到生产环境。

@@ -93,6 +93,6 @@ body { display:flex; align-items:center; justify-content:center; height:100vh; m
 </body>
 </html>
 HTML;
-        exit;
+        terminateRequest();
     }
 }

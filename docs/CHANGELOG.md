@@ -1,5 +1,35 @@
 # 更新日志
 
+## [2.6.0] - 2026-03-12 🚀 多运行模式支持（PHP-FPM / FrankenPHP Classic / Worker）
+
+### 新增
+- ✅ **FrankenPHP Worker 模式支持**：新增 `public/worker.php` 作为 Worker 模式专用入口，PHP 进程长驻内存，性能提升 3~10 倍
+- ✅ **共享启动文件**：新建 `app/bootstrap.php`，将所有初始化逻辑和路由定义从 `public/index.php` 抽离，三种模式共享同一套代码
+- ✅ **`terminateRequest()` 函数**：模式感知的请求终止函数，Worker 模式下抛出异常（不杀死进程），FPM/Classic 模式下直接 `exit`
+- ✅ **`RequestTerminatedException` 异常类**：新建 `app/Exceptions/RequestTerminatedException.php`，供 Worker 模式使用
+- ✅ **SERVER_MODES.md 文档**：完整的运行模式说明，包含三种模式的 Caddyfile/Nginx 配置示例、性能对比和开发注意事项
+
+### 修改
+- ✅ **`public/index.php` 精简**：仅保留 2 行（require bootstrap + Flight::start），适用于 PHP-FPM / FrankenPHP Classic
+- ✅ **`app/helpers/functions.php`**：`success()`、`error()`、`layuiTable()` 的 `exit` 替换为 `terminateRequest()`
+- ✅ **`app/helpers/permission.php`**：`checkPermission()` 的 `exit` 替换为 `terminateRequest()`
+- ✅ **`app/api/admin/AdminViewController.php`**：`renderError()` 的 `exit` 替换为 `terminateRequest()`
+- ✅ **`app/helpers/security.php`**：移除文件顶层的 `session_start()`，改为 Worker 模式每次请求按需启动
+
+### 架构说明
+
+**切换模式只需改服务器配置，代码零改动：**
+
+```
+PHP-FPM    → Nginx 指向 public/，入口 index.php
+Classic    → Caddyfile: php_server
+Worker     → Caddyfile: php_server { worker worker.php }
+```
+
+详见 [SERVER_MODES.md](SERVER_MODES.md)
+
+---
+
 ## [2.3.7] - 2026-02-12 🐛 修复 CRUD 设计器显示与自动识别问题
 
 ### 修复
