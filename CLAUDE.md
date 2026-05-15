@@ -23,6 +23,7 @@ This project includes 5 custom skills in `.claude/skills/`. When a task matches 
 | **frontend-view** | `.claude/skills/frontend-view/SKILL.md` | Creating public-facing frontend pages — list pages, detail pages, landing pages, error pages |
 | **api-development** | `.claude/skills/api-development/SKILL.md` | Creating any non-CRUD API endpoint — client APIs (`/api/*`) or admin APIs (`/api/admin/*`) |
 | **database** | `.claude/skills/database/SKILL.md` | Database table design, CrudConfig-to-SQL type mapping, CREATE/ALTER via MCP |
+| **medoo-query** | `.claude/skills/medoo-query/SKILL.md` | Medoo ORM query syntax reference — JOINs, WHERE modifiers, aggregates, common mistakes |
 
 Each skill contains the full workflow, code templates, and conventions for its domain. Load the relevant skill before starting implementation.
 
