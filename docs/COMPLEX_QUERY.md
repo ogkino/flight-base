@@ -20,9 +20,9 @@
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class ArticleController
 {
@@ -315,9 +315,9 @@ public static function batchUpdateStatus()
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class UserController
 {

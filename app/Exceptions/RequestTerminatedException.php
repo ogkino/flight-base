@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\exceptions;
 
 /**
  * 请求终止异常

@@ -1,7 +1,7 @@
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 use ReflectionClass;
 use ReflectionMethod;
 

@@ -318,11 +318,11 @@ export const fetchArticles = async () => {
 
 // 前端页面路由（返回 HTML）
 Flight::route('GET /', function(){
-    \App\Api\ArticleController::listPage();
+    \App\api\ArticleController::listPage();
 });
 
 Flight::route('GET /article/@id', function($id){
-    \App\Api\ArticleController::detailPage($id);
+    \App\api\ArticleController::detailPage($id);
 });
 ```
 

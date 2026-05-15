@@ -245,9 +245,9 @@ CREATE TABLE `og_products` (
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class ProductController
 {
@@ -262,7 +262,7 @@ class ProductController
 
 ```php
 Flight::route('GET /api/admin/products', function(){
-    \App\Api\Admin\ProductController::list();
+    \App\api\admin\ProductController::list();
 });
 // ... 其他路由
 ```

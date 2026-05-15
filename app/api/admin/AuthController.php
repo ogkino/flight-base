@@ -1,8 +1,8 @@
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
-use App\Middleware\CaptchaMiddleware;
+use App\middleware\AuthMiddleware;
+use App\middleware\CaptchaMiddleware;
 
 /**
  * 管理员认证控制器

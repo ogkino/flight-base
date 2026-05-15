@@ -13,7 +13,7 @@
 function terminateRequest(): void
 {
     if (defined('APP_WORKER_MODE') && APP_WORKER_MODE) {
-        throw new \App\Exceptions\RequestTerminatedException();
+        throw new \App\exceptions\RequestTerminatedException();
     }
     exit;
 }

@@ -523,7 +523,7 @@ Session 仅用于 CSRF Token 功能（`generateCsrfToken()` / `validateCsrfToken
 ```php
 // app/bootstrap.php
 Flight::route('GET /api/admin/your-module', function () {
-    \App\Api\Admin\YourController::list();
+    \App\api\admin\YourController::list();
 });
 ```
 

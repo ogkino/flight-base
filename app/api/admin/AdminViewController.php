@@ -1,7 +1,7 @@
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 /**
  * 管理后台自定义视图控制器

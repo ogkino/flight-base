@@ -187,9 +187,9 @@ CREATE TABLE `og_products` (
 
 ```php
 <?php
-namespace App\Api;
+namespace App\api;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class ProductController
 {
@@ -251,11 +251,11 @@ class ProductController
 ```php
 // 商品管理
 Flight::route('GET /api/products', function(){
-    \App\Api\ProductController::list();
+    \App\api\ProductController::list();
 });
 
 Flight::route('POST /api/product', function(){
-    \App\Api\ProductController::create();
+    \App\api\ProductController::create();
 });
 ```
 
@@ -342,7 +342,7 @@ $token = getHeader('Authorization');
 ### 权限验证
 
 ```php
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 // 需要登录
 Flight::route('GET /api/info', function(){
@@ -440,7 +440,7 @@ Flight::route('DELETE /api/user/@id', function($id){
 
 ```php
 <?php
-namespace App\Api;
+namespace App\api;
 
 class ArticleController
 {
@@ -516,12 +516,12 @@ Flight::set('flight.views.path', __DIR__ . '/../app/views');
 
 // 文章列表页
 Flight::route('GET /articles', function(){
-    \App\Api\ArticleController::listPage();
+    \App\api\ArticleController::listPage();
 });
 
 // 文章详情页
 Flight::route('GET /article/@id', function($id){
-    \App\Api\ArticleController::detailPage($id);
+    \App\api\ArticleController::detailPage($id);
 });
 ```
 

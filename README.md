@@ -347,9 +347,9 @@ public static function products()
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class ProductController
 {
@@ -409,19 +409,19 @@ class ProductController
 
 ```php
 Flight::route('GET /api/admin/products', function(){
-    \App\Api\Admin\ProductController::list();
+    \App\api\admin\ProductController::list();
 });
 
 Flight::route('POST /api/admin/product', function(){
-    \App\Api\Admin\ProductController::create();
+    \App\api\admin\ProductController::create();
 });
 
 Flight::route('POST /api/admin/product/@id', function($id){
-    \App\Api\Admin\ProductController::update($id);
+    \App\api\admin\ProductController::update($id);
 });
 
 Flight::route('DELETE /api/admin/product/@id', function($id){
-    \App\Api\Admin\ProductController::delete($id);
+    \App\api\admin\ProductController::delete($id);
 });
 ```
 

@@ -1,5 +1,5 @@
 <?php
-namespace App\Api;
+namespace App\api;
 
 /**
  * 健康检查控制器

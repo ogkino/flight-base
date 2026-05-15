@@ -27,7 +27,7 @@ if (!function_exists('hasPermission')) {
 }
 
 use Medoo\Medoo;
-use App\Middleware\CorsMiddleware;
+use App\middleware\CorsMiddleware;
 
 // ==================== 基础配置 ====================
 $appConfig = require __DIR__ . '/config/app.php';
@@ -85,168 +85,168 @@ Flight::route('GET /', function () {
 });
 
 Flight::route('GET /api/health', function () {
-    \App\Api\HealthController::check();
+    \App\api\HealthController::check();
 });
 
 Flight::route('GET /api/captcha', function () {
-    \App\Api\CaptchaController::generate();
+    \App\api\CaptchaController::generate();
 });
 
 // ========== 前端业务接口 ==========
 
 Flight::route('POST /api/login', function () {
-    \App\Api\AuthController::login();
+    \App\api\AuthController::login();
 });
 
 Flight::route('GET /api/info', function () {
-    \App\Api\AuthController::info();
+    \App\api\AuthController::info();
 });
 
 Flight::route('POST /api/logout', function () {
-    \App\Api\AuthController::logout();
+    \App\api\AuthController::logout();
 });
 
 // ========== 前端页面路由（Views）==========
 
 Flight::route('GET /articles', function () {
-    \App\Api\ArticleController::listPage();
+    \App\api\ArticleController::listPage();
 });
 
 Flight::route('GET /article/@id', function ($id) {
-    \App\Api\ArticleController::detailPage($id);
+    \App\api\ArticleController::detailPage($id);
 });
 
 Flight::route('GET /api/articles', function () {
-    \App\Api\ArticleController::listApi();
+    \App\api\ArticleController::listApi();
 });
 
 Flight::route('GET /api/article/@id', function ($id) {
-    \App\Api\ArticleController::detailApi($id);
+    \App\api\ArticleController::detailApi($id);
 });
 
 // ========== 管理后台接口（/api/admin/*）==========
 
 Flight::route('POST /api/admin/login', function () {
-    \App\Api\Admin\AuthController::login();
+    \App\api\admin\AuthController::login();
 });
 
 Flight::route('GET /api/admin/info', function () {
-    \App\Api\Admin\AuthController::info();
+    \App\api\admin\AuthController::info();
 });
 
 Flight::route('POST /api/admin/logout', function () {
-    \App\Api\Admin\AuthController::logout();
+    \App\api\admin\AuthController::logout();
 });
 
 Flight::route('POST /api/admin/change-password', function () {
-    \App\Api\Admin\AuthController::changePassword();
+    \App\api\admin\AuthController::changePassword();
 });
 
 Flight::route('GET /api/admin/config', function () {
-    \App\Api\Admin\ConfigController::getPageConfig();
+    \App\api\admin\ConfigController::getPageConfig();
 });
 
 Flight::route('GET /api/admin/menus', function () {
-    \App\Api\Admin\ConfigController::getMenus();
+    \App\api\admin\ConfigController::getMenus();
 });
 
 Flight::route('GET /api/admin/system', function () {
-    \App\Api\Admin\ConfigController::getSystemConfig();
+    \App\api\admin\ConfigController::getSystemConfig();
 });
 
 // 仪表盘统计接口
 Flight::route('GET /api/admin/stats/users', function () {
-    \App\Api\Admin\DashboardController::getUsersCount();
+    \App\api\admin\DashboardController::getUsersCount();
 });
 
 Flight::route('GET /api/admin/stats/articles', function () {
-    \App\Api\Admin\DashboardController::getArticlesCount();
+    \App\api\admin\DashboardController::getArticlesCount();
 });
 
 Flight::route('GET /api/admin/stats/views', function () {
-    \App\Api\Admin\DashboardController::getTodayViews();
+    \App\api\admin\DashboardController::getTodayViews();
 });
 
 Flight::route('GET /api/admin/stats/system', function () {
-    \App\Api\Admin\DashboardController::getSystemStatus();
+    \App\api\admin\DashboardController::getSystemStatus();
 });
 
 // 文件上传
 Flight::route('POST /api/admin/upload', function () {
-    \App\Api\Admin\UploadController::upload();
+    \App\api\admin\UploadController::upload();
 });
 
 // 用户管理
 Flight::route('GET /api/admin/users', function () {
-    \App\Api\Admin\UserController::list();
+    \App\api\admin\UserController::list();
 });
 
 Flight::route('POST /api/admin/user', function () {
-    \App\Api\Admin\UserController::create();
+    \App\api\admin\UserController::create();
 });
 
 Flight::route('POST /api/admin/user/@id', function ($id) {
-    \App\Api\Admin\UserController::update($id);
+    \App\api\admin\UserController::update($id);
 });
 
 Flight::route('DELETE /api/admin/user/@id', function ($id) {
-    \App\Api\Admin\UserController::delete($id);
+    \App\api\admin\UserController::delete($id);
 });
 
 // 文章管理
 Flight::route('GET /api/admin/articles', function () {
-    \App\Api\Admin\ArticleController::list();
+    \App\api\admin\ArticleController::list();
 });
 
 Flight::route('GET /api/admin/articles/export', function () {
-    \App\Api\Admin\ArticleController::export();
+    \App\api\admin\ArticleController::export();
 });
 
 Flight::route('POST /api/admin/article', function () {
-    \App\Api\Admin\ArticleController::create();
+    \App\api\admin\ArticleController::create();
 });
 
 Flight::route('POST /api/admin/article/@id', function ($id) {
-    \App\Api\Admin\ArticleController::update($id);
+    \App\api\admin\ArticleController::update($id);
 });
 
 Flight::route('DELETE /api/admin/article/@id', function ($id) {
-    \App\Api\Admin\ArticleController::delete($id);
+    \App\api\admin\ArticleController::delete($id);
 });
 
 // 管理员管理
 Flight::route('GET /api/admin/admins', function () {
-    \App\Api\Admin\AdminManageController::list();
+    \App\api\admin\AdminManageController::list();
 });
 
 Flight::route('POST /api/admin/admin', function () {
-    \App\Api\Admin\AdminManageController::create();
+    \App\api\admin\AdminManageController::create();
 });
 
 Flight::route('POST /api/admin/admin/@id', function ($id) {
-    \App\Api\Admin\AdminManageController::update($id);
+    \App\api\admin\AdminManageController::update($id);
 });
 
 Flight::route('DELETE /api/admin/admin/@id', function ($id) {
-    \App\Api\Admin\AdminManageController::delete($id);
+    \App\api\admin\AdminManageController::delete($id);
 });
 
 Flight::route('GET /api/admin/permissions', function () {
-    \App\Api\Admin\AdminManageController::getPermissionOptions();
+    \App\api\admin\AdminManageController::getPermissionOptions();
 });
 
 // CRUD 可视化设计器
 Flight::route('GET /api/admin/crud-designer/config', function () {
-    \App\Api\Admin\CrudDesignerController::getConfig();
+    \App\api\admin\CrudDesignerController::getConfig();
 });
 
 Flight::route('POST /api/admin/crud-designer/save', function () {
-    \App\Api\Admin\CrudDesignerController::saveConfig();
+    \App\api\admin\CrudDesignerController::saveConfig();
 });
 
 // ========== 管理后台自定义视图页面（View 模式）==========
 Flight::route('GET /admin/view/@viewName', function ($viewName) {
-    \App\Api\Admin\AdminViewController::render($viewName);
+    \App\api\admin\AdminViewController::render($viewName);
 });
 
 // ========== 404 处理 ==========

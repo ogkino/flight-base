@@ -1,7 +1,7 @@
 <?php
-namespace App\Api;
+namespace App\api;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 /**
  * 认证控制器

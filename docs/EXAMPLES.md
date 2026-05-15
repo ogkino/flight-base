@@ -91,9 +91,9 @@ public static function products()
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class ProductController
 {
@@ -145,19 +145,19 @@ class ProductController
 
 ```php
 Flight::route('GET /api/admin/products', function(){
-    \App\Api\Admin\ProductController::list();
+    \App\api\admin\ProductController::list();
 });
 
 Flight::route('POST /api/admin/product', function(){
-    \App\Api\Admin\ProductController::create();
+    \App\api\admin\ProductController::create();
 });
 
 Flight::route('POST /api/admin/product/@id', function($id){
-    \App\Api\Admin\ProductController::update($id);
+    \App\api\admin\ProductController::update($id);
 });
 
 Flight::route('DELETE /api/admin/product/@id', function($id){
-    \App\Api\Admin\ProductController::delete($id);
+    \App\api\admin\ProductController::delete($id);
 });
 ```
 
@@ -486,22 +486,22 @@ error('文章不存在', 404);
 ```php
 // GET 请求
 Flight::route('GET /api/article/@id', function($id){
-    \App\Api\ArticleController::detailApi($id);
+    \App\api\ArticleController::detailApi($id);
 });
 
 // POST 请求
 Flight::route('POST /api/article', function(){
-    \App\Api\ArticleController::createApi();
+    \App\api\ArticleController::createApi();
 });
 
 // PUT 请求（更新）
 Flight::route('PUT /api/article/@id', function($id){
-    \App\Api\ArticleController::updateApi($id);
+    \App\api\ArticleController::updateApi($id);
 });
 
 // DELETE 请求
 Flight::route('DELETE /api/article/@id', function($id){
-    \App\Api\ArticleController::deleteApi($id);
+    \App\api\ArticleController::deleteApi($id);
 });
 ```
 

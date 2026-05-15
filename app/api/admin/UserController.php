@@ -1,8 +1,8 @@
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
 use Flight;
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 /**
  * 用户管理控制器（管理员）

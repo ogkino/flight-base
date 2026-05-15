@@ -351,9 +351,9 @@ auditLog('删除文章', [
 
 ```php
 <?php
-namespace App\Api\Admin;
+namespace App\api\admin;
 
-use App\Middleware\AuthMiddleware;
+use App\middleware\AuthMiddleware;
 
 class UserController
 {

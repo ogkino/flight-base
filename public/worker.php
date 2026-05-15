@@ -43,7 +43,7 @@ do {
 
         try {
             Flight::start();
-        } catch (\App\Exceptions\RequestTerminatedException $e) {
+        } catch (\App\exceptions\RequestTerminatedException $e) {
             // 正常的请求终止（由 success/error/layuiTable 等函数触发）
             // 不是错误，什么都不做，继续处理下一个请求
         }

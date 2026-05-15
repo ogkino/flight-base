@@ -1,5 +1,5 @@
 <?php
-namespace App\Middleware;
+namespace App\middleware;
 
 use Flight;
 
