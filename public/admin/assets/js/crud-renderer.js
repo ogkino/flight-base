@@ -93,7 +93,7 @@ class CrudRenderer {
                          
                          const $select = $(`select[name="${field.name}"]`);
                          if ($select.length > 0) {
-                             let html = `<option value="">${field.placeholder || '请选择'}</option>`;
+                             let html = `<option value="">${field.placeholder || t('crud.please_select', '请选择')}</option>`;
                              if (Array.isArray(list)) {
                                  list.forEach(item => {
                                      html += `<option value="${item[valueField]}">${item[labelField]}</option>`;
@@ -125,14 +125,14 @@ class CrudRenderer {
                     <div class="layui-inline">
                         <input type="text" name="${field.name}" 
                                id="search-date-${field.name}"
-                               placeholder="${field.placeholder || '请选择日期'}" 
+                               placeholder="${field.placeholder || t('crud.please_select_date', '请选择日期')}" 
                                class="layui-input search-date-item" 
                                style="width: ${field.width || 200}px;"
                                autocomplete="off">
                     </div>
                 `;
             } else if (field.type === 'select') {
-                let optionsHtml = `<option value="">${field.placeholder || '请选择'}</option>`;
+                let optionsHtml = `<option value="">${field.placeholder || t('crud.please_select', '请选择')}</option>`;
                 if (field.options && Array.isArray(field.options)) {
                     field.options.forEach(opt => {
                         optionsHtml += `<option value="${opt.value}">${opt.label || opt.title || opt.value}</option>`;
@@ -161,9 +161,9 @@ class CrudRenderer {
         let buttonsHtml = '';
         buttonsHtml += `
             <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search">
-                <i class="layui-icon layui-icon-search"></i> 搜索
+                <i class="layui-icon layui-icon-search"></i> ${t('crud.search', '搜索')}
             </button>
-            <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+            <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">${t('crud.reset', '重置')}</button>
         `;
         
         toolbar.forEach(btn => {
@@ -399,7 +399,7 @@ class CrudRenderer {
                     templet: (d) => {
                         const url = d[col.field];
                         if (!url) return '-';
-                        return `<a href="${url}" target="_blank" class="layui-table-link" style="color: #1E9FFF;">查看文件</a>`;
+                        return `<a href="${url}" target="_blank" class="layui-table-link" style="color: #1E9FFF;">${t('crud.view_file', '查看文件')}</a>`;
                     }
                 };
             }
@@ -471,7 +471,7 @@ class CrudRenderer {
                         }
                         
                         // 文本优先顺序：配置的文本 -> 字段值 -> 默认文本
-                        const text = col.text || val || '查看';
+                        const text = col.text || val || t('crud.view', '查看');
                         
                         if (!href) return '-';
                         return `<a href="${href}" target="_blank" class="layui-table-link" style="color: #1E9FFF;">${text}</a>`;
@@ -632,6 +632,9 @@ class CrudRenderer {
             return col;
         });
 
+        // "操作" 列标题（多语言），后面 isAdaptable() 判断列类型时也会用到
+        const actionsColTitle = t('crud.actions', '操作');
+
         // 动态注入操作列（如果配置了 actions）
         if (this.config.actions && this.config.actions.length > 0) {
             // 移除旧的 toolbar 列（如果有）
@@ -645,7 +648,7 @@ class CrudRenderer {
             
             cleanCols.push({
                 fixed: isMobile ? '' : 'right',
-                title: '操作',
+                title: actionsColTitle,
                 width: actionsWidth,
                 templet: (d) => {
                     let html = '';
@@ -688,7 +691,7 @@ class CrudRenderer {
 
         // 辅助：判断列是否适合作为自适应列（非固定、非操作、非ID、非多选）
         const isAdaptable = (col) =>
-            !col.fixed && col.title !== '操作' && col.field !== 'id' &&
+            !col.fixed && col.title !== actionsColTitle && col.field !== 'id' &&
             col.type !== 'checkbox' && col.type !== 'switch';
 
         // 1. 优先找 mainFields 中【没有配置 width 的列】→ 让它自适应
@@ -783,7 +786,7 @@ class CrudRenderer {
                         
                         layer.open({
                             type: 2,
-                            title: actionConfig.text || '操作',
+                            title: actionConfig.text || t('crud.actions', '操作'),
                             shadeClose: true,
                             shade: 0,
                             maxmin: true,
@@ -837,7 +840,7 @@ class CrudRenderer {
                             
                             layer.open({
                                 type: 2,
-                                title: actionConfig.text || '预览',
+                                title: actionConfig.text || t('crud.preview', '预览'),
                                 shadeClose: true,
                                 shade: 0, // 去掉遮罩
                                 maxmin: true, // 允许最大化
@@ -873,9 +876,9 @@ class CrudRenderer {
                 data: data
             }).then(res => {
                 if (res.code === 0) {
-                    layer.msg('状态更新成功', { icon: 1, time: 1000 });
+                    layer.msg(t('crud.status_update_success', '状态更新成功'), { icon: 1, time: 1000 });
                 } else {
-                    layer.msg(res.msg || '更新失败', { icon: 2 });
+                    layer.msg(res.msg || t('crud.update_failed', '更新失败'), { icon: 2 });
                     // 失败时回滚状态
                     obj.elem.checked = !obj.elem.checked;
                     form.render('checkbox');
@@ -892,7 +895,7 @@ class CrudRenderer {
         const form = layui.form;
         
         const isEdit = !!rowData;
-        const title = isEdit ? '编辑' : '新增';
+        const title = isEdit ? t('crud.edit', '编辑') : t('crud.add', '新增');
         
         // 根据字段数量动态调整弹窗大小
         const formFieldCount = this.config.form?.length || 0;
@@ -912,8 +915,8 @@ class CrudRenderer {
                     ${this.renderFormFields(rowData)}
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
-                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <button class="layui-btn" lay-submit lay-filter="submitForm">${t('crud.submit', '提交')}</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">${t('crud.reset', '重置')}</button>
                         </div>
                     </div>
                 </form>
@@ -1128,7 +1131,7 @@ class CrudRenderer {
                                       data-value="${value}"
                                       data-value-field="${field.valueField || 'id'}" 
                                       data-label-field="${field.labelField || 'name'}">
-                                      <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中...
+                                      <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> ${t('crud.loading', '加载中...')}
                                  </div>`;
                     } else {
                         html += '<div class="layui-form-mid layui-word-aux">未配置选项数据</div>';
@@ -1160,7 +1163,7 @@ class CrudRenderer {
                                       data-value="${value}"
                                       data-value-field="${field.valueField || 'id'}" 
                                       data-label-field="${field.labelField || 'name'}">
-                                      <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 加载中...
+                                      <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> ${t('crud.loading', '加载中...')}
                                  </div>`;
                     } else {
                         html += '<div class="layui-form-mid layui-word-aux">未配置选项数据</div>';
@@ -1185,7 +1188,7 @@ class CrudRenderer {
                     html += `<select name="${field.name}" id="${fieldId}" ${requiredAttr} ${verifyAttr} ${disabled ? 'disabled' : ''} ${dynamicAttrs}>`;
                     
                     if (!required) {
-                        html += '<option value="">请选择</option>';
+                        html += `<option value="">${t('crud.please_select', '请选择')}</option>`;
                     }
                     
                     if (staticOptions.length > 0) {
@@ -1195,7 +1198,7 @@ class CrudRenderer {
                         });
                     } else if (field.url) {
                         // 如果是动态数据，初始显示 Loading 或当前值
-                        html += `<option value="${value}" selected>加载中...</option>`;
+                        html += `<option value="${value}" selected>${t('crud.loading', '加载中...')}</option>`;
                     }
                     
                     html += '</select>';
@@ -1239,7 +1242,7 @@ class CrudRenderer {
                                     name="${field.name}" 
                                     id="${fieldId}"
                                     value="${value}" 
-                                    placeholder="${field.placeholder || '请选择'}"
+                                    placeholder="${field.placeholder || t('crud.please_select', '请选择')}"
                                     ${requiredAttr} ${verifyAttr}
                                     class="layui-input"
                                     data-date-type="${field.type}">`;
@@ -1249,7 +1252,7 @@ class CrudRenderer {
                 case 'image':
                     // 文件上传
                     const isImage = field.type === 'image';
-                    const fileDisplay = isImage ? '' : (value ? `<a href="${value}" target="_blank" id="${fieldId}_link" style="margin-right: 10px; color: #1E9FFF;">查看文件</a>` : `<a href="javascript:;" target="_blank" id="${fieldId}_link" style="display:none; margin-right: 10px; color: #1E9FFF;">查看文件</a>`);
+                    const fileDisplay = isImage ? '' : (value ? `<a href="${value}" target="_blank" id="${fieldId}_link" style="margin-right: 10px; color: #1E9FFF;">${t('crud.view_file', '查看文件')}</a>` : `<a href="javascript:;" target="_blank" id="${fieldId}_link" style="display:none; margin-right: 10px; color: #1E9FFF;">${t('crud.view_file', '查看文件')}</a>`);
                     
                     html += `<button type="button" class="layui-btn" id="${fieldId}_btn">
                                 <i class="layui-icon layui-icon-upload"></i> 选择文件
@@ -1292,7 +1295,7 @@ class CrudRenderer {
                     // 图标选择
                     html += `<div class="layui-input-inline" style="width: auto;">
                                 <input type="text" name="${field.name}" id="${fieldId}" value="${value}" 
-                                       placeholder="${field.placeholder || '请选择图标'}" class="layui-input" 
+                                       placeholder="${field.placeholder || t('crud.please_select_icon', '请选择图标')}" class="layui-input" 
                                        style="width: 200px;">
                              </div>
                              <div class="layui-input-inline" style="width: auto;">
@@ -1306,7 +1309,7 @@ class CrudRenderer {
                     // 标签输入
                     html += `<div class="layui-input" style="height: auto; min-height: 38px; padding: 4px 10px; display: flex; flex-wrap: wrap; align-items: center;">
                                 <div id="${fieldId}_tags" style="display: contents;"></div>
-                                <input type="text" id="${fieldId}_input" placeholder="${field.placeholder || '输入后回车'}" 
+                                <input type="text" id="${fieldId}_input" placeholder="${field.placeholder || t('crud.input_then_enter', '输入后回车')}" 
                                        style="border: none; outline: none; height: 30px; line-height: 30px; min-width: 100px; flex: 1;">
                                 <input type="hidden" name="${field.name}" id="${fieldId}" value="${value}">
                              </div>`;
@@ -1512,12 +1515,12 @@ class CrudRenderer {
 
                     layer.open({
                         type: 1,
-                        title: '选择图标',
+                        title: t('crud.select_icon_title', '选择图标'),
                         area: ['600px', '400px'],
                         content: `
                             <div style="padding: 10px;">
                                 <div class="layui-form-item" style="margin-bottom: 10px;">
-                                    <input type="text" id="icon-search-${fieldId}" placeholder="搜索图标..." class="layui-input">
+                                    <input type="text" id="icon-search-${fieldId}" placeholder="${t('crud.search_icon', '搜索图标...')}" class="layui-input">
                                 </div>
                                 <div id="icon-list-${fieldId}" style="height: 300px; overflow-y: auto; padding: 5px;">
                                     ${renderIcons()}
@@ -1590,10 +1593,10 @@ class CrudRenderer {
                                 if (link) {
                                     link.href = res.data.url;
                                     link.style.display = 'inline';
-                                    link.textContent = '查看文件';
+                                    link.textContent = t('crud.view_file', '查看文件');
                                 }
                             } else {
-                                document.getElementById(fieldId + '_text').textContent = '上传成功';
+                                document.getElementById(fieldId + '_text').textContent = t('crud.upload_success', '上传成功');
                                 document.getElementById(fieldId + '_text').style.display = 'inline';
                             }
                             
@@ -1610,11 +1613,11 @@ class CrudRenderer {
                                 }
                             }
                         } else {
-                            layer.msg('上传失败：' + res.msg, { icon: 2 });
+                            layer.msg(t('crud.upload_failed', '上传失败') + '：' + res.msg, { icon: 2 });
                         }
                     },
                     error: () => {
-                        layer.msg('上传失败', { icon: 2 });
+                        layer.msg(t('crud.upload_failed', '上传失败'), { icon: 2 });
                     }
                 };
                 
@@ -1691,7 +1694,7 @@ class CrudRenderer {
                         
                         // 编辑器配置
                         const editorConfig = {
-                            placeholder: field.placeholder || '请输入内容...',
+                            placeholder: field.placeholder || t('crud.editor_placeholder', '请输入内容...'),
                             onChange(editor) {
                                 // 同步内容到隐藏的 textarea
                                 const html = editor.getHtml();
@@ -1712,7 +1715,7 @@ class CrudRenderer {
                                     if (res.code === 0) {
                                         insertFn(res.data.url, '', '');
                                     } else {
-                                        layer.msg('图片上传失败：' + res.msg, { icon: 2 });
+                                        layer.msg(t('crud.image_upload_failed', '图片上传失败') + '：' + res.msg, { icon: 2 });
                                     }
                                 }
                             };
@@ -1899,11 +1902,11 @@ class CrudRenderer {
             const labelField = select.dataset.labelField;
             const fieldName = select.name;
             // 获取当前选中的值（可能是编辑时的值）
-            const currentValue = rowData ? rowData[fieldName] : (select.value === '加载中...' ? '' : select.value);
+            const currentValue = rowData ? rowData[fieldName] : (select.value === t('crud.loading', '加载中...') ? '' : select.value);
             
             request(url.replace(API_BASE, ''), { method: 'GET' }).then(res => {
                 if (res.code === 0) {
-                    let optionsHtml = '<option value="">请选择</option>';
+                    let optionsHtml = `<option value="">${t('crud.please_select', '请选择')}</option>`;
                     const list = res.data.list || res.data; // 兼容 {code:0, data:[...]} 和 {code:0, data:{list:[...]}}
                     
                     if (Array.isArray(list)) {
@@ -1998,7 +2001,7 @@ class CrudRenderer {
     deleteRow(data, obj) {
         const layer = layui.layer;
         
-        layer.confirm('确定删除吗？', { icon: 3 }, () => {
+        layer.confirm(t('crud.confirm_delete', '确定删除吗？'), { icon: 3 }, () => {
             const loadIndex = layer.load(2, { shade: 0.3 });
             
             let url = this.config.api.delete.replace('{id}', data.id);
@@ -2009,7 +2012,7 @@ class CrudRenderer {
                 layer.close(loadIndex);
                 if (res.code === 0) {
                     obj.del();
-                    layer.msg('删除成功', { icon: 1 });
+                    layer.msg(t('crud.delete_success', '删除成功'), { icon: 1 });
                 } else {
                     layer.msg(res.msg, { icon: 2 });
                 }
@@ -2050,11 +2053,11 @@ class CrudRenderer {
                             <div class="layui-input-block">
                                 <button class="layui-btn layui-btn-normal" lay-submit lay-filter="submitFormPage">
                                     <i class="layui-icon layui-icon-ok"></i>
-                                    提交
+                                    ${t('crud.submit', '提交')}
                                 </button>
                                 <button type="reset" class="layui-btn layui-btn-primary">
                                     <i class="layui-icon layui-icon-refresh"></i>
-                                    重置
+                                    ${t('crud.reset', '重置')}
                                 </button>
                             </div>
                         </div>
@@ -2157,13 +2160,13 @@ class CrudRenderer {
         form.verify({
             password: function(value) {
                 if (value.length < 6) {
-                    return '密码长度不能少于6位';
+                    return t('crud.password_too_short', '密码长度不能少于6位');
                 }
             },
             confirmPassword: function(value) {
                 const newPassword = document.querySelector('input[name=new_password]').value;
                 if (value !== newPassword) {
-                    return '两次输入的密码不一致';
+                    return t('crud.password_mismatch', '两次输入的密码不一致');
                 }
             }
         });

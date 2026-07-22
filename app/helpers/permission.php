@@ -88,7 +88,8 @@ function getAllPermissions()
     // 从 CrudConfig 获取所有模块
     require_once __DIR__ . '/../config/CrudConfig.php';
     
-    $menus = CrudConfig::getMenus();
+    // 用 localizeConfig() 解析 name/name_en 等后缀，保证权限配置面板里的模块名跟随当前语言
+    $menus = localizeConfig(CrudConfig::getMenus());
     $permissions = [];
     
     foreach ($menus as $groupName => $groupConfig) {
@@ -104,7 +105,7 @@ function getAllPermissions()
                     'name' => $item['name'],
                     'type' => 'view',
                     'actions' => [
-                        'access' => '访问权限'
+                        'access' => lang('permission.access')
                     ]
                 ];
                 continue;
@@ -122,17 +123,22 @@ function getAllPermissions()
             $permissions[$page] = [
                 'name' => $item['name'],
                 'actions' => [
-                    'list' => '查看列表',
-                    'create' => '新增',
-                    'update' => '编辑',
-                    'delete' => '删除',
-                    'export' => '导出',
-                    'custom' => '自定义'
+                    'list' => lang('permission.list'),
+                    'create' => lang('permission.create'),
+                    'update' => lang('permission.update'),
+                    'delete' => lang('permission.delete'),
+                    'export' => lang('permission.export'),
+                    'custom' => lang('permission.custom')
                 ]
             ];
         }
     }
-    
+
+    // 说明：字典数据（dictData）的管理入口已合并进「字典管理」（dictType）列表的
+    // "配置数据"弹层，不再作为独立的权限维度。字典数据的增删改查复用 dictType 的
+    // list/create/update/delete 四个动作（见 DictDataController），因此这里不再
+    // 单独注册 dictData 权限项。
+
     return $permissions;
 }
 
@@ -148,14 +154,14 @@ function checkPermission($module, $action)
     $adminId = Flight::get('admin_id');
 
     if (!$adminId) {
-        error('请先登录', 401);
+        error(lang('common.please_login'), 401);
         // error() 内部会调用 terminateRequest()，以下代码不会执行
         // 保留 terminateRequest() 作为防御性保证（静态分析友好）
         terminateRequest();
     }
 
     if (!hasPermission($adminId, $module, $action)) {
-        error('无权限访问', 403);
+        error(lang('common.no_permission'), 403);
         terminateRequest();
     }
 }

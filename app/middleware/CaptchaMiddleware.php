@@ -20,32 +20,35 @@ class CaptchaMiddleware
         if (empty($captcha)) {
             Flight::json([
                 'code' => 400,
-                'msg' => '请输入验证码',
+                'msg' => lang('auth.captcha_required'),
                 'data' => null
             ]);
             Flight::stop();
+            return; // Flight::stop() 不会中断脚本执行，必须显式 return 防止继续往下走
         }
         
         if (empty($_SESSION['captcha'])) {
             Flight::json([
                 'code' => 400,
-                'msg' => '验证码已失效，请刷新',
+                'msg' => lang('auth.captcha_expired'),
                 'data' => null
             ]);
             Flight::stop();
+            return;
         }
         
         // 不区分大小写比较
-        if (strtolower($captcha) !== strtolower($_SESSION['captcha'])) {
+        if (strtolower((string)$captcha) !== strtolower((string)$_SESSION['captcha'])) {
             // 验证失败，清除验证码，强制用户刷新
             unset($_SESSION['captcha']);
             
             Flight::json([
                 'code' => 400,
-                'msg' => '验证码错误',
+                'msg' => lang('auth.captcha_error'),
                 'data' => null
             ]);
             Flight::stop();
+            return;
         }
         
         // 验证通过，清除验证码（防止重放）

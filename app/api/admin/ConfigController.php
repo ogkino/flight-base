@@ -26,9 +26,10 @@ class ConfigController
         
         if (method_exists('CrudConfig', $method)) {
             $config = call_user_func(['CrudConfig', $method]);
-            success($config);
+            // 解析 CrudConfig 里手写的字段级多语言后缀（如 label_en），详见 docs/I18N.md
+            success(localizeConfig($config));
         } else {
-            error('配置不存在');
+            error(lang('common.config_not_found'));
         }
     }
     
@@ -44,7 +45,8 @@ class ConfigController
         // 加载配置类
         require_once __DIR__ . '/../../config/CrudConfig.php';
         
-        $menus = \CrudConfig::getMenus();
+        // 解析菜单项里手写的字段级多语言后缀（如 name_en），详见 docs/I18N.md
+        $menus = localizeConfig(\CrudConfig::getMenus());
         
         // 获取当前管理员 ID
         $adminId = \Flight::get('admin_id');
@@ -106,6 +108,9 @@ class ConfigController
                 // 旧格式（无 icon）同样需要携带 expanded，否则前端会错误地使用
                 // isFirstGroup 回退逻辑，导致第一个分组始终强制展开。
                 $filteredMenus[$groupName] = [
+                    // 分组展示名：优先用已被 localizeConfig() 解析为当前语言的 title，
+                    // 兼容没有配置 title 的旧数据（直接用数组 key，即默认语言的分组名）
+                    'title'    => $groupConfig['title'] ?? $groupName,
                     'icon'     => $groupIcon ?: null,
                     'expanded' => isset($groupConfig['expanded']) ? (bool)$groupConfig['expanded'] : false,
                     'items'    => $filteredItems,

@@ -26,6 +26,11 @@ if (!function_exists('hasPermission')) {
     require __DIR__ . '/helpers/permission.php';
 }
 
+// 加载多语言（i18n）函数
+if (!function_exists('lang')) {
+    require __DIR__ . '/helpers/i18n.php';
+}
+
 use Medoo\Medoo;
 use App\middleware\CorsMiddleware;
 
@@ -235,6 +240,54 @@ Flight::route('GET /api/admin/permissions', function () {
     \App\api\admin\AdminManageController::getPermissionOptions();
 });
 
+// 字典类型管理
+Flight::route('GET /api/admin/dict/types', function () {
+    \App\api\admin\DictTypeController::list();
+});
+
+Flight::route('GET /api/admin/dict/types/options', function () {
+    \App\api\admin\DictTypeController::options();
+});
+
+Flight::route('POST /api/admin/dict/type', function () {
+    \App\api\admin\DictTypeController::create();
+});
+
+Flight::route('POST /api/admin/dict/type/@id', function ($id) {
+    \App\api\admin\DictTypeController::update($id);
+});
+
+Flight::route('DELETE /api/admin/dict/type/@id', function ($id) {
+    \App\api\admin\DictTypeController::delete($id);
+});
+
+// 字典数据管理
+Flight::route('GET /api/admin/dict/data', function () {
+    \App\api\admin\DictDataController::list();
+});
+
+Flight::route('GET /api/admin/dict/data/options', function () {
+    \App\api\admin\DictDataController::options();
+});
+
+Flight::route('POST /api/admin/dict/data', function () {
+    \App\api\admin\DictDataController::create();
+});
+
+Flight::route('POST /api/admin/dict/data/@id', function ($id) {
+    \App\api\admin\DictDataController::update($id);
+});
+
+Flight::route('DELETE /api/admin/dict/data/@id', function ($id) {
+    \App\api\admin\DictDataController::delete($id);
+});
+
+// 字典数据管理弹层页面（由「字典管理」列表的"配置数据"行操作以 iframe 方式打开）
+// 权限跟随 dictType/dictData 权限，不走 /admin/view/{viewName} 的独立视图权限体系
+Flight::route('GET /admin/dict-data-manage', function () {
+    \App\api\admin\DictDataController::managePage();
+});
+
 // CRUD 可视化设计器
 Flight::route('GET /api/admin/crud-designer/config', function () {
     \App\api\admin\CrudDesignerController::getConfig();
@@ -253,3 +306,4 @@ Flight::route('GET /admin/view/@viewName', function ($viewName) {
 Flight::map('notFound', function () {
     error('接口不存在', 404);
 });
+

@@ -11,6 +11,15 @@ const ADMIN_API_PREFIX = '/api/admin';
 // Token 存储键名
 const TOKEN_KEY = 'admin_token';
 
+// 语言存储键名（localStorage + Cookie 双写，Cookie 供 PHP 视图页/登录页读取）
+const LOCALE_KEY = 'admin_locale';
+
+// 支持的语言列表（需与 app/config/app.php 的 supported_locales 保持一致）
+const SUPPORTED_LOCALES = ['zh-CN', 'en-US'];
+
+// 默认语言
+const DEFAULT_LOCALE = 'zh-CN';
+
 /**
  * Cookie 域名手动覆盖（正常情况留空，自动检测）
  * 仅当使用 .com.cn / .co.uk 等二级公共后缀时需要手动填写，例如：
@@ -80,6 +89,34 @@ function clearToken() {
 }
 
 /**
+ * 获取当前语言
+ * 优先级：localStorage > 浏览器语言 > 默认语言
+ */
+function getLocale() {
+    const saved = localStorage.getItem(LOCALE_KEY);
+    if (saved && SUPPORTED_LOCALES.indexOf(saved) !== -1) {
+        return saved;
+    }
+    return DEFAULT_LOCALE;
+}
+
+/**
+ * 设置当前语言
+ * 同时写入 localStorage（JS 读取用）和 Cookie（PHP 视图页/登录页读取用）
+ */
+function setLocale(locale) {
+    if (SUPPORTED_LOCALES.indexOf(locale) === -1) {
+        locale = DEFAULT_LOCALE;
+    }
+    localStorage.setItem(LOCALE_KEY, locale);
+    const domain    = getCookieDomain();
+    const domainStr = domain ? '; domain=' + domain : '';
+    // max-age=31536000（1年），语言偏好长期保留
+    document.cookie = LOCALE_KEY + '=' + encodeURIComponent(locale)
+        + '; path=/; max-age=31536000; SameSite=Strict' + domainStr;
+}
+
+/**
  * HTTP 请求封装
  */
 function request(url, options = {}) {
@@ -87,7 +124,9 @@ function request(url, options = {}) {
         method: options.method || 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': getToken()
+            'Authorization': getToken(),
+            // 后端 lang() 会读取此 Header 决定返回内容的语言（见 app/helpers/i18n.php）
+            'X-Locale': getLocale()
         }
     };
     

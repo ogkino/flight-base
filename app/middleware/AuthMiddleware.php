@@ -16,13 +16,13 @@ class AuthMiddleware
         $token = getHeader('Authorization');
         
         if (!$token) {
-            error('未授权，请先登录', 401);
+            error(lang('common.unauthorized'), 401);
         }
         
         $payload = validateToken($token);
         
         if (!$payload) {
-            error('Token无效或已过期', 401);
+            error(lang('common.token_invalid'), 401);
         }
         
         // 从数据库验证用户是否存在且状态正常
@@ -35,13 +35,13 @@ class AuthMiddleware
         ]);
         
         if (!$user) {
-            error('用户不存在或已被禁用', 401);
+            error(lang('common.user_disabled'), 401);
         }
 
         // 检查过期时间
         $expired_at = $user['expired_at'];
         if ($expired_at && $expired_at < time()) {
-            error('用户账号已过期', 401);
+            error(lang('common.user_expired'), 401);
         }
         
         // 存储当前用户信息
@@ -64,13 +64,13 @@ class AuthMiddleware
         }
         
         if (!$token) {
-            error('未授权，请先登录', 401);
+            error(lang('common.unauthorized'), 401);
         }
         
         $payload = validateToken($token);
         
         if (!$payload || $payload['type'] !== 'admin') {
-            error('需要管理员权限', 403);
+            error(lang('common.need_admin'), 403);
         }
         
         // 验证管理员
@@ -81,13 +81,13 @@ class AuthMiddleware
         ]);
         
         if (!$admin) {
-            error('管理员不存在或已被禁用', 401);
+            error(lang('common.admin_disabled'), 401);
         }
 
         // 检查过期时间
         $expired_at = $admin['expired_at'];
         if ($expired_at && $expired_at < time()) {
-            error('管理员账号已过期', 401);
+            error(lang('common.admin_expired'), 401);
         }
         
         Flight::set('currentUser', $admin);

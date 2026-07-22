@@ -33,6 +33,7 @@ do {
         Flight::set('currentUser', null);
         Flight::set('userType', null);
         Flight::set('admin_id', null);
+        Flight::set('dictCache', null);
 
         // ── 每次请求独立开启 Session ──
         // security.php 的顶层 session_start() 在 Worker 模式下已被移除，

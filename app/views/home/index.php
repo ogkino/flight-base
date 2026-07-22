@@ -110,7 +110,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Flight Base</h1>
+        <h1>⚡ Flight Base</h1>
         <p class="subtitle">基于 Flight + Medoo + Layui 的超轻量级 PHP 框架</p>
         
         <div class="features">
@@ -130,6 +130,22 @@
                 <h3>🎯 快速开发</h3>
                 <p>适合快速开发 API 接口、管理后台和前端页面</p>
             </div>
+            <div class="feature">
+                <h3>🚀 多运行模式支持</h3>
+                <p>PHP-FPM / FrankenPHP Classic / FrankenPHP Worker</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 多语言支持</h3>
+                <p>支持中文、英文，支持系统字典，支持模块字典</p>
+            </div>
+            <div class="feature">
+                <h3>🔒 安全可靠</h3>
+                <p>完善的安全措施，代码结构清晰，无漏洞风险</p>
+            </div>
+            <div class="feature">
+                <h3>🔄 灵活扩展</h3>
+                <p>灵活扩展，支持自定义扩展，支持自定义模块</p>
+            </div>
         </div>
         
         <div class="links">
@@ -139,8 +155,8 @@
         </div>
         
         <div class="footer">
-            <p>Flight Base v2.0 | MIT License</p>
-            <p style="margin-top: 10px;">技术栈：Flight + Medoo + Layui + PHP 7.4+</p>
+            <p>Flight Base v2.7 | MIT License</p>
+            <p style="margin-top: 10px;">技术栈：Flight + Medoo + Layui + PHP 7.4+ | GitHub: <a href="https://github.com/ogkino/flight-base" style="color: #667eea; text-decoration: none;" target="_blank">ogkino/flight-base</a></p>
         </div>
     </div>
 </body>

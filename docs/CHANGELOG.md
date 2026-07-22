@@ -1,5 +1,11 @@
 # 更新日志
 
+## [2.7.0] - 2026-07-21 多语言支持和系统字典
+
+详见 [i18n.md](i18n.md) [DICT.md](DICT.md)
+
+---
+
 ## [2.6.0] - 2026-03-12 🚀 多运行模式支持（PHP-FPM / FrankenPHP Classic / Worker）
 
 ### 新增

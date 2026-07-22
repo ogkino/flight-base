@@ -3,9 +3,9 @@
 -- ==========================================
 
 -- 创建数据库（如果不存在）
-CREATE DATABASE IF NOT EXISTS `flight_base` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `htpos2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE `flight_base`;
+USE `htpos2`;
 
 -- ==========================================
 -- 管理员表
@@ -167,6 +167,59 @@ NULL,
 1,
 67,
 NOW());
+
+-- ==========================================
+-- 字典类型表（数据字典 - 类型）
+-- ==========================================
+DROP TABLE IF EXISTS `og_dict_type`;
+CREATE TABLE `og_dict_type` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(50) NOT NULL COMMENT '字典名称（如：用户状态）',
+  `type` varchar(50) NOT NULL COMMENT '字典类型编码（英文，程序中引用，如：user_status）',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态：1启用 0禁用',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典类型表';
+
+-- ==========================================
+-- 字典数据表（数据字典 - 数据项）
+-- ==========================================
+DROP TABLE IF EXISTS `og_dict_data`;
+CREATE TABLE `og_dict_data` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `type` varchar(50) NOT NULL COMMENT '字典类型编码（关联 og_dict_type.type）',
+  `label` varchar(100) NOT NULL COMMENT '字典标签（显示文本，如：正常）',
+  `value` varchar(100) NOT NULL COMMENT '字典键值（存储值，如：1）',
+  `sort` int(11) DEFAULT '0' COMMENT '排序（越小越靠前）',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态：1启用 0禁用',
+  `is_default` tinyint(1) DEFAULT '0' COMMENT '是否默认项：1是 0否',
+  `color` varchar(20) DEFAULT NULL COMMENT '标签颜色（前端展示用，如：#1E9FFF）',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`),
+  KEY `sort` (`sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='字典数据表';
+
+-- 插入示例字典类型
+INSERT INTO `og_dict_type` (`name`, `type`, `status`, `remark`) VALUES
+('通用状态', 'common_status', 1, '用于各模块的启用/禁用状态'),
+('用户性别', 'gender', 1, '对应 og_users.gender 字段'),
+('管理员权限组', 'admin_role', 1, '示例：管理端角色分类（暂未接入业务逻辑，仅作演示）');
+
+-- 插入示例字典数据
+INSERT INTO `og_dict_data` (`type`, `label`, `value`, `sort`, `status`, `is_default`, `color`, `remark`) VALUES
+('common_status', '启用', '1', 1, 1, 1, '#1E9FFF', NULL),
+('common_status', '禁用', '0', 2, 1, 0, '#FF5722', NULL),
+('gender', '未知', '0', 1, 1, 1, '#c2c2c2', NULL),
+('gender', '男', '1', 2, 1, 0, '#1E9FFF', NULL),
+('gender', '女', '2', 3, 1, 0, '#FF69B4', NULL),
+('admin_role', '超级管理员', 'super', 1, 1, 0, '#FF5722', NULL),
+('admin_role', '普通管理员', 'normal', 2, 1, 1, '#1E9FFF', NULL);
 
 -- ==========================================
 -- 完成

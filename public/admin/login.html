@@ -3,17 +3,21 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>管理员登录 - Flight Base</title>
+    <title data-i18n="common.login_title">管理员登录 - Flight Base</title>
     <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
     <link rel="stylesheet" href="assets/css/admin.css?v=3.0.0">
 </head>
 <body class="login-page">
 
+<div class="locale-switcher-wrap">
+    <span id="loginLocaleSwitcher"></span>
+</div>
+
 <div class="login-wrap">
     <div class="login-logo">
         <div class="logo-icon">⚡</div>
         <h2>Flight Base</h2>
-        <p>请使用管理员账号登录</p>
+        <p data-i18n="common.welcome_desc">请使用管理员账号登录</p>
     </div>
 
     <div id="login-err"></div>
@@ -23,6 +27,7 @@
             <div class="input-wrap">
                 <i class="input-icon layui-icon layui-icon-username"></i>
                 <input type="text" name="username" required lay-verify="required"
+                       data-i18n-placeholder="common.username_placeholder"
                        placeholder="请输入用户名" autocomplete="off" class="layui-input" value="admin">
             </div>
         </div>
@@ -30,12 +35,14 @@
             <div class="input-wrap">
                 <i class="input-icon layui-icon layui-icon-password"></i>
                 <input type="password" name="password" required lay-verify="required"
+                       data-i18n-placeholder="common.password_placeholder"
                        placeholder="请输入密码" autocomplete="off" class="layui-input" value="password">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="captcha-row">
                 <input type="text" name="captcha" required lay-verify="required"
+                       data-i18n-placeholder="common.captcha_placeholder"
                        placeholder="请输入验证码" autocomplete="off" class="layui-input">
                 <div class="captcha-img-box" title="点击刷新验证码">
                     <img src="/api/captcha" id="captchaImg">
@@ -44,18 +51,22 @@
         </div>
         <input type="hidden" name="type" value="admin">
         <div class="layui-form-item" style="margin-bottom: 0;">
-            <button class="layui-btn login-btn" lay-submit lay-filter="login">立即登录</button>
+            <button class="layui-btn login-btn" lay-submit lay-filter="login" data-i18n="common.login_btn">立即登录</button>
         </div>
     </form>
 
     <div class="login-footer">
-        Powered by Flight Base &copy; 2024
+        <span data-i18n="common.login_footer">Powered by Flight Base</span> &copy; 2024
     </div>
 </div>
 
 <script src="https://unpkg.com/layui@2.8.18/dist/layui.js"></script>
 <script src="assets/js/config.js?v=2.2.2"></script>
+<script src="assets/js/i18n.js?v=1.0.0"></script>
 <script src="assets/js/common.js?v=2.2.2"></script>
+<script>
+    renderLocaleSwitcher('loginLocaleSwitcher');
+</script>
 <script>
     layui.use(['form', 'layer'], function(){
         const form = layui.form;
@@ -105,11 +116,11 @@
                         localStorage.removeItem('admin_permissions');
                     }
 
-                    successMsg('登录成功', function(){
+                    successMsg(t('common.login_success', '登录成功'), function(){
                         location.href = 'index.html';
                     });
                 } else {
-                    $err.textContent = res.msg || '账号或密码错误';
+                    $err.textContent = res.msg || t('common.login_default_error', '账号或密码错误');
                     $err.style.display = 'block';
                     refreshCaptcha();
                 }

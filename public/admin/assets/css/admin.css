@@ -78,6 +78,50 @@ body {
 }
 
 /* ═══════════════════════════════════════════
+   语言切换器（顶部 Header 右上角）
+═══════════════════════════════════════════ */
+.locale-switcher {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background .2s, border-color .2s;
+}
+
+.locale-switcher:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.locale-switcher option {
+    color: #1f2d4a;
+}
+
+/* 登录页语言切换器：浮于登录卡片右上角 */
+.login-page .locale-switcher-wrap {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+}
+
+.login-page .locale-switcher {
+    color: rgba(0, 0, 0, 0.65);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.login-page .locale-switcher:hover {
+    background: #fff;
+}
+
+/* ═══════════════════════════════════════════
    左侧 Sidebar
 ═══════════════════════════════════════════ */
 .admin-sidebar {

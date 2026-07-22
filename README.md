@@ -1,4 +1,4 @@
-# Flight Base 框架 v2.6
+# Flight Base 框架 v2.7
 
 > **轻量级 · 配置驱动 · AI 友好 · 快速开发**
 
@@ -14,6 +14,7 @@
 - ✅ **多运行模式**：同一套代码，无缝支持 PHP-FPM、FrankenPHP Classic、FrankenPHP Worker 三种模式，切换只需改服务器配置 (v2.6)
 - ✅ **自动菜单**：菜单自动从配置生成，支持父级图标、智能分组
 - ✅ **权限系统**：基于 JSON 的轻量级权限管理，精确到 CRUD 操作，自动过滤菜单
+- ✅ **多语言支持**：后台内置中文/英文切换，前后端配套标准（`lang()` / `t()`），5 分钟为新模块接入多语言 (v2.7)
 - ✅ **AI 极度友好**：结构化配置，AI 轻松生成完整功能模块
 - ✅ **超级轻量**：核心代码 < 1000 行，配置驱动让代码量减少 80%
 - ✅ **无需打包**：使用 Layui，修改即刻生效，开发体验极致
@@ -62,7 +63,11 @@ flight-base/
 │   │   ├── env.php               # 环境变量读取
 │   │   ├── functions.php         # 全局函数（含 terminateRequest）
 │   │   ├── permission.php        # 权限验证函数
+│   │   ├── i18n.php              # 🔥 多语言函数（lang() / currentLocale()）
 │   │   └── security.php          # 安全函数（XSS、CSRF、限流等）
+│   ├── lang/                     # 🔥 后端语言包
+│   │   ├── zh-CN.php             # 简体中文（基准语言包）
+│   │   └── en-US.php             # English
 │   ├── middleware/               # 中间件
 │   │   ├── AuthMiddleware.php    # 权限验证中间件
 │   │   └── CorsMiddleware.php    # 跨域中间件
@@ -83,6 +88,7 @@ flight-base/
 │   │   │   └── js/
 │   │   │       ├── common.js     # 公共函数
 │   │   │       ├── config.js     # 前端配置
+│   │   │       ├── i18n.js       # 🔥 前端多语言字典与翻译工具
 │   │   │       └── crud-renderer.js  # 🔥 通用渲染器（配置驱动核心）
 │   │   ├── crud-designer.html    # CRUD 可视化设计器
 │   │   ├── index.html            # 后台主页（单页应用）
@@ -710,6 +716,7 @@ $db->action(function($db) {
 | [EXAMPLES.md](docs/EXAMPLES.md) | **完整示例** - 浏览量统计、分页、API 等 | 学习开发 |
 | [ADMIN_DEV.md](docs/ADMIN_DEV.md) | 后台开发指南、配置驱动开发 | 开发后台功能 |
 | [PERMISSIONS.md](docs/PERMISSIONS.md) | **权限系统** - 权限配置、使用指南 | 配置权限 |
+| [I18N.md](docs/I18N.md) | **多语言（i18n）指南** - 前后端标准、如何为新模块接入中英文 | 开发多语言功能 |
 | [FIELD_TYPES.md](docs/FIELD_TYPES.md) | **字段类型完整参考** - 16+ 字段类型详解 | 查询字段类型 |
 | [FIELD_CONFIG_REFERENCE.md](docs/FIELD_CONFIG_REFERENCE.md) | **字段配置快速参考** - 完整配置对照表 | 字段配置速查 |
 | [SECURITY.md](docs/SECURITY.md) | 安全措施、最佳实践、生产环境清单 | 部署上线 |
@@ -972,7 +979,7 @@ cd your_project_name
 
 ## 🎉 总结
 
-### Flight Base 2.5 = 完美组合！
+### Flight Base 2 = 完美组合！
 
 ```
 ✅ 轻量级       - 核心代码 < 1000 行

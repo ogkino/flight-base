@@ -10,7 +10,7 @@ function loadAdminInfo() {
         method: 'GET'
     }).then(res => {
         if (res.code === 0 && res.data) {
-            const username = res.data.nickname || res.data.username || '管理员';
+            const username = res.data.nickname || res.data.username || t('common.admin_default_name', '管理员');
             document.getElementById('username').textContent = username;
         } else {
             console.error('loadAdmin error:', res.msg);
@@ -19,7 +19,7 @@ function loadAdminInfo() {
         }
     }).catch(err => {
         console.error('loadAdmin error:', err);
-        document.getElementById('username').textContent = '加载失败';
+        document.getElementById('username').textContent = t('common.load_failed', '加载失败');
     });
 }
 
@@ -31,15 +31,15 @@ function loadUserInfo() {
         method: 'GET'
     }).then(res => {
         if (res.code === 0 && res.data) {
-            const username = res.data.nickname || res.data.username || '用户';
+            const username = res.data.nickname || res.data.username || t('common.admin_default_name', '用户');
             document.getElementById('username').textContent = username;
         } else {
             console.error('loadUser error:', res.msg);
-            document.getElementById('username').textContent = '未知用户';
+            document.getElementById('username').textContent = t('common.load_failed', '未知用户');
         }
     }).catch(err => {
         console.error('loadUser error:', err);
-        document.getElementById('username').textContent = '加载失败';
+        document.getElementById('username').textContent = t('common.load_failed', '加载失败');
     });
 }
 
@@ -47,9 +47,9 @@ function loadUserInfo() {
  * 退出登录
  */
 function logout() {
-    layer.confirm('确定要退出登录吗？', {
+    layer.confirm(t('common.logout_confirm', '确定要退出登录吗？'), {
         icon: 3,
-        title: '提示'
+        title: t('common.confirm_title', '提示')
     }, function(index){
         request(ADMIN_API_PREFIX + '/logout', {
             method: 'POST'
@@ -82,8 +82,8 @@ function formatDate(date) {
  */
 function statusTag(status) {
     return status == 1 
-        ? '<span class="layui-badge layui-bg-green">正常</span>' 
-        : '<span class="layui-badge layui-bg-gray">禁用</span>';
+        ? '<span class="layui-badge layui-bg-green">' + t('common.status_normal', '正常') + '</span>'
+        : '<span class="layui-badge layui-bg-gray">' + t('common.status_disabled', '禁用') + '</span>';
 }
 
 /**
@@ -92,7 +92,7 @@ function statusTag(status) {
 function confirm(msg, callback) {
     layer.confirm(msg, {
         icon: 3,
-        title: '提示'
+        title: t('common.confirm_title', '提示')
     }, function(index){
         callback();
         layer.close(index);
@@ -137,5 +137,5 @@ function copyToClipboard(text) {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    successMsg('复制成功');
+    successMsg(t('common.copy_success', '复制成功'));
 }

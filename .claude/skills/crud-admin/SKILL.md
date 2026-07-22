@@ -254,6 +254,33 @@ public static function products()
 
 `input`, `password`, `textarea`, `editor` (rich text), `number`, `radio`, `select`, `switch`, `date`, `datetime`, `time`, `timestamp`, `upload`, `image`, `color`, `slider`, `permissions`
 
+### Dictionary-backed fields
+
+For `select`/`radio`/`checkbox`/table `status`-like fields whose options should be centrally managed (not hardcoded per-module), use the built-in data dictionary instead of a static `options` array — see `docs/DICT.md`.
+
+```php
+// Static options generated from a dict type (regenerated on every request, no caching issues):
+['type' => 'select', 'name' => 'status', 'label' => '状态',
+ 'options' => array_map(fn($d) => ['value' => $d['value'], 'label' => $d['label'], 'color' => $d['color']], dict('common_status'))],
+
+// OR fully dynamic (dict changes reflect immediately without touching CrudConfig):
+['type' => 'select', 'name' => 'status', 'label' => '状态',
+ 'url' => '/api/admin/dict/data/options?type=common_status', 'valueField' => 'value', 'labelField' => 'label'],
+```
+
+In controllers, use `dictLabel('common_status', $row['status'])` to format list output. Manage dict types/data under 系统管理 → 字典类型 / 字典数据 in the admin panel.
+
+### Multi-language modules
+
+If the project has multi-language admin enabled (see `docs/I18N.md`), add a `{key}_en` sibling next to any user-facing text key (`title`, `label`, `text`, `placeholder`, `tip`, menu item `name`, etc.) instead of hardcoding only Chinese:
+
+```php
+['field' => 'name', 'title' => '名称', 'title_en' => 'Name'],
+['type' => 'input', 'name' => 'name', 'label' => '名称', 'label_en' => 'Name'],
+```
+
+`ConfigController` automatically resolves these via `localizeConfig()` based on the current locale and strips the `_en` keys before the response is sent — no other changes needed. This is a hand-written convention only; the visual CRUD designer does not support editing these fields. Do not add this unless the project actually needs multi-language.
+
 ---
 
 ## Step 3: Register Routes

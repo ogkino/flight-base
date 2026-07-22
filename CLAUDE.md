@@ -86,6 +86,7 @@ The framework has two modes that coexist in the same menu system:
 - **Permissions**: `hasPermission($adminId, $module, $action)`, `checkPermission($module, $action)` — JSON-based, admin ID=1 is super admin.
 - **Security**: `cleanInput()`, `hashPassword()`/`verifyPassword()`, `checkRateLimit($key, $max, $window)`.
 - **Logging**: `writeLog($msg, $level)` — writes to `runtime/logs/YYYY-MM-DD.log`.
+- **Dict**: `dict($type)`, `dictLabel($type, $value, $default)`, `dictDefault($type)` — data dictionary (`og_dict_type`/`og_dict_data`), managed under 系统管理 → 字典类型/字典数据. See `docs/DICT.md`.
 
 ### Permission system
 

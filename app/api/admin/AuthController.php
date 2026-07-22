@@ -20,7 +20,7 @@ class AuthController
         $password = getPost('password');
         
         if (!$username || !$password) {
-            error('用户名和密码不能为空');
+            error(lang('auth.username_password_required'));
             return;
         }
         
@@ -32,26 +32,26 @@ class AuthController
         ]);
         
         if (!$admin) {
-            error('管理员不存在');
+            error(lang('auth.admin_not_found'));
             return;
         }
         
         // 验证密码
         if (!verifyPassword($password, $admin['password'])) {
-            error('密码错误');
+            error(lang('auth.password_error'));
             return;
         }
         
         // 检查状态
         if ($admin['status'] != 1) {
-            error('账号已被禁用');
+            error(lang('auth.account_disabled'));
             return;
         }
 
         // 检查过期时间
         $expired_at = $admin['expired_at'];
         if ($expired_at && $expired_at < time()) {
-            error('账号已过期');
+            error(lang('auth.account_expired'));
             return;
         }
         
@@ -114,7 +114,7 @@ class AuthController
                 'avatar' => $admin['avatar'] ?? '',
                 'type' => 'admin'
             ]
-        ], '登录成功');
+        ], lang('auth.login_success'));
     }
     
     /**
@@ -150,7 +150,7 @@ class AuthController
         // 清除 Cookie
         setcookie('admin_token', '', time() - 3600, '/');
         
-        success([], '退出成功');
+        success([], lang('auth.logout_success'));
     }
     
     /**
@@ -165,15 +165,15 @@ class AuthController
         $confirmPassword = getPost('confirm_password');
         
         if (!$oldPassword || !$newPassword || !$confirmPassword) {
-            error('请填写完整信息');
+            error(lang('auth.fill_complete_info'));
         }
         
         if ($newPassword !== $confirmPassword) {
-            error('两次输入的新密码不一致');
+            error(lang('auth.new_password_mismatch'));
         }
         
         if (strlen($newPassword) < 6) {
-            error('新密码长度不能少于6位');
+            error(lang('auth.new_password_too_short'));
         }
         
         $admin = currentUser();
@@ -182,7 +182,7 @@ class AuthController
         // 验证旧密码
         $currentAdmin = $db->get('admin', '*', ['id' => $admin['id']]);
         if (!verifyPassword($oldPassword, $currentAdmin['password'])) {
-            error('原密码错误');
+            error(lang('auth.old_password_error'));
         }
         
         // 更新密码
@@ -194,9 +194,9 @@ class AuthController
         
         if ($result->rowCount() > 0) {
             writeLog("管理员 {$admin['username']} 修改密码", 'info');
-            success([], '密码修改成功，请重新登录');
+            success([], lang('auth.change_password_success'));
         } else {
-            error('密码修改失败');
+            error(lang('auth.change_password_failed'));
         }
     }
 }

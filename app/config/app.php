@@ -21,8 +21,19 @@ return [
     // 时区
     'timezone' => env('APP_TIMEZONE', 'Asia/Shanghai'),
     
-    // 默认语言
+    // 默认语言（找不到 Header/Cookie/参数指定的语言时使用）
     'locale' => 'zh-CN',
+
+    // 支持的语言列表（对应 app/lang/{locale}.php 语言包文件）
+    'supported_locales' => ['zh-CN', 'en-US'],
+
+    // 字段级多语言后缀映射（用于 CrudConfig.php 内联多语言，如 'label' + 'label_en'）
+    // key：语言代码；value：字段后缀，null 表示默认语言（无需后缀，直接用原字段）
+    // 新增语言时，在这里加一行即可，无需改动任何业务代码。详见 docs/I18N.md
+    'locale_field_suffixes' => [
+        'zh-CN' => null,
+        'en-US' => 'en',
+    ],
     
     // Token 过期时间（秒）
     'token_expire' => env('TOKEN_EXPIRE', 7 * 86400),  // 7天

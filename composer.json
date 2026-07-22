@@ -17,7 +17,9 @@
             "app/helpers/env.php",
             "app/helpers/functions.php",
             "app/helpers/security.php",
-            "app/helpers/permission.php"
+            "app/helpers/permission.php",
+            "app/helpers/i18n.php",
+            "app/helpers/dict.php"
         ]
     }
 }
