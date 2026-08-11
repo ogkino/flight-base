@@ -1,0 +1,19 @@
+{
+	frankenphp
+	# 本地开发：关闭自动 HTTPS
+	auto_https off
+	# 仅用 HTTP/1.1，避免 HTTP/3(QUIC) 占 5891 导致浏览器/调试异常
+	servers {
+		protocols h1 h2
+	}
+}
+
+# 用 :5891 绑定纯 HTTP（不要写 localhost:5891，否则易残留 TLS 行为）
+:5891 {
+	root * C:\Users\12112\Desktop\flight_base\public
+
+	# Classic 模式
+	php_server
+
+	file_server
+}

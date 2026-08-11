@@ -1,0 +1,115 @@
+/* Flight Base Admin Theme — fluent
+   仿 Fluent 2：微软蓝 + 浅灰侧栏
+   入口：login_fluent.html
+═══════════════════════════════════════════════════════════ */
+:root {
+    --brand: #0f6cbd;
+    --brand-strong: #115ea3;
+    --brand-soft: #ebf3fc;
+    --brand-ink: #115ea3;
+    --menu-active-bg: var(--brand-soft);
+    --menu-active-color: var(--brand);
+    --bg: #f5f5f5;
+    --bg-elevated: #ffffff;
+    --ink: #242424;
+    --ink-soft: #616161;
+    --ink-mute: #8a8a8a;
+    --line: #e0e0e0;
+    --line-strong: #d1d1d1;
+    --sidebar: #ebebeb;
+    --sidebar-elevated: #ffffff;
+    --sidebar-text: #242424;
+    --sidebar-text-strong: #0f6cbd;
+    --danger: #d13438;
+    --radius: 8px;
+    --header-h: 48px;
+    --sidebar-w: 280px;
+    --shadow: 0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.14);
+    --shadow-lg: 0 0 2px rgba(0,0,0,.12),0 8px 16px rgba(0,0,0,.14);
+    --font: 'Segoe UI',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+}
+
+body { background: var(--bg) !important; color: var(--ink) !important; font-family: var(--font) !important; -webkit-font-smoothing: antialiased; }
+.admin-header { left: var(--sidebar-w) !important; height: var(--header-h) !important; padding: 0 20px !important; background: var(--bg-elevated) !important; color: var(--ink) !important; border-bottom: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-header .logo, .admin-header .user-info .username { color: var(--ink) !important; }
+.admin-header .user-info .username::before { background: var(--brand) !important; }
+.admin-header .locale-switcher, .admin-header .store-switcher, .admin-header .store-switcher-label { color: var(--ink) !important; background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; border-radius: var(--radius) !important; }
+.admin-header .locale-switcher:hover, .admin-header .store-switcher:hover { border-color: var(--brand) !important; color: var(--brand) !important; }
+.admin-header .locale-switcher option { color: var(--ink) !important; background: var(--bg-elevated) !important; }
+.admin-header .user-info .layui-btn-danger { background: var(--danger) !important; color: #fff !important; border: none !important; border-radius: var(--radius) !important; box-shadow: none !important; }
+.menu-toggle-btn { background: var(--bg) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; }
+.menu-toggle-icon { background: var(--ink) !important; box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink) !important; }
+.admin-sidebar { width: var(--sidebar-w) !important; background: var(--sidebar) !important; border-right: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-sidebar .sidebar-logo { height: var(--header-h) !important; background: transparent !important; border-bottom: 1px solid var(--line) !important; padding: 0 16px !important; }
+.admin-sidebar .sidebar-logo span { color: var(--sidebar-text-strong) !important; font-weight: 600 !important; }
+.admin-sidebar .sidebar-logo i { color: #fff !important; background: var(--brand) !important; width: 26px; height: 26px; border-radius: calc(var(--radius) + 2px); display: inline-flex !important; align-items: center; justify-content: center; font-size: 14px !important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background: var(--sidebar) !important; }
+.admin-sidebar .layui-nav-bar { display: none !important; }
+.layui-nav-tree { padding: 8px !important; }
+.layui-nav-tree .layui-nav-item > a { color: var(--ink-mute) !important; font-size: 12px !important; font-weight: 600 !important; padding: 12px 12px 6px !important; background: transparent !important; text-transform: none !important; letter-spacing: 0 !important; }
+.layui-nav-tree .layui-nav-item > a:hover { color: var(--brand) !important; background: transparent !important; }
+.layui-nav-tree .layui-nav-child { background: transparent !important; padding: 0 !important; }
+.layui-nav-tree .layui-nav-child dd a { color: var(--sidebar-text) !important; height: 40px !important; line-height: 40px !important; margin: 2px 0 !important; border-radius: 999px !important; padding: 0 16px !important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background: var(--brand-soft) !important; color: var(--brand) !important; box-shadow: none !important; border-radius: 999px !important; font-weight: 600 !important; }
+.admin-content { margin-left: var(--sidebar-w) !important; margin-top: var(--header-h) !important; padding: 16px !important; min-height: calc(100vh - var(--header-h)) !important; width: calc(100% - var(--sidebar-w)) !important; background: var(--bg) !important; }
+.view-toolbar .view-title { color: var(--ink) !important; font-weight: 600 !important; }
+.card,.layui-card,.stat-card,.search-bar,.table-container,.chart-card { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; box-shadow: var(--shadow) !important; color: var(--ink) !important; }
+.card-title i, .layui-card-header::before { color: var(--brand) !important; background: var(--brand) !important; }
+.stat-card .icon.blue,.stat-card .icon.green,.stat-card .icon.orange,.stat-card .icon.purple,.stat-card .icon.red,.stat-card .icon.teal { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-btn { border-radius: var(--radius) !important; box-shadow: none !important; font-weight: 500 !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled), .layui-btn-normal { background: var(--brand) !important; background-image: none !important; border: 1px solid var(--brand) !important; color: #fff !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled):hover, .layui-btn-normal:hover { background: var(--brand-strong) !important; border-color: var(--brand-strong) !important; transform: none !important; box-shadow: none !important; }
+.layui-btn-danger { background: var(--danger) !important; border: 1px solid var(--danger) !important; color: #fff !important; }
+.layui-btn-primary { background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; color: var(--ink-soft) !important; }
+.layui-btn-primary:hover { border-color: var(--brand) !important; color: var(--brand) !important; background: var(--brand-soft) !important; }
+.layui-table thead tr, .layui-table-header, .layui-table-view .layui-table th { background: var(--bg) !important; }
+.layui-table th { color: var(--ink-soft) !important; border-color: var(--line) !important; }
+.layui-table td { color: var(--ink) !important; border-color: var(--line) !important; }
+.layui-table tr:hover td, .layui-table-click td, .layui-table-hover td { background: var(--brand-soft) !important; color: var(--ink) !important; }
+.layui-input,.layui-textarea,.layui-select,.layui-form-select .layui-input { border-radius: var(--radius) !important; border-color: var(--line-strong) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-input:focus,.layui-textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 2px var(--brand-soft) !important; }
+.layui-form-onswitch { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checked[lay-skin=primary] i { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i, .layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover, .layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em { background: var(--brand) !important; }
+.layui-layer { border-radius: var(--radius) !important; box-shadow: var(--shadow-lg) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-layer-title { background: var(--bg-elevated) !important; border-bottom: 1px solid var(--line) !important; color: var(--ink) !important; }
+.layui-layer-btn .layui-layer-btn0 { background: var(--brand) !important; border-color: var(--brand) !important; }
+.layui-layer.layui-layer-msg, .layui-layer-dialog.layui-layer-msg { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; box-shadow: var(--shadow-lg) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-success, .layui-layer-msg .layui-icon-success, .layui-layer-face.layui-icon-success { color: var(--brand) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-error, .layui-layer-msg .layui-icon-error, .layui-layer-face.layui-icon-error { color: var(--danger) !important; }
+@media (max-width: 768px) { .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; } .admin-sidebar.sidebar-open { left: 0 !important; } .admin-header { left: 0 !important; } .admin-content { margin-left: 0 !important; width: 100% !important; } }
+
+/* ===== fluent distinct login + menu ===== */
+body.login-layout-fluent { min-height:100vh!important; background:linear-gradient(180deg,#d6ebff 0%,#f5f5f5 40%)!important; display:block!important; }
+body.login-layout-fluent::before, body.login-layout-fluent::after { display:none!important; }
+.login-layout-fluent .locale-switcher-wrap { position:fixed!important; top:16px; right:16px; z-index:20; }
+.login-fluent-bar { height:48px; display:flex; align-items:center; gap:8px; padding:0 20px; color:#242424; font-size:13px; }
+.login-fluent-bar .dot { width:10px; height:10px; border-radius:50%; background:#0f6cbd; }
+.login-fluent-stage { min-height:calc(100vh - 48px); display:flex; align-items:center; justify-content:center; padding:24px; }
+.login-fluent-mica { max-width:400px; width:100%; background:rgba(255,255,255,.82)!important; backdrop-filter:blur(20px); border:1px solid rgba(0,0,0,.08)!important; border-radius:12px!important; box-shadow:0 8px 16px rgba(0,0,0,.12)!important; padding:28px!important; animation:none!important; }
+.login-layout-fluent .login-wrap h2 { margin:0 0 6px; font-size:22px; font-weight:600; }
+.login-layout-fluent .login-wrap .sub { margin:0 0 20px; color:#616161; font-size:13px; }
+.login-layout-fluent .input-wrap { border-radius:8px!important; border:1px solid #d1d1d1!important; background:#fff!important; }
+.login-layout-fluent .input-wrap:focus-within { border-color:#0f6cbd!important; box-shadow:0 0 0 1px #0f6cbd!important; }
+.login-layout-fluent .layui-input { height:40px!important; border:none!important; }
+.login-layout-fluent .captcha-row .layui-input { border:1px solid #d1d1d1!important; border-radius:8px!important; height:40px!important; }
+.login-layout-fluent .captcha-img-box { height:40px!important; border-radius:8px!important; }
+.login-layout-fluent .login-btn { height:40px!important; line-height:40px!important; border-radius:8px!important; background:#0f6cbd!important; width:100%; }
+.login-layout-fluent .login-footer { margin-top:14px; color:#8a8a8a; font-size:12px; }
+
+/* Fluent 菜单：浅灰 NavigationView + 圆角选中 */
+.admin-sidebar { background:#ebebeb!important; border-right:1px solid #e0e0e0!important; }
+.admin-sidebar .sidebar-logo { background:#ebebeb!important; border-bottom:1px solid #e0e0e0!important; }
+.admin-sidebar .sidebar-logo span { color:#242424!important; }
+.admin-sidebar .sidebar-logo i { background:#0f6cbd!important; border-radius:8px!important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background:#ebebeb!important; }
+.admin-sidebar .layui-nav-bar { display:none!important; }
+.layui-nav-tree { padding:10px!important; }
+.layui-nav-tree .layui-nav-item > a { color:#616161!important; background:transparent!important; font-size:12px!important; padding:12px!important; text-transform:none!important; letter-spacing:0!important; }
+.layui-nav-tree .layui-nav-child dd a { color:#242424!important; height:40px!important; line-height:40px!important; margin:2px 0!important; border-radius:8px!important; padding:0 12px!important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background:#fff!important; color:#0f6cbd!important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background:#fff!important; color:#0f6cbd!important; box-shadow:0 0 2px rgba(0,0,0,.08)!important; border-radius:8px!important; font-weight:600!important; }

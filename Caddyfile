@@ -1,17 +1,14 @@
 {
-    frankenphp
+	frankenphp
 }
 
-localhost:80 {
-    root * C:\flight_base\public
+:5891 {
+	root * C:\Users\12112\Desktop\flight_base\public
 
-    # Classic 模式（默认）：自动处理 URL rewrite，等同于 nginx try_files
-    php_server
+	# Worker 模式
+	php_server {
+		worker C:\Users\12112\Desktop\flight_base\public\worker.php
+	}
 
-    # 切换为 Worker 模式：取消下方注释并注释上方 php_server，路径必须为绝对路径
-    # php_server {
-    #     worker C:\flight_base\public\worker.php
-    # }
-
-    file_server
+	file_server
 }

@@ -1,0 +1,406 @@
+/**
+ * Flight Base — 侧栏菜单范式（Menu Layout）v1.1
+ *
+ * html[data-menu-layout="..."] + 本文件（须在主题 CSS 之后加载）
+ * 强制拉开几何与选中态形态；颜色尽量用 var(--brand) / 主题变量。
+ */
+
+html[data-menu-layout] .admin-sidebar .layui-nav-bar {
+    display: none !important;
+}
+
+html[data-menu-layout] .layui-nav-tree .layui-nav-child .layui-this,
+html[data-menu-layout] .layui-nav-tree .layui-this {
+    background: transparent !important;
+}
+
+/* ═══════════════════════════════════════════
+   pill — 右侧大圆角「跑道」选中
+═══════════════════════════════════════════ */
+html[data-menu-layout="pill"] .layui-nav-tree {
+    padding: 10px 0 !important;
+}
+
+html[data-menu-layout="pill"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    padding: 16px 20px 8px !important;
+}
+
+html[data-menu-layout="pill"] .layui-nav-tree .layui-nav-child dd a {
+    height: 44px !important;
+    line-height: 44px !important;
+    padding: 0 18px 0 20px !important;
+    margin: 2px 14px 2px 0 !important;
+    border-radius: 0 22px 22px 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="pill"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="pill"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 0 22px 22px 0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .22) !important;
+}
+
+/* ═══════════════════════════════════════════
+   fill — 内缩实心圆角块
+═══════════════════════════════════════════ */
+html[data-menu-layout="fill"] .layui-nav-tree {
+    padding: 10px 12px !important;
+}
+
+html[data-menu-layout="fill"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em !important;
+    text-transform: none !important;
+    padding: 14px 10px 6px !important;
+}
+
+html[data-menu-layout="fill"] .layui-nav-tree .layui-nav-child dd a {
+    height: 40px !important;
+    line-height: 40px !important;
+    margin: 3px 0 !important;
+    padding: 0 12px !important;
+    border-radius: 8px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="fill"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="fill"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════
+   edge — 直角 + 粗左边条（选中不铺满色块）
+═══════════════════════════════════════════ */
+html[data-menu-layout="edge"] .layui-nav-tree {
+    padding: 8px 0 !important;
+}
+
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+    padding: 14px 16px 6px !important;
+}
+
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-child dd a {
+    height: 42px !important;
+    line-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 16px 0 20px !important;
+    border-radius: 0 !important;
+    border-left: 3px solid transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-child dd a:hover {
+    border-radius: 0 !important;
+    background: rgba(255, 255, 255, .04) !important;
+}
+
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout="edge"] .layui-nav-tree .layui-nav-child .layui-this > a:hover {
+    border-radius: 0 !important;
+    border-left-width: 3px !important;
+    border-left-style: solid !important;
+    border-left-color: var(--brand, #4f8ef7) !important;
+    background: var(--menu-active-bg, color-mix(in srgb, var(--brand, #4f8ef7) 14%, transparent)) !important;
+    box-shadow: none !important;
+    color: var(--menu-active-color, var(--brand, #4f8ef7)) !important;
+}
+
+/* ═══════════════════════════════════════════
+   capsule — 全圆角胶囊（两侧留白明显）
+═══════════════════════════════════════════ */
+html[data-menu-layout="capsule"] .layui-nav-tree {
+    padding: 14px 14px !important;
+}
+
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: .06em !important;
+    text-transform: uppercase !important;
+    padding: 12px 12px 8px !important;
+}
+
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child dd a {
+    height: 38px !important;
+    line-height: 38px !important;
+    margin: 4px 0 !important;
+    padding: 0 16px !important;
+    border-radius: 999px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════
+   cell — 微信式通栏列表 + 分割线
+═══════════════════════════════════════════ */
+html[data-menu-layout="cell"] .layui-nav-tree {
+    padding: 0 !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    padding: 14px 16px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, .06) !important;
+    background: rgba(0, 0, 0, .02) !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-item:first-child > a {
+    border-top: 1px solid rgba(0, 0, 0, .06) !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-child {
+    padding: 0 !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-child dd {
+    border-bottom: 1px solid rgba(0, 0, 0, .06) !important;
+    margin: 0 !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-child dd a {
+    height: 50px !important;
+    line-height: 50px !important;
+    margin: 0 !important;
+    padding: 0 16px 0 32px !important;
+    border-radius: 0 !important;
+    border-left: 4px solid transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="cell"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 0 !important;
+    border-left-color: var(--brand, #07c160) !important;
+    background: var(--menu-active-bg, color-mix(in srgb, var(--brand, #07c160) 10%, #fff)) !important;
+    box-shadow: none !important;
+    color: var(--menu-active-color, var(--brand, #07c160)) !important;
+    font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════
+   block — 浅色软色块（选中偏文字色，非整条实心）
+═══════════════════════════════════════════ */
+html[data-menu-layout="block"] .layui-nav-tree {
+    padding: 12px 10px !important;
+}
+
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    padding: 10px 10px 4px !important;
+}
+
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child dd a {
+    height: 36px !important;
+    line-height: 36px !important;
+    margin: 2px 0 !important;
+    padding: 0 10px !important;
+    border-radius: 6px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+}
+
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    font-weight: 700 !important;
+    background: var(--menu-active-bg, color-mix(in srgb, var(--brand, #0052d9) 12%, transparent)) !important;
+    color: var(--menu-active-color, var(--brand, #0052d9)) !important;
+}
+
+/* ═══════════════════════════════════════════
+   rail — Material：更高行 + 大圆角「轨道」
+═══════════════════════════════════════════ */
+html[data-menu-layout="rail"] .layui-nav-tree {
+    padding: 16px 12px !important;
+}
+
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: .05em !important;
+    text-transform: uppercase !important;
+    padding: 16px 12px 8px !important;
+}
+
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child dd a {
+    height: 52px !important;
+    line-height: 52px !important;
+    margin: 6px 0 !important;
+    padding: 0 18px !important;
+    border-radius: 28px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+    gap: 14px !important;
+}
+
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child dd a i {
+    font-size: 20px !important;
+    width: 24px !important;
+    min-width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+}
+
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 28px !important;
+    box-shadow: none !important;
+    background: var(--menu-active-bg, color-mix(in srgb, var(--brand, #6750a4) 16%, transparent)) !important;
+    color: var(--menu-active-color, var(--brand, #6750a4)) !important;
+    font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════
+   minimal — Notion：极矮行 + 弱选中
+═══════════════════════════════════════════ */
+html[data-menu-layout="minimal"] .layui-nav-tree {
+    padding: 10px 8px !important;
+}
+
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    padding: 10px 8px 4px !important;
+    opacity: .75;
+}
+
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child dd a {
+    height: 30px !important;
+    line-height: 30px !important;
+    margin: 1px 0 !important;
+    padding: 0 8px !important;
+    border-radius: 4px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+    font-size: 14px !important;
+}
+
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    background: rgba(55, 53, 47, .08) !important;
+    color: inherit !important;
+    font-weight: 500 !important;
+}
+
+/* ═══════════════════════════════════════════
+   docs — Bootstrap Docs：大写分组 + 圆角实心
+═══════════════════════════════════════════ */
+html[data-menu-layout="docs"] .layui-nav-tree {
+    padding: 12px 12px !important;
+}
+
+html[data-menu-layout="docs"] .layui-nav-tree .layui-nav-item > a {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .1em !important;
+    text-transform: uppercase !important;
+    padding: 16px 12px 6px !important;
+}
+
+html[data-menu-layout="docs"] .layui-nav-tree .layui-nav-child dd a {
+    height: 38px !important;
+    line-height: 38px !important;
+    margin: 2px 0 !important;
+    padding: 0 12px !important;
+    border-radius: 6px !important;
+    border-left: none !important;
+    box-shadow: none !important;
+    font-size: 14px !important;
+}
+
+html[data-menu-layout="docs"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="docs"] .layui-nav-tree .layui-nav-child .layui-this > a {
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+}
+
+
+/* menu typography (shared overrides) */
+html[data-menu-layout] .layui-nav-tree .layui-nav-item > a {
+    font-size: 12px !important;
+    line-height: 20px !important;
+}
+html[data-menu-layout] .layui-nav-tree .layui-nav-item > a .layui-nav-more {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+    border: none !important;
+    width: 16px !important;
+    height: 20px !important;
+    line-height: 20px !important;
+    font-size: 12px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+html[data-menu-layout] .layui-nav-tree .layui-nav-child dd a {
+    font-size: 14px !important;
+}
+
+/* ═══════════════════════════════════════════
+   选中色统一跟主题 —— 须在本文件末尾（覆盖 admin.css 更高选择器）
+   颜色只读 --menu-active-* / --brand，勿写死蓝/绿
+═══════════════════════════════════════════ */
+html[data-menu-layout] .layui-nav .layui-this > a,
+html[data-menu-layout] .layui-nav-child dd.layui-this > a,
+html[data-menu-layout] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout] .layui-nav-tree .layui-nav-child .layui-this > a:hover,
+html[data-menu-layout] .layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: var(--menu-active-bg, var(--brand, #4f8ef7)) !important;
+    color: var(--menu-active-color, #fff) !important;
+}
+
+/* capsule / block / rail / minimal：未单独设变量时，默认浅绿底+主题色字（更像 Naive/MD） */
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout="capsule"] .layui-nav-tree .layui-nav-child .layui-this > a:hover,
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout="block"] .layui-nav-tree .layui-nav-child .layui-this > a:hover,
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout="rail"] .layui-nav-tree .layui-nav-child .layui-this > a:hover,
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child dd.layui-this > a,
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child .layui-this > a,
+html[data-menu-layout="minimal"] .layui-nav-tree .layui-nav-child .layui-this > a:hover {
+    background: var(--menu-active-bg, var(--brand-soft, color-mix(in srgb, var(--brand) 14%, transparent))) !important;
+    color: var(--menu-active-color, var(--brand)) !important;
+    box-shadow: none !important;
+}

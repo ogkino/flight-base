@@ -1,0 +1,135 @@
+/* Flight Base Admin Theme — naive
+   仿 Naive UI：翠绿主色 + 大圆角浅色侧栏
+   入口：login_naive.html
+═══════════════════════════════════════════════════════════ */
+:root {
+    --brand: #18a058;
+    --brand-strong: #0c7a43;
+    --brand-soft: #e8f8ef;
+    --brand-ink: #0c7a43;
+    --menu-active-bg: var(--brand-soft);
+    --menu-active-color: var(--brand);
+    --bg: #f7f7fa;
+    --bg-elevated: #ffffff;
+    --ink: #333639;
+    --ink-soft: #6b7075;
+    --ink-mute: #9b9fa5;
+    --line: #efeff5;
+    --line-strong: #e0e0e6;
+    --sidebar: #ffffff;
+    --sidebar-elevated: #f7f7fa;
+    --sidebar-text: #333639;
+    --sidebar-text-strong: #18a058;
+    --danger: #d03050;
+    --radius: 10px;
+    --header-h: 56px;
+    --sidebar-w: 240px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,.08);
+    --font: v-sans,system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+}
+
+body { background: var(--bg) !important; color: var(--ink) !important; font-family: var(--font) !important; -webkit-font-smoothing: antialiased; }
+.admin-header { left: var(--sidebar-w) !important; height: var(--header-h) !important; padding: 0 20px !important; background: var(--bg-elevated) !important; color: var(--ink) !important; border-bottom: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-header .logo, .admin-header .user-info .username { color: var(--ink) !important; }
+.admin-header .user-info .username::before { background: var(--brand) !important; }
+.admin-header .locale-switcher, .admin-header .store-switcher, .admin-header .store-switcher-label { color: var(--ink) !important; background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; border-radius: var(--radius) !important; }
+.admin-header .locale-switcher:hover, .admin-header .store-switcher:hover { border-color: var(--brand) !important; color: var(--brand) !important; }
+.admin-header .locale-switcher option { color: var(--ink) !important; background: var(--bg-elevated) !important; }
+.admin-header .user-info .layui-btn-danger { background: var(--danger) !important; color: #fff !important; border: none !important; border-radius: var(--radius) !important; box-shadow: none !important; }
+.menu-toggle-btn { background: var(--bg) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; }
+.menu-toggle-icon { background: var(--ink) !important; box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink) !important; }
+.admin-sidebar { width: var(--sidebar-w) !important; background: var(--sidebar) !important; border-right: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-sidebar .sidebar-logo { height: var(--header-h) !important; background: transparent !important; border-bottom: 1px solid var(--line) !important; padding: 0 16px !important; }
+.admin-sidebar .sidebar-logo span { color: var(--sidebar-text-strong) !important; font-weight: 600 !important; }
+.admin-sidebar .sidebar-logo i { color: #fff !important; background: var(--brand) !important; width: 26px; height: 26px; border-radius: calc(var(--radius) + 2px); display: inline-flex !important; align-items: center; justify-content: center; font-size: 14px !important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background: var(--sidebar) !important; }
+.admin-sidebar .layui-nav-bar { display: none !important; }
+.layui-nav-tree { padding: 8px !important; }
+.layui-nav-tree .layui-nav-item > a { color: var(--ink-mute) !important; font-size: 12px !important; font-weight: 600 !important; padding: 12px 12px 6px !important; background: transparent !important; text-transform: none !important; letter-spacing: 0 !important; }
+.layui-nav-tree .layui-nav-item > a:hover { color: var(--brand) !important; background: transparent !important; }
+.layui-nav-tree .layui-nav-child { background: transparent !important; padding: 0 !important; }
+.layui-nav-tree .layui-nav-child dd a { color: var(--sidebar-text) !important; height: 40px !important; line-height: 40px !important; margin: 2px 0 !important; border-radius: 999px !important; padding: 0 16px !important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: var(--brand-soft) !important;
+    color: var(--brand) !important;
+    box-shadow: none !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+}
+.admin-content { margin-left: var(--sidebar-w) !important; margin-top: var(--header-h) !important; padding: 16px !important; min-height: calc(100vh - var(--header-h)) !important; width: calc(100% - var(--sidebar-w)) !important; background: var(--bg) !important; }
+.view-toolbar .view-title { color: var(--ink) !important; font-weight: 600 !important; }
+.card,.layui-card,.stat-card,.search-bar,.table-container,.chart-card { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; box-shadow: var(--shadow) !important; color: var(--ink) !important; }
+.card-title i, .layui-card-header::before { color: var(--brand) !important; background: var(--brand) !important; }
+.stat-card .icon.blue,.stat-card .icon.green,.stat-card .icon.orange,.stat-card .icon.purple,.stat-card .icon.red,.stat-card .icon.teal { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-btn { border-radius: var(--radius) !important; box-shadow: none !important; font-weight: 500 !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled), .layui-btn-normal { background: var(--brand) !important; background-image: none !important; border: 1px solid var(--brand) !important; color: #fff !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled):hover, .layui-btn-normal:hover { background: var(--brand-strong) !important; border-color: var(--brand-strong) !important; transform: none !important; box-shadow: none !important; }
+.layui-btn-danger { background: var(--danger) !important; border: 1px solid var(--danger) !important; color: #fff !important; }
+.layui-btn-primary { background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; color: var(--ink-soft) !important; }
+.layui-btn-primary:hover { border-color: var(--brand) !important; color: var(--brand) !important; background: var(--brand-soft) !important; }
+.layui-table thead tr, .layui-table-header, .layui-table-view .layui-table th { background: var(--bg) !important; }
+.layui-table th { color: var(--ink-soft) !important; border-color: var(--line) !important; }
+.layui-table td { color: var(--ink) !important; border-color: var(--line) !important; }
+.layui-table tr:hover td, .layui-table-click td, .layui-table-hover td { background: var(--brand-soft) !important; color: var(--ink) !important; }
+.layui-input,.layui-textarea,.layui-select,.layui-form-select .layui-input { border-radius: var(--radius) !important; border-color: var(--line-strong) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-input:focus,.layui-textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 2px var(--brand-soft) !important; }
+.layui-form-onswitch { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checked[lay-skin=primary] i { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i, .layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover, .layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em { background: var(--brand) !important; }
+.layui-layer { border-radius: var(--radius) !important; box-shadow: var(--shadow-lg) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-layer-title { background: var(--bg-elevated) !important; border-bottom: 1px solid var(--line) !important; color: var(--ink) !important; }
+.layui-layer-btn .layui-layer-btn0 { background: var(--brand) !important; border-color: var(--brand) !important; }
+.layui-layer.layui-layer-msg, .layui-layer-dialog.layui-layer-msg { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; box-shadow: var(--shadow-lg) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-success, .layui-layer-msg .layui-icon-success, .layui-layer-face.layui-icon-success { color: var(--brand) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-error, .layui-layer-msg .layui-icon-error, .layui-layer-face.layui-icon-error { color: var(--danger) !important; }
+@media (max-width: 768px) { .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; } .admin-sidebar.sidebar-open { left: 0 !important; } .admin-header { left: 0 !important; } .admin-content { margin-left: 0 !important; width: 100% !important; } }
+
+/* ===== naive distinct login + menu ===== */
+body.login-layout-naive { min-height:100vh!important; background:#f7f7fa!important; display:flex!important; align-items:center; justify-content:center; }
+body.login-layout-naive::before, body.login-layout-naive::after { display:none!important; }
+.login-layout-naive .locale-switcher-wrap { position:fixed!important; top:16px; right:16px; z-index:20; }
+.login-naive-page { width:100%; padding:40px 20px; display:flex; justify-content:center; }
+.login-naive-card { position:relative; overflow:hidden; max-width:400px; width:100%; background:#fff!important; border:1px solid #efeff5!important; border-radius:16px!important; box-shadow:0 8px 28px rgba(0,0,0,.06)!important; padding:36px 28px 24px!important; animation:none!important; }
+.login-naive-accent { position:absolute; left:0; right:0; top:0; height:4px; background:linear-gradient(90deg,#18a058,#36ad6a); }
+.login-layout-naive .logo-icon { background:#18a058!important; border-radius:12px!important; width:48px!important; height:48px!important; margin:0 auto 12px!important; display:flex!important; align-items:center; justify-content:center; color:#fff!important; }
+.login-layout-naive .login-logo { text-align:center!important; margin-bottom:24px!important; }
+.login-layout-naive .input-wrap { border-radius:10px!important; border:1px solid #e0e0e6!important; background:#fff!important; }
+.login-layout-naive .input-wrap:focus-within { border-color:#18a058!important; box-shadow:0 0 0 3px rgba(24,160,88,.15)!important; }
+.login-layout-naive .layui-input { height:44px!important; border:none!important; }
+.login-layout-naive .captcha-row .layui-input { border-radius:10px!important; height:44px!important; border:1px solid #e0e0e6!important; }
+.login-layout-naive .captcha-img-box { height:44px!important; border-radius:10px!important; }
+.login-layout-naive .login-btn { height:44px!important; line-height:44px!important; border-radius:10px!important; background:#18a058!important; width:100%; box-shadow:none!important; }
+.login-layout-naive .login-footer { text-align:center; margin-top:16px; color:#9b9fa5; font-size:12px; }
+
+/* Naive 菜单：白侧栏 + 翠绿胶囊选中 */
+.admin-sidebar { background:#fff!important; border-right:1px solid #efeff5!important; }
+.admin-sidebar .sidebar-logo { background:#fff!important; border-bottom:1px solid #efeff5!important; }
+.admin-sidebar .sidebar-logo span { color:#333639!important; }
+.admin-sidebar .sidebar-logo i { background:#18a058!important; border-radius:10px!important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background:#fff!important; }
+.admin-sidebar .layui-nav-bar { display:none!important; }
+.layui-nav-tree .layui-nav-item > a { color:#9b9fa5!important; background:transparent!important; font-size:12px!important; padding:14px 12px 6px!important; text-transform:none!important; letter-spacing:0!important; }
+.layui-nav-tree .layui-nav-child dd a { color:#333639!important; height:40px!important; line-height:40px!important; margin:3px 4px!important; border-radius:10px!important; padding:0 14px!important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background:#e8f8ef!important; color:#18a058!important; }
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: #e8f8ef !important;
+    color: #18a058 !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+}

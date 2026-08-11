@@ -110,6 +110,26 @@ function lang(string $key, array $replace = [], ?string $locale = null): string
 }
 
 /**
+ * 取某一 section 的全部文案（供 View 弹层注入 JS：window.VIEW_I18N）
+ * 非基准语言会与 zh-CN 合并，缺 key 时用中文兜底。
+ */
+function langSection(string $section, ?string $locale = null): array
+{
+    $locale = $locale ?: currentLocale();
+    $sec = loadLangPack($locale)[$section] ?? [];
+    if (!is_array($sec)) {
+        $sec = [];
+    }
+    if ($locale !== 'zh-CN') {
+        $base = loadLangPack('zh-CN')[$section] ?? [];
+        if (is_array($base)) {
+            $sec = array_merge($base, $sec);
+        }
+    }
+    return $sec;
+}
+
+/**
  * ============================================================
  * 字段级多语言后缀（用于手写 CrudConfig.php，无需维护语言包 key）
  * ============================================================

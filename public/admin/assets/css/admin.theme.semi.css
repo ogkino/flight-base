@@ -1,0 +1,118 @@
+/* Flight Base Admin Theme — semi
+   仿 Semi Design：设计系统感深蓝侧栏
+   入口：login_semi.html
+═══════════════════════════════════════════════════════════ */
+:root {
+    --brand: #0077fa;
+    --brand-strong: #0062d6;
+    --brand-soft: #eaf5ff;
+    --brand-ink: #0062d6;
+    --menu-active-bg: var(--brand);
+    --menu-active-color: #fff;
+    --bg: #f9f9f9;
+    --bg-elevated: #ffffff;
+    --ink: #1c1f23;
+    --ink-soft: #55585d;
+    --ink-mute: #888d92;
+    --line: #e6e8ea;
+    --line-strong: #c6cacd;
+    --sidebar: #1c1f23;
+    --sidebar-elevated: #2e3238;
+    --sidebar-text: rgba(255,255,255,.7);
+    --sidebar-text-strong: #fff;
+    --danger: #f93920;
+    --radius: 6px;
+    --header-h: 52px;
+    --sidebar-w: 240px;
+    --shadow: 0 0 1px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.1);
+    --shadow-lg: 0 0 1px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.1);
+    --font: 'Inter','PingFang SC','Microsoft YaHei',sans-serif;
+}
+
+body { background: var(--bg) !important; color: var(--ink) !important; font-family: var(--font) !important; -webkit-font-smoothing: antialiased; }
+.admin-header { left: var(--sidebar-w) !important; height: var(--header-h) !important; padding: 0 20px !important; background: var(--bg-elevated) !important; color: var(--ink) !important; border-bottom: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-header .logo, .admin-header .user-info .username { color: var(--ink) !important; }
+.admin-header .user-info .username::before { background: var(--brand) !important; }
+.admin-header .locale-switcher, .admin-header .store-switcher, .admin-header .store-switcher-label { color: var(--ink) !important; background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; border-radius: var(--radius) !important; }
+.admin-header .locale-switcher:hover, .admin-header .store-switcher:hover { border-color: var(--brand) !important; color: var(--brand) !important; }
+.admin-header .locale-switcher option { color: var(--ink) !important; background: var(--bg-elevated) !important; }
+.admin-header .user-info .layui-btn-danger { background: var(--danger) !important; color: #fff !important; border: none !important; border-radius: var(--radius) !important; box-shadow: none !important; }
+.menu-toggle-btn { background: var(--bg) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; }
+.menu-toggle-icon { background: var(--ink) !important; box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink) !important; }
+.admin-sidebar { width: var(--sidebar-w) !important; background: var(--sidebar) !important; border-right: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-sidebar .sidebar-logo { height: var(--header-h) !important; background: transparent !important; border-bottom: 1px solid var(--line) !important; padding: 0 16px !important; }
+.admin-sidebar .sidebar-logo span { color: var(--sidebar-text-strong) !important; font-weight: 600 !important; }
+.admin-sidebar .sidebar-logo i { color: #fff !important; background: var(--brand) !important; width: 26px; height: 26px; border-radius: calc(var(--radius) + 2px); display: inline-flex !important; align-items: center; justify-content: center; font-size: 14px !important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background: var(--sidebar) !important; }
+.admin-sidebar .layui-nav-bar { display: none !important; }
+.layui-nav-tree { padding: 8px !important; }
+.admin-sidebar { border-right: none !important; }
+.admin-sidebar .sidebar-logo { border-bottom-color: rgba(255,255,255,.08) !important; }
+.layui-nav-tree .layui-nav-item > a { color: rgba(255,255,255,.45) !important; font-size: 12px !important; font-weight: 600 !important; padding: 14px 12px 6px !important; background: transparent !important; text-transform: none !important; letter-spacing: .03em !important; }
+.layui-nav-tree .layui-nav-item > a:hover { color: #fff !important; background: transparent !important; }
+.layui-nav-tree .layui-nav-child { background: transparent !important; padding: 0 !important; }
+.layui-nav-tree .layui-nav-child dd a { color: var(--sidebar-text) !important; height: 42px !important; line-height: 42px !important; margin: 2px 0 !important; border-radius: var(--radius) !important; padding: 0 14px !important; background: transparent !important; }
+.layui-nav-tree .layui-nav-child dd a:hover { color: #fff !important; background: var(--sidebar-elevated) !important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background: var(--brand) !important; color: #fff !important; box-shadow: none !important; border-radius: var(--radius) !important; }
+.admin-content { margin-left: var(--sidebar-w) !important; margin-top: var(--header-h) !important; padding: 16px !important; min-height: calc(100vh - var(--header-h)) !important; width: calc(100% - var(--sidebar-w)) !important; background: var(--bg) !important; }
+.view-toolbar .view-title { color: var(--ink) !important; font-weight: 600 !important; }
+.card,.layui-card,.stat-card,.search-bar,.table-container,.chart-card { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; box-shadow: var(--shadow) !important; color: var(--ink) !important; }
+.card-title i, .layui-card-header::before { color: var(--brand) !important; background: var(--brand) !important; }
+.stat-card .icon.blue,.stat-card .icon.green,.stat-card .icon.orange,.stat-card .icon.purple,.stat-card .icon.red,.stat-card .icon.teal { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-btn { border-radius: var(--radius) !important; box-shadow: none !important; font-weight: 500 !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled), .layui-btn-normal { background: var(--brand) !important; background-image: none !important; border: 1px solid var(--brand) !important; color: #fff !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled):hover, .layui-btn-normal:hover { background: var(--brand-strong) !important; border-color: var(--brand-strong) !important; transform: none !important; box-shadow: none !important; }
+.layui-btn-danger { background: var(--danger) !important; border: 1px solid var(--danger) !important; color: #fff !important; }
+.layui-btn-primary { background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; color: var(--ink-soft) !important; }
+.layui-btn-primary:hover { border-color: var(--brand) !important; color: var(--brand) !important; background: var(--brand-soft) !important; }
+.layui-table thead tr, .layui-table-header, .layui-table-view .layui-table th { background: var(--bg) !important; }
+.layui-table th { color: var(--ink-soft) !important; border-color: var(--line) !important; }
+.layui-table td { color: var(--ink) !important; border-color: var(--line) !important; }
+.layui-table tr:hover td, .layui-table-click td, .layui-table-hover td { background: var(--brand-soft) !important; color: var(--ink) !important; }
+.layui-input,.layui-textarea,.layui-select,.layui-form-select .layui-input { border-radius: var(--radius) !important; border-color: var(--line-strong) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-input:focus,.layui-textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 2px var(--brand-soft) !important; }
+.layui-form-onswitch { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checked[lay-skin=primary] i { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i, .layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover, .layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em { background: var(--brand) !important; }
+.layui-layer { border-radius: var(--radius) !important; box-shadow: var(--shadow-lg) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-layer-title { background: var(--bg-elevated) !important; border-bottom: 1px solid var(--line) !important; color: var(--ink) !important; }
+.layui-layer-btn .layui-layer-btn0 { background: var(--brand) !important; border-color: var(--brand) !important; }
+.layui-layer.layui-layer-msg, .layui-layer-dialog.layui-layer-msg { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; box-shadow: var(--shadow-lg) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-success, .layui-layer-msg .layui-icon-success, .layui-layer-face.layui-icon-success { color: var(--brand) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-error, .layui-layer-msg .layui-icon-error, .layui-layer-face.layui-icon-error { color: var(--danger) !important; }
+@media (max-width: 768px) { .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; } .admin-sidebar.sidebar-open { left: 0 !important; } .admin-header { left: 0 !important; } .admin-content { margin-left: 0 !important; width: 100% !important; } }
+
+/* ===== semi distinct login + menu ===== */
+body.login-layout-semi { min-height:100vh!important; background:#f9f9f9!important; display:block!important; }
+body.login-layout-semi::before, body.login-layout-semi::after { display:none!important; }
+.login-layout-semi .locale-switcher-wrap { position:fixed!important; top:16px; right:16px; z-index:20; }
+.login-semi-shell { min-height:100vh; display:grid; grid-template-columns:.95fr 1.05fr; }
+.login-semi-side { background:#1c1f23; color:#fff; padding:64px 48px; display:flex; flex-direction:column; justify-content:center; }
+.login-semi-side h1 { margin:0 0 28px; font-size:36px; font-weight:600; letter-spacing:-.02em; }
+.login-semi-side ul { margin:0; padding:0; list-style:none; }
+.login-semi-side li { padding:10px 0; color:rgba(255,255,255,.7); border-bottom:1px solid rgba(255,255,255,.08); font-size:15px; }
+.login-semi-main { display:flex; align-items:center; justify-content:center; padding:40px 24px; }
+.login-layout-semi .login-wrap { max-width:380px; width:100%; background:#fff!important; border:1px solid #e6e8ea!important; border-radius:12px!important; box-shadow:0 4px 14px rgba(0,0,0,.08)!important; padding:32px!important; animation:none!important; }
+.login-layout-semi .login-wrap h2 { margin:0 0 22px; font-size:24px; font-weight:600; }
+.login-layout-semi .input-wrap { border-radius:6px!important; border:1px solid #c6cacd!important; }
+.login-layout-semi .input-wrap:focus-within { border-color:#0077fa!important; box-shadow:0 0 0 2px rgba(0,119,250,.15)!important; }
+.login-layout-semi .layui-input { height:42px!important; border:none!important; }
+.login-layout-semi .captcha-row .layui-input { border:1px solid #c6cacd!important; border-radius:6px!important; height:42px!important; }
+.login-layout-semi .captcha-img-box { height:42px!important; border-radius:6px!important; }
+.login-layout-semi .login-btn { height:42px!important; line-height:42px!important; border-radius:6px!important; background:#0077fa!important; width:100%; }
+.login-layout-semi .login-footer { margin-top:16px; color:#888d92; font-size:12px; }
+@media(max-width:900px){ .login-semi-shell{grid-template-columns:1fr;} .login-semi-side{min-height:160px;padding:28px;} }
+
+/* Semi 菜单：深色 + 选中填充蓝 */
+.admin-sidebar { background:#1c1f23!important; border-right:none!important; }
+.admin-sidebar .sidebar-logo { background:#1c1f23!important; border-bottom:1px solid rgba(255,255,255,.06)!important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background:#1c1f23!important; }
+.admin-sidebar .layui-nav-bar { display:none!important; }
+.layui-nav-tree { padding:8px!important; }
+.layui-nav-tree .layui-nav-item > a { color:rgba(255,255,255,.45)!important; background:transparent!important; font-size:12px!important; padding:12px!important; text-transform:none!important; }
+.layui-nav-tree .layui-nav-child dd a { color:rgba(255,255,255,.7)!important; height:40px!important; line-height:40px!important; margin:2px 0!important; border-radius:6px!important; padding:0 12px!important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background:#2e3238!important; color:#fff!important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background:#0077fa!important; color:#fff!important; box-shadow:none!important; border-radius:6px!important; }

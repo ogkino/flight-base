@@ -1,0 +1,553 @@
+/* ═══════════════════════════════════════════════════════════
+   Flight Base Admin Theme — ocean
+   加载方式：在 admin.css 之后引入（theme.js / _head.php）
+   入口：login_ocean.html
+═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg: #e8f1f8;
+    --bg-elevated: #ffffff;
+    --ink: #0f2744;
+    --ink-soft: #4a6280;
+    --ink-mute: #7a90a8;
+    --line: #d5e4f0;
+    --line-strong: #b8cfe3;
+    --brand: #0369a1;
+    --brand-strong: #0284c7;
+    --brand-soft: #e0f2fe;
+    --brand-ink: #075985;
+    --menu-active-bg: #fff;
+    --menu-active-color: var(--brand);
+    --sidebar: #f4f9fd;
+    --sidebar-elevated: #ffffff;
+    --sidebar-text: #4a6280;
+    --sidebar-text-strong: #0f2744;
+    --danger: #dc2626;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(15, 39, 68, .04), 0 10px 28px rgba(15, 39, 68, .07);
+    --shadow-lg: 0 16px 44px rgba(15, 39, 68, .12);
+    --header-h: 64px;
+    --sidebar-w: 260px;
+    --font: 'Figtree', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background:
+        radial-gradient(ellipse 90% 60% at 100% -10%, rgba(14,165,233,.12), transparent 50%),
+        var(--bg) !important;
+    color: var(--ink) !important;
+    font-family: var(--font) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+.admin-header {
+    left: var(--sidebar-w) !important;
+    height: var(--header-h) !important;
+    padding: 0 28px !important;
+    background: rgba(255,255,255,.86) !important;
+    color: var(--ink) !important;
+    border-bottom: 1px solid var(--line) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: none !important;
+}
+
+.admin-header .logo,
+.admin-header .user-info .username { color: var(--ink) !important; }
+
+.admin-header .user-info .username::before {
+    background: var(--brand-strong) !important;
+}
+
+/* 默认皮顶栏是深色，选择器是白字；ocean 顶栏浅色必须改回深色字 */
+.admin-header .locale-switcher,
+.admin-header .store-switcher,
+.admin-header .store-switcher-label {
+    color: var(--ink) !important;
+    background: #f0f7fc !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 999px !important;
+}
+
+.admin-header .locale-switcher:hover,
+.admin-header .store-switcher:hover {
+    background: #fff !important;
+    border-color: var(--brand-strong) !important;
+}
+
+.admin-header .locale-switcher option {
+    color: var(--ink) !important;
+    background: #fff !important;
+}
+
+.admin-sidebar {
+    width: var(--sidebar-w) !important;
+    background: var(--sidebar) !important;
+    border-right: 1px solid var(--line) !important;
+    box-shadow: none !important;
+}
+
+.admin-sidebar .sidebar-logo {
+    height: var(--header-h) !important;
+    border-bottom: 1px solid var(--line) !important;
+    background: transparent !important;
+    padding: 0 18px !important;
+}
+
+.admin-sidebar .sidebar-logo span {
+    color: var(--ink) !important;
+    font-weight: 700 !important;
+    font-size: 17px !important;
+}
+
+.admin-sidebar .sidebar-logo i {
+    color: var(--brand-strong) !important;
+    background: var(--brand-soft);
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px !important;
+}
+
+.admin-sidebar,
+.admin-sidebar .layui-nav-tree,
+.admin-sidebar .layui-nav-child,
+.admin-sidebar .layui-nav-item {
+    background: var(--sidebar) !important;
+}
+
+.admin-sidebar .layui-nav-bar { display: none !important; }
+
+.layui-nav-tree { padding: 14px 12px !important; }
+
+/* 分组：普通字重，非全大写 */
+.layui-nav-tree .layui-nav-item > a {
+    color: var(--ink-mute) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em !important;
+    text-transform: none !important;
+    padding: 12px 14px 6px !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-item > a:hover {
+    background: transparent !important;
+    color: var(--brand) !important;
+}
+
+.layui-nav-tree .layui-nav-item > a .layui-nav-more {
+    color: var(--ink-mute) !important;
+}
+
+/* 子项：大圆角胶囊 */
+.layui-nav-tree .layui-nav-child dd a {
+    color: var(--sidebar-text) !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    margin: 3px 0 !important;
+    border-radius: 999px !important;
+    padding: 0 18px !important;
+    background: transparent !important;
+    font-weight: 500 !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a:hover {
+    color: var(--brand-ink) !important;
+    background: rgba(2, 132, 199, .08) !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a i {
+    color: inherit !important;
+    opacity: .75 !important;
+}
+
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: #fff !important;
+    color: var(--brand) !important;
+    box-shadow: 0 6px 18px rgba(3, 105, 161, .14) !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+}
+
+.admin-content {
+    margin-left: var(--sidebar-w) !important;
+    margin-top: var(--header-h) !important;
+    padding: 22px 26px 36px !important;
+    min-height: calc(100vh - var(--header-h)) !important;
+    width: calc(100% - var(--sidebar-w)) !important;
+}
+
+.card,
+.layui-card,
+.stat-card,
+.search-bar,
+.table-container,
+.chart-card {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.card-title i,
+.layui-card-header::before { color: var(--brand) !important; background: var(--brand) !important; }
+
+.view-toolbar .view-title {
+    color: var(--ink) !important;
+    font-size: 22px !important;
+    letter-spacing: -.03em;
+}
+
+.stat-card .icon.blue { background: #e0f2fe !important; color: #0284c7 !important; }
+.stat-card .icon.green { background: #dcfce7 !important; color: #16a34a !important; }
+.stat-card .icon.orange { background: #ffedd5 !important; color: #ea580c !important; }
+.stat-card .icon.purple,
+.stat-card .icon.teal { background: #e0f2fe !important; color: #0369a1 !important; }
+.stat-card .icon.red { background: #fee2e2 !important; color: #dc2626 !important; }
+
+#dashboardRangeGroup .layui-btn-normal {
+    background: var(--brand) !important;
+    box-shadow: none !important;
+}
+
+#dashboardRangeGroup .layui-btn-primary {
+    background: #fff !important;
+    border-color: var(--line) !important;
+    color: var(--ink-soft) !important;
+}
+
+.layui-btn { border-radius: var(--radius-sm) !important; font-weight: 600 !important; }
+
+.layui-btn:not([class*="layui-btn-"]) {
+    background: var(--ink) !important;
+}
+
+.layui-btn-normal {
+    background: var(--brand) !important;
+}
+.layui-btn-normal:hover {
+    background: var(--brand-strong) !important;
+    box-shadow: 0 8px 22px rgba(2, 132, 199, .28) !important;
+}
+
+.layui-btn-primary {
+    background: #fff !important;
+    border: 1px solid var(--line-strong) !important;
+    color: var(--ink-soft) !important;
+}
+.layui-btn-primary:hover {
+    border-color: var(--brand) !important;
+    color: var(--brand) !important;
+    background: var(--brand-soft) !important;
+}
+
+.layui-table thead tr,
+.layui-table-header,
+.layui-table-view .layui-table th {
+    background: #f0f7fc !important;
+}
+
+.layui-table th {
+    color: var(--ink-soft) !important;
+    font-weight: 600 !important;
+}
+
+.layui-table tr:hover td { background: #f3f9fd !important; }
+
+.layui-input,
+.layui-textarea,
+.layui-select {
+    border-radius: var(--radius-sm) !important;
+    border-color: var(--line-strong) !important;
+}
+
+.layui-input:focus,
+.layui-textarea:focus {
+    border-color: var(--brand-strong) !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, .14) !important;
+}
+
+.layui-layer {
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; }
+    .admin-sidebar.sidebar-open { left: 0 !important; }
+    .admin-header { left: 0 !important; }
+    .admin-content { margin-left: 0 !important; width: 100% !important; }
+}
+
+/* ── Login：顶部 Hero + 下方居中卡（堆叠，非左右分栏） ── */
+body.login-page {
+    min-height: 100vh !important;
+    background: var(--bg) !important;
+    display: block !important;
+    overflow: auto !important;
+}
+
+body.login-page::before,
+body.login-page::after { display: none !important; }
+
+.login-page .locale-switcher-wrap {
+    position: fixed !important;
+    top: 20px !important;
+    right: 24px !important;
+    z-index: 20;
+}
+
+.login-page .locale-switcher {
+    color: #fff !important;
+    background: rgba(255,255,255,.16) !important;
+    border: 1px solid rgba(255,255,255,.28) !important;
+    border-radius: 999px !important;
+}
+
+.login-horizon-hero {
+    position: relative;
+    color: #fff;
+    padding: 72px 24px 88px;
+    background:
+        radial-gradient(ellipse 70% 80% at 10% 20%, rgba(125,211,252,.35), transparent 55%),
+        radial-gradient(ellipse 60% 70% at 90% 10%, rgba(14,165,233,.25), transparent 50%),
+        linear-gradient(160deg, #082f49 0%, #0c4a6e 40%, #0284c7 100%);
+    overflow: hidden;
+    text-align: center;
+}
+
+.login-horizon-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.login-horizon-hero .login-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    font-size: 13px;
+    margin: 0 auto 20px;
+}
+
+.login-horizon-hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -.03em;
+}
+
+.login-horizon-hero p {
+    margin: 0 auto;
+    max-width: 34em;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,.72);
+}
+
+.login-horizon-wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 64px;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 64' preserveAspectRatio='none'%3E%3Cpath fill='%23e8f1f8' d='M0,32 C240,64 480,0 720,24 C960,48 1200,64 1440,24 L1440,64 L0,64 Z'/%3E%3C/svg%3E")
+        center bottom / 100% 64px no-repeat;
+}
+
+.login-horizon-main {
+    margin-top: -48px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px 56px;
+}
+
+.login-layout-horizon .login-wrap {
+    width: 100%;
+    max-width: 440px;
+    background: #fff !important;
+    border-radius: 24px !important;
+    box-shadow: var(--shadow-lg) !important;
+    border: 1px solid var(--line) !important;
+    padding: 36px 32px 28px !important;
+    animation: none !important;
+}
+
+.login-layout-horizon .login-logo {
+    text-align: center !important;
+    margin-bottom: 24px !important;
+}
+
+.login-layout-horizon .login-logo .logo-icon {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 18px !important;
+    background: linear-gradient(145deg, #0369a1, #38bdf8) !important;
+    box-shadow: 0 12px 28px rgba(3,105,161,.28) !important;
+    font-size: 22px !important;
+    margin: 0 auto 16px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+}
+
+.login-layout-horizon .login-logo h2 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+    margin: 0 0 6px !important;
+}
+
+.login-layout-horizon .login-logo p {
+    color: var(--ink-mute) !important;
+    margin: 0 !important;
+}
+
+.login-layout-horizon .input-wrap {
+    background: #f5f9fc !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 999px !important;
+}
+
+.login-layout-horizon .input-wrap:focus-within {
+    border-color: var(--brand-strong) !important;
+    box-shadow: 0 0 0 3px rgba(2,132,199,.14) !important;
+    background: #fff !important;
+}
+
+.login-layout-horizon .input-icon { color: var(--ink-mute) !important; }
+
+.login-layout-horizon .layui-input {
+    background: transparent !important;
+    border: none !important;
+    height: 48px !important;
+}
+
+.login-layout-horizon .captcha-row .layui-input {
+    background: #f5f9fc !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 999px !important;
+    height: 48px !important;
+}
+
+.login-layout-horizon .captcha-img-box {
+    height: 48px !important;
+    width: 128px !important;
+    border-radius: 999px !important;
+    border: 1px solid var(--line) !important;
+    overflow: hidden;
+}
+
+.login-layout-horizon .login-btn {
+    height: 48px !important;
+    line-height: 48px !important;
+    border-radius: 999px !important;
+    background: var(--brand) !important;
+    box-shadow: 0 10px 24px rgba(3,105,161,.28) !important;
+}
+
+.login-layout-horizon .login-btn:hover {
+    background: var(--brand-strong) !important;
+    transform: translateY(-1px) !important;
+}
+
+.login-layout-horizon .login-footer {
+    color: var(--ink-mute) !important;
+    margin-top: 22px !important;
+    text-align: center !important;
+}
+
+.login-layout-horizon #login-err {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+    border-radius: 14px !important;
+}
+
+@media (max-width: 640px) {
+    .login-horizon-hero { padding: 56px 18px 72px; }
+    .login-horizon-main { padding: 0 14px 40px; }
+    .login-layout-horizon .login-wrap { padding: 28px 20px 22px !important; }
+}
+
+/* ── 表单控件跟随主题色（覆盖 admin.css 写死的蓝） ── */
+.layui-form-onswitch {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i,
+.layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover,
+.layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: var(--brand) !important;
+}
+
+
+/* 仅有尺寸类的按钮（如搜索：layui-btn-sm）也走主题主色 */
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled) {
+    background: var(--brand) !important;
+    background-image: none !important;
+    border-color: var(--brand) !important;
+    color: #fff !important;
+}
+.layui-btn-normal {
+    background: var(--brand) !important;
+    background-image: none !important;
+    border-color: var(--brand) !important;
+    color: #fff !important;
+}
+
+
+/* ── Toast / layer.msg（Layui 2.8 用字体图标 layui-icon-success，不是旧 ico 雪碧图） ── */
+.layui-layer.layui-layer-msg,
+.layui-layer-dialog.layui-layer-msg {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,.18)) !important;
+}
+.layui-layer.layui-layer-msg .layui-layer-content,
+.layui-layer-dialog.layui-layer-msg .layui-layer-content {
+    color: var(--ink) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-success,
+.layui-layer-msg .layui-icon-success,
+.layui-layer-face.layui-icon-success {
+    color: var(--brand) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-error,
+.layui-layer-msg .layui-icon-error,
+.layui-layer-face.layui-icon-error {
+    color: var(--danger, #dc3545) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-tips,
+.layui-layer-msg .layui-icon-tips {
+    color: var(--brand-strong, var(--brand)) !important;
+}

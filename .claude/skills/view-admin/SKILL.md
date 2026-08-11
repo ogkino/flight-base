@@ -53,7 +53,7 @@ File: `app/views/admin/{viewName}.php`
 
 ```php
 <?php
-$pageTitle = '页面标题';
+$pageTitle = lang('view.my_page_title');
 include __DIR__ . '/_head.php';
 ?>
 
@@ -63,11 +63,11 @@ include __DIR__ . '/_head.php';
     <div class="view-toolbar">
         <div class="view-title">
             <i class="layui-icon layui-icon-template" style="margin-right:6px;"></i>
-            页面标题
+            <?= htmlspecialchars(lang('view.my_page_title')) ?>
         </div>
         <div>
             <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="doSave()">
-                <i class="layui-icon layui-icon-ok"></i> 保存
+                <i class="layui-icon layui-icon-ok"></i> <?= htmlspecialchars(lang('view.save')) ?>
             </button>
         </div>
     </div>
@@ -75,7 +75,7 @@ include __DIR__ . '/_head.php';
     <!-- Card: standard container -->
     <div class="card">
         <div class="card-title">
-            <i class="layui-icon layui-icon-tips"></i> 卡片标题
+            <i class="layui-icon layui-icon-tips"></i> <?= htmlspecialchars(lang('view.my_page_card')) ?>
         </div>
         <!-- Your custom HTML here -->
     </div>
@@ -89,14 +89,14 @@ layui.use(['layer', 'form'], function() {
     window.layer = layui.layer;
 });
 
-// Your custom JS
+// Your custom JS — use vt() for layer.msg / parent.layer.msg (VIEW_I18N from _foot.php)
 function doSave() {
     request('/api/admin/your-api', {
         method: 'POST',
         data: { key: 'value' }
     }).then(res => {
-        if (res.code === 0) layer.msg('保存成功', {icon: 1});
-        else layer.msg(res.msg, {icon: 2});
+        if (res.code === 0) layer.msg(vt('save_success', '保存成功'), {icon: 1});
+        else layer.msg(res.msg || vt('op_failed', '操作失败'), {icon: 2});
     });
 }
 </script>
@@ -104,6 +104,17 @@ function doSave() {
 </body>
 </html>
 ```
+
+### i18n（必须）
+
+弹层 / View 页面的用户可见文案**必须**走多语言，不要硬编码中文：
+
+| 场景 | 用法 |
+|------|------|
+| PHP 标题 / HTML 静态文案 | `lang('view.xxx')`，key 写在 `app/lang/{locale}.php` 的 `view` section |
+| JS：`layer.msg` / `parent.layer.msg` / 表格列标题等 | `vt('xxx', '中文兜底')` |
+
+`_foot.php` 已注入 `window.VIEW_I18N`（整份 `view` section）并定义 `vt(key, fallback)`。新增文案时同步维护 `zh-CN.php` 与 `en-US.php` 的相同 key。自定义动作 iframe 弹层与菜单 View 页同一套规则。详见 `docs/I18N.md`。
 
 ### What's Available in the View
 
@@ -119,10 +130,11 @@ function doSave() {
 **JS libraries (from _foot.php):**
 - Layui 2.8+ (layer, form, table, upload, element, etc.)
 - jQuery (via Layui)
-- `request(url, options)` from `config.js` — wrapper around fetch with auto Token
+- `request(url, options)` from `config.js` — wrapper around fetch with auto Token + `X-Locale`
 - `successMsg()` / `errorMsg()` from `common.js`
 - `logout()` from `config.js`
 - `config.js` globals: `CONFIG.baseUrl`, `CONFIG.apiUrl`
+- `window.VIEW_I18N` + `vt(key, fallback)` — view section i18n for dialog JS copy
 
 ### JS `request()` Function
 

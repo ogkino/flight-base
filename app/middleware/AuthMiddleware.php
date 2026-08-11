@@ -69,7 +69,11 @@ class AuthMiddleware
         
         $payload = validateToken($token);
         
-        if (!$payload || $payload['type'] !== 'admin') {
+        if (!$payload) {
+            error(lang('common.token_invalid'), 401);
+        }
+
+        if (($payload['type'] ?? '') !== 'admin') {
             error(lang('common.need_admin'), 403);
         }
         

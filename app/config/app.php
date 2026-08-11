@@ -37,6 +37,9 @@ return [
     
     // Token 过期时间（秒）
     'token_expire' => env('TOKEN_EXPIRE', 7 * 86400),  // 7天
+
+    // 管理端 / POS 登录是否校验图形验证码（false 时跳过校验，登录页隐藏验证码）
+    'captcha_enabled' => env('ADMIN_CAPTCHA_ENABLED', true),
     
     // 日志配置
     'log' => [

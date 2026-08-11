@@ -15,7 +15,7 @@ function loadAdminInfo() {
         } else {
             console.error('loadAdmin error:', res.msg);
             clearToken();
-            location.href = 'login.html';
+            location.href = (typeof getAdminLoginEntry === 'function' ? getAdminLoginEntry() : 'login.html');
         }
     }).catch(err => {
         console.error('loadAdmin error:', err);
@@ -51,11 +51,13 @@ function logout() {
         icon: 3,
         title: t('common.confirm_title', '提示')
     }, function(index){
+        // 先记下入口，避免异步过程中被其它逻辑改写
+        var loginUrl = (typeof getAdminLoginEntry === 'function' ? getAdminLoginEntry() : 'login.html');
         request(ADMIN_API_PREFIX + '/logout', {
             method: 'POST'
         }).then(res => {
             clearToken();
-            location.href = 'login.html';
+            location.href = loginUrl;
         });
         layer.close(index);
     });
@@ -139,3 +141,78 @@ function copyToClipboard(text) {
     document.body.removeChild(textarea);
     successMsg(t('common.copy_success', '复制成功'));
 }
+
+/** 是否窄屏（后台移动端自适应阈值） */
+function isMobileViewport() {
+    return window.innerWidth <= 768;
+}
+
+/**
+ * 解析 layer 弹窗尺寸：移动端强制接近全屏，避免固定 800px/900px 溢出
+ * @returns {[string, string]}
+ */
+function resolveLayerArea(width, height) {
+    if (isMobileViewport()) {
+        return [
+            Math.max(280, Math.floor(window.innerWidth * 0.96)) + 'px',
+            Math.max(320, Math.floor(window.innerHeight * 0.92)) + 'px'
+        ];
+    }
+    return [width || '800px', height || '80%'];
+}
+
+/** 打开后再次校正位置（防 Layui 按 PC 宽计算导致左半边裁切） */
+function adaptLayerToMobile(index) {
+    if (!isMobileViewport() || typeof layer === 'undefined') return;
+    const w = Math.max(280, Math.floor(window.innerWidth * 0.96));
+    const h = Math.max(320, Math.floor(window.innerHeight * 0.92));
+    layer.style(index, {
+        width: w + 'px',
+        height: h + 'px',
+        top: Math.floor((window.innerHeight - h) / 2) + 'px',
+        left: Math.floor((window.innerWidth - w) / 2) + 'px'
+    });
+}
+
+/**
+ * 按 ADMIN_CAPTCHA_ENABLED /login-config 隐藏登录页验证码行
+ * （.env ADMIN_CAPTCHA_ENABLED=false 时后端也不再校验）
+ */
+function applyLoginCaptchaUi(enabled) {
+    if (enabled !== false) return;
+    window.ADMIN_CAPTCHA_ENABLED = false;
+    window.refreshCaptcha = function () {};
+
+    document.querySelectorAll('.captcha-row').forEach(function (row) {
+        row.style.display = 'none';
+        var input = row.querySelector('input[name="captcha"]');
+        if (input) {
+            input.removeAttribute('required');
+            input.removeAttribute('lay-verify');
+            input.value = '';
+            input.disabled = true;
+        }
+    });
+}
+
+(function initLoginCaptchaGate() {
+    if (!document.querySelector('.captcha-row')) return;
+
+    function apply(flag) {
+        applyLoginCaptchaUi(flag !== false);
+    }
+
+    if (typeof window.ADMIN_CAPTCHA_ENABLED === 'boolean') {
+        apply(window.ADMIN_CAPTCHA_ENABLED);
+        return;
+    }
+
+    fetch('/api/admin/login-config', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+            var enabled = !(res && res.code === 0 && res.data && res.data.captcha_enabled === false);
+            window.ADMIN_CAPTCHA_ENABLED = enabled;
+            apply(enabled);
+        })
+        .catch(function () { /* 拉取失败保持验证码可见，与后端默认开启一致 */ });
+})();

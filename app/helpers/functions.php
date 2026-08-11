@@ -104,6 +104,21 @@ function getHeader($key) {
 }
 
 /**
+ * 规范化 Authorization：支持 "Bearer xxx" 与裸 token（管理后台历史写法）
+ */
+function normalizeAuthToken($token): ?string
+{
+    if ($token === null || $token === '') {
+        return null;
+    }
+    $token = trim((string)$token);
+    if (stripos($token, 'Bearer ') === 0) {
+        $token = trim(substr($token, 7));
+    }
+    return $token !== '' ? $token : null;
+}
+
+/**
  * 生成 Token
  */
 function generateToken($user) {
@@ -121,6 +136,7 @@ function generateToken($user) {
  * 验证 Token
  */
 function validateToken($token) {
+    $token = normalizeAuthToken($token);
     if (!$token) return false;
 
     $data = json_decode(base64_decode($token), true);

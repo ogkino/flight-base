@@ -15,7 +15,7 @@
  * @var array $dictType 由 DictDataController::managePage() include 时注入
  */
 
-$pageTitle = '字典数据 - ' . $dictType['name'];
+$pageTitle = lang('view.dict_data_title') . ' - ' . $dictType['name'];
 include __DIR__ . '/_head.php';
 ?>
 
@@ -25,21 +25,19 @@ include __DIR__ . '/_head.php';
     <div class="card" style="margin-bottom: 14px; padding: 12px 16px;">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
             <div>
-                <span style="font-size:16px; font-weight:600; color:#1a2035;">
-                    <i class="layui-icon layui-icon-template" style="margin-right:4px; color:#1E9FFF;"></i>
+                <span class="view-meta-title">
+                    <i class="layui-icon layui-icon-template"></i>
                     <?= htmlspecialchars($dictType['name']) ?>
                 </span>
-                <span style="margin-left:10px; padding:2px 8px; background:#f2f2f2; border-radius:4px; font-family:monospace; color:#666; font-size:13px;">
-                    <?= htmlspecialchars($dictType['type']) ?>
-                </span>
+                <span class="view-meta-tag"><?= htmlspecialchars($dictType['type']) ?></span>
                 <?php if (!empty($dictType['remark'])): ?>
-                    <span style="margin-left:10px; color:#999; font-size:13px;"><?= htmlspecialchars($dictType['remark']) ?></span>
+                    <span class="view-meta-desc"><?= htmlspecialchars($dictType['remark']) ?></span>
                 <?php endif; ?>
             </div>
             <div>
-                <input type="text" id="keyword" placeholder="搜索标签/键值" class="layui-input" style="width:180px; display:inline-block; height:32px;">
-                <button class="layui-btn layui-btn-sm" onclick="searchData()"><i class="layui-icon layui-icon-search"></i> 搜索</button>
-                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="openForm()"><i class="layui-icon layui-icon-add-1"></i> 新增数据</button>
+                <input type="text" id="keyword" placeholder="<?= htmlspecialchars(lang('view.dict_data_search_ph')) ?>" class="layui-input" style="width:180px; display:inline-block; height:32px;">
+                <button class="layui-btn layui-btn-sm" onclick="searchData()"><i class="layui-icon layui-icon-search"></i> <?= htmlspecialchars(lang('view.search')) ?></button>
+                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="openForm()"><i class="layui-icon layui-icon-add-1"></i> <?= htmlspecialchars(lang('view.dict_data_add_btn')) ?></button>
             </div>
         </div>
     </div>
@@ -54,51 +52,51 @@ include __DIR__ . '/_head.php';
     <form class="layui-form" id="dictDataForm" lay-filter="dictDataForm">
         <input type="hidden" name="id">
         <div class="layui-form-item">
-            <label class="layui-form-label">字典标签</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.dict_data_label')) ?></label>
             <div class="layui-input-block">
-                <input type="text" name="label" placeholder="显示文本，如：启用" class="layui-input" lay-verify="required">
+                <input type="text" name="label" placeholder="<?= htmlspecialchars(lang('view.dict_data_label_ph')) ?>" class="layui-input" lay-verify="required">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">字典键值</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.dict_data_value')) ?></label>
             <div class="layui-input-block">
-                <input type="text" name="value" placeholder="存储值，如：1" class="layui-input" lay-verify="required">
+                <input type="text" name="value" placeholder="<?= htmlspecialchars(lang('view.dict_data_value_ph')) ?>" class="layui-input" lay-verify="required">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.sort')) ?></label>
             <div class="layui-input-block">
-                <input type="number" name="sort" value="0" placeholder="数字越小越靠前" class="layui-input">
+                <input type="number" name="sort" value="0" placeholder="<?= htmlspecialchars(lang('view.dict_data_sort_ph')) ?>" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">颜色</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.dict_data_color')) ?></label>
             <div class="layui-input-block" style="display:flex; align-items:center; gap:8px;">
                 <input type="color" name="color" id="colorPicker" value="#1E9FFF" style="width:40px; height:32px; padding:2px; border:1px solid #e6e6e6; border-radius:4px;">
-                <input type="text" name="color_text" id="colorText" placeholder="留空表示不设置" class="layui-input" style="flex:1;">
+                <input type="text" name="color_text" id="colorText" placeholder="<?= htmlspecialchars(lang('view.dict_data_color_ph')) ?>" class="layui-input" style="flex:1;">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">默认项</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.dict_data_is_default')) ?></label>
             <div class="layui-input-block">
-                <input type="checkbox" name="is_default" lay-skin="switch" lay-text="是|否">
+                <input type="checkbox" name="is_default" lay-skin="switch" lay-text="<?= htmlspecialchars(lang('view.dict_data_yes_no')) ?>">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.status')) ?></label>
             <div class="layui-input-block">
-                <input type="checkbox" name="status" lay-skin="switch" lay-text="启用|禁用" checked>
+                <input type="checkbox" name="status" lay-skin="switch" lay-text="<?= htmlspecialchars(lang('view.dict_data_status_switch')) ?>" checked>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">备注</label>
+            <label class="layui-form-label"><?= htmlspecialchars(lang('view.remark')) ?></label>
             <div class="layui-input-block">
-                <textarea name="remark" placeholder="选填" class="layui-textarea"></textarea>
+                <textarea name="remark" placeholder="<?= htmlspecialchars(lang('view.optional')) ?>" class="layui-textarea"></textarea>
             </div>
         </div>
         <div class="layui-form-item" style="text-align:right; margin-top:24px;">
-            <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();">取消</button>
-            <button type="button" class="layui-btn" lay-submit lay-filter="dictDataForm">确定</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><?= htmlspecialchars(lang('view.cancel')) ?></button>
+            <button type="button" class="layui-btn" lay-submit lay-filter="dictDataForm"><?= htmlspecialchars(lang('view.confirm')) ?></button>
         </div>
     </form>
 </div>
@@ -152,31 +150,31 @@ function renderTable(keyword) {
         limit: 20,
         cols: [[
             { field: 'id', title: 'ID', width: 70, sort: true },
-            { field: 'label', title: '字典标签', minWidth: 140 },
-            { field: 'value', title: '字典键值', width: 120 },
-            { field: 'sort', title: '排序', width: 80, sort: true },
+            { field: 'label', title: vt('dict_data_col_label', '字典标签'), minWidth: 140 },
+            { field: 'value', title: vt('dict_data_col_value', '字典键值'), width: 120 },
+            { field: 'sort', title: vt('sort', '排序'), width: 80, sort: true },
             {
-                field: 'color', title: '颜色', width: 100, templet: function (d) {
+                field: 'color', title: vt('dict_data_col_color', '颜色'), width: 105, templet: function (d) {
                     if (!d.color) return '<span style="color:#ccc;">-</span>';
                     return '<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:' + d.color + ';vertical-align:middle;margin-right:4px;"></span>' + d.color;
                 }
             },
             {
-                field: 'is_default', title: '默认项', width: 90, templet: function (d) {
+                field: 'is_default', title: vt('dict_data_col_default', '默认项'), width: 90, templet: function (d) {
                     return d.is_default == 1
-                        ? '<span class="layui-badge layui-bg-blue">是</span>'
-                        : '<span class="layui-badge layui-bg-gray">否</span>';
+                        ? '<span class="layui-badge layui-bg-blue">' + vt('yes', '是') + '</span>'
+                        : '<span class="layui-badge layui-bg-gray">' + vt('no', '否') + '</span>';
                 }
             },
             {
-                field: 'status', title: '状态', width: 90, templet: function (d) {
+                field: 'status', title: vt('status', '状态'), width: 100, templet: function (d) {
                     return d.status == 1
-                        ? '<span class="layui-badge layui-bg-green">启用</span>'
-                        : '<span class="layui-badge layui-bg-gray">禁用</span>';
+                        ? '<span class="layui-badge layui-bg-green">' + vt('enabled', '启用') + '</span>'
+                        : '<span class="layui-badge layui-bg-gray">' + vt('disabled_status', '禁用') + '</span>';
                 }
             },
-            { field: 'remark', title: '备注', minWidth: 120 },
-            { title: '操作', width: 175, toolbar: '#dictDataRowActions', fixed: 'right' },
+            { field: 'remark', title: vt('remark', '备注'), minWidth: 120 },
+            { title: vt('actions', '操作'), width: 190, toolbar: '#dictDataRowActions', fixed: 'right' },
         ]],
     });
 }
@@ -190,7 +188,7 @@ function openForm(row) {
 
     layer.open({
         type: 1,
-        title: editingId ? '编辑字典数据' : '新增字典数据',
+        title: editingId ? vt('dict_data_edit_title', '编辑字典数据') : vt('dict_data_add_title', '新增字典数据'),
         area: ['520px', '620px'],
         content: $('#dictDataFormTpl'),
         success: function () {
@@ -229,23 +227,23 @@ function submitForm(field) {
 
     request(url, { method: 'POST', data: data }).then(function (res) {
         if (res.code === 0) {
-            successMsg(isEdit ? '更新成功' : '创建成功');
+            successMsg(isEdit ? vt('update_success', '更新成功') : vt('create_success', '创建成功'));
             layer.closeAll();
             renderTable(document.getElementById('keyword').value.trim());
         } else {
-            errorMsg(res.msg || '操作失败');
+            errorMsg(res.msg || vt('op_failed', '操作失败'));
         }
     });
 }
 
 function confirmDelete(obj) {
-    layer.confirm('确定删除字典数据「' + obj.data.label + '」吗？', { icon: 3, title: '提示' }, function (index) {
+    layer.confirm(vt('dict_data_delete_confirm', '确定删除字典数据「:name」吗？').replace(':name', obj.data.label), { icon: 3, title: vt('tip', '提示') }, function (index) {
         request('/api/admin/dict/data/' + obj.data.id, { method: 'DELETE' }).then(function (res) {
             if (res.code === 0) {
-                successMsg('删除成功');
+                successMsg(vt('delete_success', '删除成功'));
                 obj.del();
             } else {
-                errorMsg(res.msg || '删除失败');
+                errorMsg(res.msg || vt('op_failed', '删除失败'));
             }
         });
         layer.close(index);
@@ -254,8 +252,8 @@ function confirmDelete(obj) {
 </script>
 
 <script type="text/html" id="dictDataRowActions">
-    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit"><i class="layui-icon layui-icon-edit"></i> 编辑</a>
-    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete"><i class="layui-icon layui-icon-delete"></i> 删除</a>
+    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit"><i class="layui-icon layui-icon-edit"></i> <?= htmlspecialchars(lang('view.edit')) ?></a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete"><i class="layui-icon layui-icon-delete"></i> <?= htmlspecialchars(lang('view.delete')) ?></a>
 </script>
 
 </body>

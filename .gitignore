@@ -7,6 +7,7 @@ composer.lock
 
 # 日志和运行时文件
 /runtime/logs/*.log
+/runtime/captcha/*
 
 # 上传文件
 /public/uploads/*

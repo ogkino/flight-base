@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title data-i18n="common.login_title">管理员登录 - Flight Base</title>
+    <link rel="stylesheet" href="assets/css/layui2.8.18.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=3.4.9">
+    <link rel="stylesheet" href="assets/css/admin.theme.ocean.css?v=1.4.0">
+    <script>window.ADMIN_THEME_CSS_BASE = 'assets/css/';</script>
+    <script src="assets/js/theme.js?v=1.5.0"></script>
+    <script>setAdminTheme('ocean', 'login_ocean.html');</script>
+</head>
+<body class="login-page login-layout-horizon">
+
+<div class="locale-switcher-wrap">
+    <span id="loginLocaleSwitcher"></span>
+</div>
+
+<div class="login-horizon-hero">
+    <div class="login-horizon-inner">
+        <div class="login-brand-badge"><span>●</span><span>Flight Base Ocean</span></div>
+        <h1>海天一色的工作台</h1>
+        <p>Hero 登录布局 · 浅色胶囊侧栏菜单</p>
+    </div>
+    <div class="login-horizon-wave" aria-hidden="true"></div>
+</div>
+
+<div class="login-horizon-main">
+    <div class="login-wrap">
+        <div class="login-logo">
+            <div class="logo-icon">🌊</div>
+            <h2>欢迎回来</h2>
+            <p>请使用管理员账号登录</p>
+        </div>
+        <div id="login-err"></div>
+        <form class="layui-form" lay-filter="loginForm">
+            <div class="layui-form-item">
+                <div class="input-wrap">
+                    <i class="input-icon layui-icon layui-icon-username"></i>
+                    <input type="text" name="username" required lay-verify="required" class="layui-input" placeholder="请输入用户名" value="admin" autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="input-wrap">
+                    <i class="input-icon layui-icon layui-icon-password"></i>
+                    <input type="password" name="password" required lay-verify="required" class="layui-input" placeholder="请输入密码" value="password" autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="captcha-row">
+                    <input type="text" name="captcha" required lay-verify="required" class="layui-input" placeholder="请输入验证码" autocomplete="off">
+                    <div class="captcha-img-box" title="点击刷新验证码">
+                        <img src="/api/captcha" id="captchaImg" alt="captcha">
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="type" value="admin">
+            <div class="layui-form-item" style="margin-bottom:0;">
+                <button class="layui-btn login-btn" lay-submit lay-filter="login" data-i18n="common.login_btn">立即登录</button>
+            </div>
+        </form>
+        <div class="login-footer">Theme ocean</div>
+    </div>
+</div>
+
+<script src="assets/js/layui2.8.18.js"></script>
+<script src="assets/js/config.js?v=2.4.1"></script>
+<script src="assets/js/i18n.js?v=1.0.0"></script>
+<script src="assets/js/common.js?v=2.3.9"></script>
+<script>renderLocaleSwitcher('loginLocaleSwitcher');</script>
+<script>
+layui.use(['form','layer'], function(){
+  const form = layui.form;
+  if (getToken()) {
+    request(ADMIN_API_PREFIX + '/info').then(res => { if (res.code === 0) location.href = 'index.html'; });
+  }
+  window.refreshCaptcha = function(){
+    document.getElementById('captchaImg').src = '/api/captcha?t=' + Date.now();
+  };
+  document.getElementById('captchaImg').onclick = refreshCaptcha;
+  form.on('submit(login)', function(data){
+    const $err = document.getElementById('login-err');
+    $err.style.display = 'none';
+    const loadIndex = loading();
+    request(ADMIN_API_PREFIX + '/login', { method:'POST', data: data.field }).then(res => {
+      closeLoading(loadIndex);
+      if (res.code === 0) {
+        setToken(res.data.token);
+        setAdminTheme('ocean', 'login_ocean.html');
+        if (res.data.is_super_admin) localStorage.setItem('is_super_admin','1');
+        else localStorage.removeItem('is_super_admin');
+        if (res.data.permissions) localStorage.setItem('admin_permissions', JSON.stringify(res.data.permissions));
+        else localStorage.removeItem('admin_permissions');
+        successMsg(t('common.login_success','登录成功'), function(){ location.href = 'index.html'; });
+      } else {
+        $err.textContent = res.msg || t('common.login_default_error','账号或密码错误');
+        $err.style.display = 'block';
+        refreshCaptcha();
+      }
+    });
+    return false;
+  });
+});
+</script>
+</body>
+</html>

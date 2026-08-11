@@ -2,10 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, minimum-scale=1, user-scalable=no">
     <title data-i18n="common.title">后台管理 - Flight Base</title>
-    <link rel="stylesheet" href="https://unpkg.com/layui@2.8.18/dist/css/layui.css">
+    <link rel="stylesheet" href="assets/css/layui2.8.18.css">
     <link rel="stylesheet" href="assets/css/admin.css?v=3.3.0">
+    <script>window.ADMIN_THEME_CSS_BASE = 'assets/css/';</script>
+    <script src="/api/admin/theme-config"></script>
+    <script src="assets/js/theme.js?v=1.5.8"></script>
+    <script>applyAdminThemeCss();</script>
 </head>
 <body>
     <!-- 移动端侧边栏遮罩 -->
@@ -13,9 +17,9 @@
 
     <!-- 头部 -->
     <div class="admin-header">
-        <!-- 移动端汉堡按钮 -->
-        <button class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleSidebar()">
-            <i class="layui-icon layui-icon-align-justify"></i>
+        <!-- 移动端汉堡按钮（纯 CSS 三横线，不依赖 Layui 图标字库） -->
+        <button type="button" class="menu-toggle-btn" id="menuToggleBtn" onclick="toggleSidebar()" aria-label="菜单">
+            <span class="menu-toggle-icon" aria-hidden="true"></span>
         </button>
         <div class="logo">
         </div>
@@ -119,11 +123,13 @@
     </script>
     <!-- 状态模板 -->
 
-    <script src="https://unpkg.com/layui@2.8.18/dist/layui.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/layui2.8.18.js"></script>
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <!-- ECharts 图表库（经营仪表盘用） -->
+    <script src="assets/js/echarts5.5.1.min.js"></script>
     <!-- wangEditor 富文本编辑器 v5 -->
-    <link href="https://unpkg.com/@wangeditor/editor@5.1.23/dist/css/style.css" rel="stylesheet">
-    <script src="https://unpkg.com/@wangeditor/editor@5.1.23/dist/index.js"></script>
+    <link href="assets/css/editor5.1.23.css" rel="stylesheet">
+    <script src="assets/js/editor5.1.23.js"></script>
     <script src="assets/js/config.js?v=2.3.7"></script>
     <script src="assets/js/i18n.js?v=1.0.0"></script>
     <script src="assets/js/common.js?v=2.3.7"></script>

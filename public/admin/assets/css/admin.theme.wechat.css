@@ -1,0 +1,700 @@
+/* ═══════════════════════════════════════════════════════════
+   Flight Base Admin Theme — wechat
+   仿微信：微信绿 #07C160 + 微信灰 #EDEDED + 白
+   入口：login_wechat.html
+═══════════════════════════════════════════════════════════ */
+
+:root {
+    --wx-green: #07c160;
+    --wx-green-press: #06ad56;
+    --wx-green-soft: #e8f8ef;
+    --wx-red: #fa5151;
+    --wx-bg: #ededed;
+    --wx-bg-soft: #f7f7f7;
+    --wx-white: #ffffff;
+    --wx-ink: #191919;
+    --wx-ink-soft: #888888;
+    --wx-ink-mute: #b2b2b2;
+    --wx-line: #e5e5e5;
+    --wx-line-strong: #d9d9d9;
+
+    --bg: var(--wx-bg);
+    --bg-elevated: var(--wx-white);
+    --ink: var(--wx-ink);
+    --ink-soft: var(--wx-ink-soft);
+    --ink-mute: var(--wx-ink-mute);
+    --line: var(--wx-line);
+    --line-strong: var(--wx-line-strong);
+    --brand: var(--wx-green);
+    --brand-strong: var(--wx-green-press);
+    --brand-soft: var(--wx-green-soft);
+    --brand-ink: #059a4c;
+    --menu-active-bg: var(--brand-soft);
+    --menu-active-color: var(--brand);
+    --sidebar: var(--wx-white);
+    --sidebar-elevated: var(--wx-bg-soft);
+    --sidebar-text: #353535;
+    --sidebar-text-strong: var(--wx-ink);
+    --danger: var(--wx-red);
+    --radius: 4px;
+    --radius-sm: 4px;
+    --shadow: none;
+    --shadow-lg: 0 2px 12px rgba(0, 0, 0, .08);
+    --header-h: 56px;
+    --sidebar-w: 232px;
+    --font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+        'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background: var(--wx-bg) !important;
+    color: var(--wx-ink) !important;
+    font-family: var(--font) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header：微信顶栏白底细线 ── */
+.admin-header {
+    left: var(--sidebar-w) !important;
+    height: var(--header-h) !important;
+    padding: 0 20px !important;
+    background: var(--wx-white) !important;
+    color: var(--wx-ink) !important;
+    border-bottom: 1px solid var(--wx-line) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.admin-header .logo,
+.admin-header .user-info .username {
+    color: var(--wx-ink) !important;
+    font-weight: 500 !important;
+}
+
+.admin-header .user-info .username::before {
+    background: var(--wx-green) !important;
+}
+
+.admin-header .locale-switcher,
+.admin-header .store-switcher,
+.admin-header .store-switcher-label {
+    color: var(--wx-ink) !important;
+    background: var(--wx-bg-soft) !important;
+    border: 1px solid var(--wx-line) !important;
+    border-radius: 4px !important;
+    height: 32px !important;
+    line-height: 30px !important;
+}
+
+.admin-header .locale-switcher:hover,
+.admin-header .store-switcher:hover {
+    background: var(--wx-white) !important;
+    border-color: var(--wx-green) !important;
+}
+
+.admin-header .locale-switcher option {
+    color: var(--wx-ink) !important;
+    background: #fff !important;
+}
+
+.admin-header .user-info .layui-btn-danger {
+    background: var(--wx-white) !important;
+    color: var(--wx-red) !important;
+    border: 1px solid var(--wx-line) !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    height: 32px !important;
+    line-height: 30px !important;
+    font-weight: 500 !important;
+}
+.admin-header .user-info .layui-btn-danger:hover {
+    background: #fff5f5 !important;
+    border-color: #f0b4b4 !important;
+    transform: none !important;
+}
+
+.menu-toggle-btn {
+    background: var(--wx-bg-soft) !important;
+    border: 1px solid var(--wx-line) !important;
+    border-radius: 4px !important;
+}
+.menu-toggle-icon {
+    background: var(--wx-ink) !important;
+    box-shadow: 0 -6px 0 var(--wx-ink), 0 6px 0 var(--wx-ink) !important;
+}
+
+/* ── Sidebar：仿微信设置列表 / 会话列表白底 ── */
+.admin-sidebar {
+    width: var(--sidebar-w) !important;
+    background: var(--wx-white) !important;
+    border-right: 1px solid var(--wx-line) !important;
+    box-shadow: none !important;
+}
+
+.admin-sidebar .sidebar-logo {
+    height: var(--header-h) !important;
+    background: var(--wx-white) !important;
+    border-bottom: 1px solid var(--wx-line) !important;
+    padding: 0 16px !important;
+    gap: 10px !important;
+}
+
+.admin-sidebar .sidebar-logo i {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    background: var(--wx-green) !important;
+    color: #fff !important;
+    font-size: 15px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-sidebar .sidebar-logo span {
+    color: var(--wx-ink) !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+}
+
+.admin-sidebar,
+.admin-sidebar .layui-nav-tree,
+.admin-sidebar .layui-nav-child,
+.admin-sidebar .layui-nav-item {
+    background: var(--wx-white) !important;
+}
+
+.admin-sidebar .layui-nav-bar { display: none !important; }
+
+.layui-nav-tree { padding: 0 !important; }
+
+/* 分组标题：像微信「通讯录」分区 */
+.layui-nav-tree .layui-nav-item > a {
+    color: var(--wx-ink-soft) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    padding: 14px 16px 6px !important;
+    background: var(--wx-bg-soft) !important;
+    border-top: 1px solid var(--wx-line) !important;
+    height: auto !important;
+}
+
+.layui-nav-tree .layui-nav-item:first-child > a {
+    border-top: none !important;
+}
+
+.layui-nav-tree .layui-nav-item > a:hover {
+    color: var(--wx-ink) !important;
+    background: var(--wx-bg-soft) !important;
+}
+
+.layui-nav-tree .layui-nav-item > a .layui-nav-more {
+    color: var(--wx-ink-mute) !important;
+}
+
+/* 子菜单：仿微信 cell */
+.layui-nav-tree .layui-nav-child {
+    padding: 0 !important;
+    background: var(--wx-white) !important;
+}
+
+.layui-nav-tree .layui-nav-child dd {
+    border-bottom: 1px solid var(--wx-line) !important;
+}
+
+.layui-nav-tree .layui-nav-child dd:last-child {
+    border-bottom: none !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a {
+    color: var(--wx-ink) !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 16px 0 18px !important;
+    background: var(--wx-white) !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    border-left: 3px solid transparent !important;
+    position: relative;
+}
+
+.layui-nav-tree .layui-nav-child dd a:hover {
+    background: var(--wx-bg-soft) !important;
+    color: var(--wx-ink) !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a i {
+    color: var(--wx-ink-soft) !important;
+    opacity: 1 !important;
+    margin-right: 10px !important;
+}
+
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: var(--wx-green-soft) !important;
+    color: var(--wx-green) !important;
+    border-left-color: var(--wx-green) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-weight: 500 !important;
+}
+
+.layui-nav-tree .layui-nav-child .layui-this > a i {
+    color: var(--wx-green) !important;
+}
+
+/* ── Content ── */
+.admin-content {
+    margin-left: var(--sidebar-w) !important;
+    margin-top: var(--header-h) !important;
+    padding: 16px !important;
+    min-height: calc(100vh - var(--header-h)) !important;
+    width: calc(100% - var(--sidebar-w)) !important;
+    background: var(--wx-bg) !important;
+}
+
+.view-toolbar .view-title {
+    color: var(--wx-ink) !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+}
+
+/* ── Cards / 表格容器：白块 + 细线，无厚阴影 ── */
+.card,
+.layui-card,
+.stat-card,
+.search-bar,
+.table-container,
+.chart-card {
+    background: var(--wx-white) !important;
+    border: 1px solid var(--wx-line) !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+}
+
+.card { padding: 16px !important; }
+
+.card-title,
+.layui-card-header {
+    color: var(--wx-ink) !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid var(--wx-line) !important;
+}
+
+.card-title i,
+.layui-card-header::before {
+    color: var(--wx-green) !important;
+    background: var(--wx-green) !important;
+}
+
+.stat-card .title { color: var(--wx-ink-soft) !important; font-size: 13px !important; }
+.stat-card .value { color: var(--wx-ink) !important; font-weight: 600 !important; }
+
+.stat-card .icon.blue,
+.stat-card .icon.green,
+.stat-card .icon.orange,
+.stat-card .icon.purple,
+.stat-card .icon.red,
+.stat-card .icon.teal {
+    background: var(--wx-green-soft) !important;
+    color: var(--wx-green) !important;
+    border-radius: 8px !important;
+}
+
+#dashboardRangeGroup .layui-btn-normal {
+    background: var(--wx-green) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+#dashboardRangeGroup .layui-btn-primary {
+    background: var(--wx-white) !important;
+    border-color: var(--wx-line) !important;
+    color: var(--wx-ink-soft) !important;
+}
+
+/* ── Buttons：仿微信主按钮 ── */
+.layui-btn {
+    border-radius: 4px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    letter-spacing: 0 !important;
+}
+
+.layui-btn:not([class*="layui-btn-"]) {
+    background: var(--wx-green) !important;
+    color: #fff !important;
+}
+.layui-btn:not([class*="layui-btn-"]):hover {
+    background: var(--wx-green-press) !important;
+    transform: none !important;
+}
+
+.layui-btn-normal {
+    background: var(--wx-green) !important;
+    color: #fff !important;
+    border: none !important;
+}
+.layui-btn-normal:hover {
+    background: var(--wx-green-press) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.layui-btn-danger {
+    background: var(--wx-red) !important;
+    color: #fff !important;
+}
+.layui-btn-danger:hover {
+    background: #e24545 !important;
+    box-shadow: none !important;
+}
+
+.layui-btn-warm {
+    background: #ffc300 !important;
+    color: #191919 !important;
+}
+
+.layui-btn-primary {
+    background: var(--wx-white) !important;
+    border: 1px solid var(--wx-line-strong) !important;
+    color: var(--wx-ink) !important;
+}
+.layui-btn-primary:hover {
+    border-color: var(--wx-green) !important;
+    color: var(--wx-green) !important;
+    background: var(--wx-white) !important;
+}
+
+.layui-btn-sm { border-radius: 4px !important; }
+
+/* ── Tables ── */
+.layui-table,
+.layui-table-view {
+    background: var(--wx-white) !important;
+    color: var(--wx-ink) !important;
+}
+
+.layui-table thead tr,
+.layui-table-header,
+.layui-table-view .layui-table th {
+    background: var(--wx-bg-soft) !important;
+}
+
+.layui-table th {
+    color: var(--wx-ink-soft) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    border-color: var(--wx-line) !important;
+}
+
+.layui-table td {
+    color: var(--wx-ink) !important;
+    border-color: var(--wx-line) !important;
+}
+
+.layui-table tr:hover td { background: #fafafa !important; }
+
+.layui-table-click,
+.layui-table-hover {
+    background-color: var(--wx-green-soft) !important;
+}
+.layui-table-click td,
+.layui-table-hover td {
+    background: var(--wx-green-soft) !important;
+    color: var(--wx-ink) !important;
+}
+
+.layui-table-checked {
+    background-color: #d7f4e3 !important;
+}
+.layui-table-checked td { color: var(--wx-ink) !important; }
+
+/* ── Forms ── */
+.layui-input,
+.layui-textarea,
+.layui-select,
+.layui-form-select .layui-input {
+    border-radius: 4px !important;
+    border-color: var(--wx-line-strong) !important;
+    background: var(--wx-white) !important;
+    color: var(--wx-ink) !important;
+}
+
+.layui-input:focus,
+.layui-textarea:focus {
+    border-color: var(--wx-green) !important;
+    box-shadow: none !important;
+}
+
+.search-bar { padding: 14px 16px !important; }
+.table-toolbar {
+    padding: 12px 16px !important;
+    border-bottom: 1px solid var(--wx-line) !important;
+}
+
+/* ── Layer 弹层 ── */
+.layui-layer {
+    border-radius: 8px !important;
+    box-shadow: var(--shadow-lg) !important;
+    overflow: hidden !important;
+}
+.layui-layer-title {
+    background: var(--wx-white) !important;
+    border-bottom: 1px solid var(--wx-line) !important;
+    color: var(--wx-ink) !important;
+    font-weight: 600 !important;
+}
+.layui-layer-btn .layui-layer-btn0 {
+    background: var(--wx-green) !important;
+    border-color: var(--wx-green) !important;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; }
+    .admin-sidebar.sidebar-open { left: 0 !important; }
+    .admin-header { left: 0 !important; }
+    .admin-content { margin-left: 0 !important; width: 100% !important; }
+}
+
+/* ═══════════════════════════════════════════
+   Login：仿微信网页版 — 灰底居中白卡
+═══════════════════════════════════════════ */
+body.login-page.login-layout-wechat {
+    min-height: 100vh !important;
+    background: var(--wx-bg) !important;
+    display: block !important;
+    overflow: auto !important;
+}
+
+body.login-page.login-layout-wechat::before,
+body.login-page.login-layout-wechat::after { display: none !important; }
+
+.login-layout-wechat .locale-switcher-wrap {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 20;
+}
+
+.login-layout-wechat .locale-switcher {
+    color: var(--wx-ink) !important;
+    background: var(--wx-white) !important;
+    border: 1px solid var(--wx-line) !important;
+    border-radius: 4px !important;
+}
+
+.login-wechat {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 56px;
+}
+
+.login-wechat-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.login-wechat-bubble {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: var(--wx-green);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(7, 193, 96, .28);
+    margin-bottom: 14px;
+}
+
+.login-wechat-mark h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--wx-ink);
+    letter-spacing: 0;
+}
+
+.login-wechat-mark p {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--wx-ink-soft);
+}
+
+.login-layout-wechat .login-wrap {
+    width: 100%;
+    max-width: 360px;
+    background: var(--wx-white) !important;
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .06) !important;
+    padding: 28px 28px 24px !important;
+    animation: none !important;
+}
+
+.login-layout-wechat .login-logo { display: none !important; }
+
+.login-layout-wechat .layui-form-item { margin-bottom: 16px !important; }
+
+.login-layout-wechat .login-field-label {
+    display: block;
+    font-size: 14px;
+    color: var(--wx-ink);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.login-layout-wechat .input-wrap {
+    background: var(--wx-bg-soft) !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+}
+
+.login-layout-wechat .input-wrap:focus-within {
+    background: var(--wx-white) !important;
+    border-color: var(--wx-green) !important;
+    box-shadow: none !important;
+}
+
+.login-layout-wechat .input-icon { color: var(--wx-ink-mute) !important; }
+
+.login-layout-wechat .layui-input {
+    background: transparent !important;
+    border: none !important;
+    height: 44px !important;
+    font-size: 15px !important;
+    color: var(--wx-ink) !important;
+}
+
+.login-layout-wechat .captcha-row .layui-input {
+    background: var(--wx-bg-soft) !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    height: 44px !important;
+}
+
+.login-layout-wechat .captcha-row .layui-input:focus {
+    background: var(--wx-white) !important;
+    border-color: var(--wx-green) !important;
+    box-shadow: none !important;
+}
+
+.login-layout-wechat .captcha-img-box {
+    height: 44px !important;
+    width: 120px !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--wx-line) !important;
+    overflow: hidden;
+    background: #fff;
+}
+
+.login-layout-wechat .login-btn {
+    height: 44px !important;
+    line-height: 44px !important;
+    border-radius: 4px !important;
+    background: var(--wx-green) !important;
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    margin-top: 8px;
+}
+
+.login-layout-wechat .login-btn:hover {
+    background: var(--wx-green-press) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.login-layout-wechat .login-footer {
+    margin-top: 28px !important;
+    color: var(--wx-ink-mute) !important;
+    font-size: 12px !important;
+    text-align: center !important;
+}
+
+.login-layout-wechat #login-err {
+    background: #fff5f5 !important;
+    border: 1px solid #f0c0c0 !important;
+    color: var(--wx-red) !important;
+    border-radius: 4px !important;
+    font-size: 13px !important;
+}
+
+/* ── 表单控件跟随主题色（覆盖 admin.css 写死的蓝） ── */
+.layui-form-onswitch {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i,
+.layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover,
+.layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: var(--brand) !important;
+}
+
+
+/* 仅有尺寸类的按钮（如搜索：layui-btn-sm）也走主题主色 */
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled) {
+    background: var(--brand) !important;
+    background-image: none !important;
+    border-color: var(--brand) !important;
+    color: #fff !important;
+}
+.layui-btn-normal {
+    background: var(--brand) !important;
+    background-image: none !important;
+    border-color: var(--brand) !important;
+    color: #fff !important;
+}
+
+
+/* ── Toast / layer.msg（Layui 2.8 用字体图标 layui-icon-success，不是旧 ico 雪碧图） ── */
+.layui-layer.layui-layer-msg,
+.layui-layer-dialog.layui-layer-msg {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,.18)) !important;
+}
+.layui-layer.layui-layer-msg .layui-layer-content,
+.layui-layer-dialog.layui-layer-msg .layui-layer-content {
+    color: var(--ink) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-success,
+.layui-layer-msg .layui-icon-success,
+.layui-layer-face.layui-icon-success {
+    color: var(--brand) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-error,
+.layui-layer-msg .layui-icon-error,
+.layui-layer-face.layui-icon-error {
+    color: var(--danger, #dc3545) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-tips,
+.layui-layer-msg .layui-icon-tips {
+    color: var(--brand-strong, var(--brand)) !important;
+}

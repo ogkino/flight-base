@@ -20,6 +20,9 @@ APP_TIMEZONE=Asia/Shanghai
 # Token 过期时间（秒）
 TOKEN_EXPIRE=604800
 
+# 管理端 / POS 登录图形验证码：true=开启（默认），false=关闭（开发/内网可关）
+ADMIN_CAPTCHA_ENABLED=true
+
 # 日志配置
 LOG_ENABLED=true
 LOG_LEVEL=info

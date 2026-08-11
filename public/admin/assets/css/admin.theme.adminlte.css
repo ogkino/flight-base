@@ -1,0 +1,115 @@
+/* Flight Base Admin Theme — adminlte
+   仿 AdminLTE / CoreUI：经典仪表盘深色侧栏
+   入口：login_adminlte.html
+═══════════════════════════════════════════════════════════ */
+:root {
+    --brand: #007bff;
+    --brand-strong: #0056b3;
+    --brand-soft: #e7f1ff;
+    --brand-ink: #0056b3;
+    --menu-active-bg: var(--brand);
+    --menu-active-color: #fff;
+    --bg: #f4f6f9;
+    --bg-elevated: #ffffff;
+    --ink: #212529;
+    --ink-soft: #6c757d;
+    --ink-mute: #adb5bd;
+    --line: #dee2e6;
+    --line-strong: #ced4da;
+    --sidebar: #343a40;
+    --sidebar-elevated: #2c3136;
+    --sidebar-text: #c2c7d0;
+    --sidebar-text-strong: #fff;
+    --danger: #dc3545;
+    --radius: 0.25rem;
+    --header-h: 57px;
+    --sidebar-w: 250px;
+    --shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
+    --shadow-lg: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
+    --font: 'Source Sans Pro',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+}
+
+body { background: var(--bg) !important; color: var(--ink) !important; font-family: var(--font) !important; -webkit-font-smoothing: antialiased; }
+.admin-header { left: var(--sidebar-w) !important; height: var(--header-h) !important; padding: 0 20px !important; background: var(--bg-elevated) !important; color: var(--ink) !important; border-bottom: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-header .logo, .admin-header .user-info .username { color: var(--ink) !important; }
+.admin-header .user-info .username::before { background: var(--brand) !important; }
+.admin-header .locale-switcher, .admin-header .store-switcher, .admin-header .store-switcher-label { color: var(--ink) !important; background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; border-radius: var(--radius) !important; }
+.admin-header .locale-switcher:hover, .admin-header .store-switcher:hover { border-color: var(--brand) !important; color: var(--brand) !important; }
+.admin-header .locale-switcher option { color: var(--ink) !important; background: var(--bg-elevated) !important; }
+.admin-header .user-info .layui-btn-danger { background: var(--danger) !important; color: #fff !important; border: none !important; border-radius: var(--radius) !important; box-shadow: none !important; }
+.menu-toggle-btn { background: var(--bg) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; }
+.menu-toggle-icon { background: var(--ink) !important; box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink) !important; }
+.admin-sidebar { width: var(--sidebar-w) !important; background: var(--sidebar) !important; border-right: 1px solid var(--line) !important; box-shadow: none !important; }
+.admin-sidebar .sidebar-logo { height: var(--header-h) !important; background: transparent !important; border-bottom: 1px solid var(--line) !important; padding: 0 16px !important; }
+.admin-sidebar .sidebar-logo span { color: var(--sidebar-text-strong) !important; font-weight: 600 !important; }
+.admin-sidebar .sidebar-logo i { color: #fff !important; background: var(--brand) !important; width: 26px; height: 26px; border-radius: calc(var(--radius) + 2px); display: inline-flex !important; align-items: center; justify-content: center; font-size: 14px !important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background: var(--sidebar) !important; }
+.admin-sidebar .layui-nav-bar { display: none !important; }
+.layui-nav-tree { padding: 8px !important; }
+.admin-sidebar { border-right: none !important; }
+.admin-sidebar .sidebar-logo { border-bottom-color: rgba(255,255,255,.08) !important; }
+.layui-nav-tree .layui-nav-item > a { color: rgba(255,255,255,.45) !important; font-size: 12px !important; font-weight: 600 !important; padding: 14px 12px 6px !important; background: transparent !important; text-transform: none !important; letter-spacing: .03em !important; }
+.layui-nav-tree .layui-nav-item > a:hover { color: #fff !important; background: transparent !important; }
+.layui-nav-tree .layui-nav-child { background: transparent !important; padding: 0 !important; }
+.layui-nav-tree .layui-nav-child dd a { color: var(--sidebar-text) !important; height: 44px !important; line-height: 44px !important; margin: 0 !important; border-radius: 0 !important; padding: 0 16px !important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background: var(--sidebar-elevated) !important; color: #fff !important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background: var(--brand) !important; color: #fff !important; box-shadow: none !important; border-radius: 0 !important; }
+.admin-content { margin-left: var(--sidebar-w) !important; margin-top: var(--header-h) !important; padding: 16px !important; min-height: calc(100vh - var(--header-h)) !important; width: calc(100% - var(--sidebar-w)) !important; background: var(--bg) !important; }
+.view-toolbar .view-title { color: var(--ink) !important; font-weight: 600 !important; }
+.card,.layui-card,.stat-card,.search-bar,.table-container,.chart-card { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; border-radius: var(--radius) !important; box-shadow: var(--shadow) !important; color: var(--ink) !important; }
+.card-title i, .layui-card-header::before { color: var(--brand) !important; background: var(--brand) !important; }
+.stat-card .icon.blue,.stat-card .icon.green,.stat-card .icon.orange,.stat-card .icon.purple,.stat-card .icon.red,.stat-card .icon.teal { background: var(--brand-soft) !important; color: var(--brand) !important; }
+.layui-btn { border-radius: var(--radius) !important; box-shadow: none !important; font-weight: 500 !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled), .layui-btn-normal { background: var(--brand) !important; background-image: none !important; border: 1px solid var(--brand) !important; color: #fff !important; }
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled):hover, .layui-btn-normal:hover { background: var(--brand-strong) !important; border-color: var(--brand-strong) !important; transform: none !important; box-shadow: none !important; }
+.layui-btn-danger { background: var(--danger) !important; border: 1px solid var(--danger) !important; color: #fff !important; }
+.layui-btn-primary { background: var(--bg-elevated) !important; border: 1px solid var(--line-strong) !important; color: var(--ink-soft) !important; }
+.layui-btn-primary:hover { border-color: var(--brand) !important; color: var(--brand) !important; background: var(--brand-soft) !important; }
+.layui-table thead tr, .layui-table-header, .layui-table-view .layui-table th { background: var(--bg) !important; }
+.layui-table th { color: var(--ink-soft) !important; border-color: var(--line) !important; }
+.layui-table td { color: var(--ink) !important; border-color: var(--line) !important; }
+.layui-table tr:hover td, .layui-table-click td, .layui-table-hover td { background: var(--brand-soft) !important; color: var(--ink) !important; }
+.layui-input,.layui-textarea,.layui-select,.layui-form-select .layui-input { border-radius: var(--radius) !important; border-color: var(--line-strong) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-input:focus,.layui-textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 2px var(--brand-soft) !important; }
+.layui-form-onswitch { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checked[lay-skin=primary] i { border-color: var(--brand) !important; background-color: var(--brand) !important; }
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i, .layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover, .layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em { background: var(--brand) !important; }
+.layui-layer { border-radius: var(--radius) !important; box-shadow: var(--shadow-lg) !important; background: var(--bg-elevated) !important; color: var(--ink) !important; }
+.layui-layer-title { background: var(--bg-elevated) !important; border-bottom: 1px solid var(--line) !important; color: var(--ink) !important; }
+.layui-layer-btn .layui-layer-btn0 { background: var(--brand) !important; border-color: var(--brand) !important; }
+.layui-layer.layui-layer-msg, .layui-layer-dialog.layui-layer-msg { background: var(--bg-elevated) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; box-shadow: var(--shadow-lg) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-success, .layui-layer-msg .layui-icon-success, .layui-layer-face.layui-icon-success { color: var(--brand) !important; }
+.layui-layer-dialog .layui-layer-content .layui-icon-error, .layui-layer-msg .layui-icon-error, .layui-layer-face.layui-icon-error { color: var(--danger) !important; }
+@media (max-width: 768px) { .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; } .admin-sidebar.sidebar-open { left: 0 !important; } .admin-header { left: 0 !important; } .admin-content { margin-left: 0 !important; width: 100% !important; } }
+
+/* ===== adminlte distinct login + menu ===== */
+body.login-layout-adminlte { min-height:100vh!important; background:#e9ecef!important; display:flex!important; align-items:center; justify-content:center; }
+body.login-layout-adminlte::before, body.login-layout-adminlte::after { display:none!important; }
+.login-layout-adminlte .locale-switcher-wrap { position:fixed!important; top:16px; right:16px; z-index:20; }
+.login-lte-box { width:100%; max-width:360px; padding:20px; }
+.login-lte-logo { text-align:center; font-size:32px; margin-bottom:16px; color:#343a40; }
+.login-lte-logo b { font-weight:700; }
+.login-layout-adminlte .login-wrap { background:#fff!important; border-top:3px solid #007bff!important; border-radius:.25rem!important; box-shadow:0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2)!important; padding:20px!important; animation:none!important; }
+.login-lte-msg { text-align:center; color:#6c757d; margin:0 0 16px; }
+.login-layout-adminlte .input-wrap { border-radius:.25rem!important; border:1px solid #ced4da!important; }
+.login-layout-adminlte .input-wrap:focus-within { border-color:#80bdff!important; box-shadow:0 0 0 .2rem rgba(0,123,255,.25)!important; }
+.login-layout-adminlte .layui-input { height:38px!important; border:none!important; }
+.login-layout-adminlte .captcha-row .layui-input { border:1px solid #ced4da!important; border-radius:.25rem!important; height:38px!important; }
+.login-layout-adminlte .captcha-img-box { height:38px!important; border-radius:.25rem!important; }
+.login-layout-adminlte .login-btn { height:38px!important; line-height:38px!important; border-radius:.25rem!important; background:#007bff!important; width:100%; }
+.login-layout-adminlte .login-footer { text-align:center; margin-top:12px; color:#6c757d; font-size:12px; }
+
+/* AdminLTE 菜单：灰黑侧栏 + 左边蓝条 */
+.admin-sidebar { background:#343a40!important; border-right:none!important; }
+.admin-sidebar .sidebar-logo { background:#343a40!important; border-bottom:1px solid #4b545c!important; }
+.admin-sidebar, .admin-sidebar .layui-nav-tree, .admin-sidebar .layui-nav-child, .admin-sidebar .layui-nav-item { background:#343a40!important; }
+.admin-sidebar .layui-nav-bar { display:none!important; }
+.layui-nav-tree { padding:0!important; }
+.layui-nav-tree .layui-nav-item > a { color:#c2c7d0!important; background:transparent!important; font-size:12px!important; padding:12px 16px!important; text-transform:none!important; border-bottom:1px solid #4b545c!important; }
+.layui-nav-tree .layui-nav-child { background:#2c3136!important; }
+.layui-nav-tree .layui-nav-child dd a { color:#c2c7d0!important; height:40px!important; line-height:40px!important; margin:0!important; border-radius:0!important; padding:0 16px 0 28px!important; border-left:3px solid transparent!important; }
+.layui-nav-tree .layui-nav-child dd a:hover { background:#3f474e!important; color:#fff!important; }
+.layui-nav-tree .layui-nav-child .layui-this > a, .layui-nav-child dd.layui-this > a { background:#007bff!important; color:#fff!important; border-left-color:#007bff!important; box-shadow:none!important; border-radius:0!important; }

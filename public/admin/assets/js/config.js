@@ -153,7 +153,7 @@ function request(url, options = {}) {
  */
 function checkLogin() {
     if (!getToken()) {
-        location.href = 'login.html';
+        location.href = (typeof getAdminLoginEntry === 'function' ? getAdminLoginEntry() : 'login.html');
         return false;
     }
     return true;

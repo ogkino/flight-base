@@ -82,7 +82,7 @@ class ArticleController
         $fp = fopen('php://output', 'w');
         // 写入表头 (BOM for Excel)
         fwrite($fp, "\xEF\xBB\xBF");
-        fputcsv($fp, ['ID', '标题', '作者', '创建时间', '状态']);
+        fputcsv($fp, ['ID', '标题', '作者', '创建时间', '状态'], ',', '"', '\\');
         
         foreach ($articles as $item) {
             fputcsv($fp, [
@@ -91,7 +91,7 @@ class ArticleController
                 $item['author'],
                 $item['created_at'],
                 $item['is_published'] ? '已发布' : '草稿'
-            ]);
+            ], ',', '"', '\\');
         }
         
         fclose($fp);

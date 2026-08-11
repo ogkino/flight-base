@@ -160,7 +160,7 @@ class CrudRenderer {
         
         let buttonsHtml = '';
         buttonsHtml += `
-            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">
                 <i class="layui-icon layui-icon-search"></i> ${t('crud.search', '搜索')}
             </button>
             <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">${t('crud.reset', '重置')}</button>
@@ -632,6 +632,19 @@ class CrudRenderer {
             return col;
         });
 
+        // 窄屏：操作列不再 sticky 时，把 id 粘在左侧，横向滑动能对上是哪一行
+        const isMobileLayout = typeof isMobileViewport === 'function'
+            ? isMobileViewport()
+            : (window.innerWidth <= 768);
+        if (isMobileLayout) {
+            cols.forEach(col => {
+                if (col.field === 'id') {
+                    col.fixed = 'left';
+                    if (!col.width) col.width = 70;
+                }
+            });
+        }
+
         // "操作" 列标题（多语言），后面 isAdaptable() 判断列类型时也会用到
         const actionsColTitle = t('crud.actions', '操作');
 
@@ -640,31 +653,45 @@ class CrudRenderer {
             // 移除旧的 toolbar 列（如果有）
             const cleanCols = cols.filter(c => !c.toolbar);
             
-            // 获取操作列宽度配置，默认为 200；移动端缩小宽度且不 sticky
-            const isMobile = window.innerWidth <= 768;
-            const actionsWidth = isMobile
-                ? Math.min(this.config.actions.length * 58, 160)
-                : (this.config.table.actionsWidth || 200);
+            // 操作列宽度：不要为了“挤折”刻意压窄（会把向下箭头裁掉且无法展开）
+            const actionsWidth = this.config.table.actionsWidth || 200;
+
+            const renderActionBtn = (btn, opts = {}) => {
+                const className = btn.class || 'layui-btn-primary';
+                const iconHtml = btn.icon ? `<i class="layui-icon ${btn.icon}"></i>` : '';
+                const label = opts.compact && btn.icon ? '' : ` ${btn.text}`;
+                return `<a class="layui-btn layui-btn-xs ${className}" lay-event="${btn.action}">${iconHtml}${label}</a>`;
+            };
             
             cleanCols.push({
-                fixed: isMobile ? '' : 'right',
+                // 移动端不 fixed 操作列，避免与左侧 id 双 sticky 挤布局；PC 仍右粘操作
+                fixed: isMobileLayout ? '' : 'right',
                 title: actionsColTitle,
                 width: actionsWidth,
+                minWidth: 120,
                 templet: (d) => {
-                    let html = '';
-                    this.config.actions.forEach(btn => {
-                        // 权限检查
-                        if (btn.permission && !this.checkPermission(btn.permission)) {
-                            return;
-                        }
-                        
-                        const className = btn.class || 'layui-btn-primary';
-                        const iconHtml = btn.icon ? `<i class="layui-icon ${btn.icon}"></i>` : '';
-                        
-                        html += `<a class="layui-btn layui-btn-xs ${className}" lay-event="${btn.action}">
-                                    ${iconHtml} ${btn.text}
-                                 </a>`;
-                    });
+                    const visibleBtns = this.config.actions.filter(btn =>
+                        !btn.permission || this.checkPermission(btn.permission)
+                    );
+                    if (!visibleBtns.length) return '';
+
+                    // 单按钮：直接展示
+                    if (visibleBtns.length === 1) {
+                        return visibleBtns.map(btn => renderActionBtn(btn)).join('');
+                    }
+
+                    // 多按钮：PC / 移动双份 DOM，用 CSS 媒体查询切换（避免 innerWidth 误判/改尺寸后不刷新）
+                    let html = '<div class="crud-row-actions">';
+                    html += '<div class="crud-actions-desktop">';
+                    html += visibleBtns.map(btn => renderActionBtn(btn)).join('');
+                    html += '</div>';
+                    html += '<div class="crud-actions-mobile">';
+                    html += renderActionBtn(visibleBtns[0], { compact: true });
+                    html += `<button type="button" class="layui-btn layui-btn-xs layui-btn-primary crud-actions-toggle" title="${t('crud.more_actions', '更多操作')}">`
+                        + `<i class="layui-icon layui-icon-down"></i></button>`;
+                    html += '<div class="crud-actions-dropdown">';
+                    visibleBtns.forEach(btn => { html += renderActionBtn(btn); });
+                    html += '</div></div></div>';
                     return html;
                 }
             });
@@ -788,10 +815,13 @@ class CrudRenderer {
                             type: 2,
                             title: actionConfig.text || t('crud.actions', '操作'),
                             shadeClose: true,
-                            shade: 0,
-                            maxmin: true,
-                            area: [actionConfig.width || '80%', actionConfig.height || '90%'],
-                            content: url
+                            shade: 0.3,
+                            maxmin: !isMobileViewport(),
+                            area: resolveLayerArea(actionConfig.width || '80%', actionConfig.height || '90%'),
+                            content: url,
+                            success: function (layero, index) {
+                                adaptLayerToMobile(index);
+                            }
                         });
                     }
                 }
@@ -842,10 +872,13 @@ class CrudRenderer {
                                 type: 2,
                                 title: actionConfig.text || t('crud.preview', '预览'),
                                 shadeClose: true,
-                                shade: 0, // 去掉遮罩
-                                maxmin: true, // 允许最大化
-                                area: [actionConfig.width || '80%', actionConfig.height || '90%'],
-                                content: url
+                                shade: 0.3,
+                                maxmin: !isMobileViewport(),
+                                area: resolveLayerArea(actionConfig.width || '80%', actionConfig.height || '90%'),
+                                content: url,
+                                success: function (layero, index) {
+                                    adaptLayerToMobile(index);
+                                }
                             });
                         } else if (actionConfig.callback) {
                             // 如果支持回调函数（需要 eval 或预定义函数，这里暂不实现复杂回调）
@@ -854,6 +887,38 @@ class CrudRenderer {
                     }
                 }
             }
+        });
+
+        // 移动端操作列：向下箭头展开其余按钮
+        $(document).off('click.crudRowActions').on('click.crudRowActions', '.crud-actions-toggle', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const $btn = $(this);
+            const $wrap = $btn.closest('.crud-row-actions');
+            const $dd = $wrap.find('.crud-actions-dropdown');
+            const willOpen = !$dd.hasClass('is-open');
+
+            $('.crud-actions-dropdown.is-open').removeClass('is-open');
+            $('.crud-actions-toggle.is-open').removeClass('is-open')
+                .find('.layui-icon').removeClass('layui-icon-up').addClass('layui-icon-down');
+
+            if (willOpen) {
+                $dd.addClass('is-open');
+                $btn.addClass('is-open');
+                $btn.find('.layui-icon').removeClass('layui-icon-down').addClass('layui-icon-up');
+            }
+        });
+        $(document).off('click.crudRowActionsOutside').on('click.crudRowActionsOutside', function (e) {
+            if ($(e.target).closest('.crud-row-actions').length) return;
+            $('.crud-actions-dropdown.is-open').removeClass('is-open');
+            $('.crud-actions-toggle.is-open').removeClass('is-open')
+                .find('.layui-icon').removeClass('layui-icon-up').addClass('layui-icon-down');
+        });
+        $(document).off('click.crudRowActionsItem').on('click.crudRowActionsItem', '.crud-actions-dropdown [lay-event]', function () {
+            const $wrap = $(this).closest('.crud-row-actions');
+            $wrap.find('.crud-actions-dropdown').removeClass('is-open');
+            $wrap.find('.crud-actions-toggle').removeClass('is-open')
+                .find('.layui-icon').removeClass('layui-icon-up').addClass('layui-icon-down');
         });
 
         // 监听表格开关切换
@@ -902,19 +967,19 @@ class CrudRenderer {
         const hasRichText = this.config.form?.some(f => f.type === 'editor');
         const hasUpload = this.config.form?.some(f => f.type === 'upload' || f.type === 'image');
         
-        // 动态宽度：有富文本或上传时使用更大宽度
+        // 动态宽度：有富文本或上传时使用更大宽度；移动端由 resolveLayerArea 压成近全屏
         const width = hasRichText ? '90%' : (hasUpload ? '900px' : '800px');
         const height = hasRichText ? '90%' : '80%';
         
         layer.open({
             type: 1,
             title: title + this.config.page.title,
-            area: [width, height],
+            area: resolveLayerArea(width, height),
             content: `
-                <form class="layui-form" lay-filter="crudForm" style="padding: 20px;">
+                <form class="layui-form crud-layer-form" lay-filter="crudForm" style="padding: 20px;">
                     ${this.renderFormFields(rowData)}
                     <div class="layui-form-item">
-                        <div class="layui-input-block">
+                        <div class="layui-input-block crud-form-input-block">
                             <button class="layui-btn" lay-submit lay-filter="submitForm">${t('crud.submit', '提交')}</button>
                             <button type="reset" class="layui-btn layui-btn-primary">${t('crud.reset', '重置')}</button>
                         </div>
@@ -922,6 +987,7 @@ class CrudRenderer {
                 </form>
             `,
             success: (layero, index) => {
+                adaptLayerToMobile(index);
                 // 初始化表单
                 this.initFormComponents(rowData, isEdit);
                 form.render();
@@ -1079,8 +1145,8 @@ class CrudRenderer {
             const requiredStar = required ? '<span style="color: red; margin-right: 4px;">*</span>' : '';
 
             html += '<div class="layui-form-item">';
-            html += `<label class="layui-form-label" style="width: 110px;">${requiredStar}${field.label}</label>`;
-            html += '<div class="layui-input-block" style="margin-left: 140px;">';
+            html += `<label class="layui-form-label crud-form-label">${requiredStar}${field.label}</label>`;
+            html += '<div class="layui-input-block crud-form-input-block">';
             
             switch (field.type) {
                 case 'input':
@@ -1516,7 +1582,7 @@ class CrudRenderer {
                     layer.open({
                         type: 1,
                         title: t('crud.select_icon_title', '选择图标'),
-                        area: ['600px', '400px'],
+                        area: resolveLayerArea('600px', '400px'),
                         content: `
                             <div style="padding: 10px;">
                                 <div class="layui-form-item" style="margin-bottom: 10px;">
@@ -1529,6 +1595,7 @@ class CrudRenderer {
                             </div>
                         `,
                         success: function(layero, index) {
+                            adaptLayerToMobile(index);
                             // 绑定点击事件，只关闭当前层
                             $(`#icon-list-${fieldId}`).on('click', '.icon-item', function() {
                                 const icon = $(this).data('icon');
@@ -2095,7 +2162,7 @@ class CrudRenderer {
                             // 修改密码成功后跳转登录
                             if (this.config.api.submit.includes('change-password')) {
                                 clearToken();
-                                location.href = 'login.html';
+                                location.href = (typeof getAdminLoginEntry === 'function' ? getAdminLoginEntry() : 'login.html');
                             }
                         });
                     } else {

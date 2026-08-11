@@ -131,6 +131,22 @@ Flight::route('GET /api/article/@id', function ($id) {
 
 // ========== 管理后台接口（/api/admin/*）==========
 
+// 主题配置（无鉴权；勿用 .js 后缀——Linux Nginx 常把 *.js 当静态文件直接 404）
+Flight::route('GET /api/admin/theme-config', function () {
+    \App\config\AdminThemeConfig::emitThemeConfigJs();
+});
+// 兼容旧路径（Apache/Windows 或已配置把 /api 交给 PHP 的环境）
+Flight::route('GET /api/admin/theme-config.js', function () {
+    \App\config\AdminThemeConfig::emitThemeConfigJs();
+});
+
+// 登录页公开配置（验证码开关等，无鉴权）
+Flight::route('GET /api/admin/login-config', function () {
+    success([
+        'captcha_enabled' => \App\api\CaptchaController::isEnabled(),
+    ]);
+});
+
 Flight::route('POST /api/admin/login', function () {
     \App\api\admin\AuthController::login();
 });

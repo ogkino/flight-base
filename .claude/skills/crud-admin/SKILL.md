@@ -241,14 +241,48 @@ public static function products()
 
 | Section | Required | Purpose |
 |---------|----------|---------|
-| `page` | Yes | `title`, `icon`, `page` (menu key) |
+| `page` | Yes | `title`, `icon`, `page` (menu key). `icon` must be a **real Layui class** (e.g. `layui-icon-form`); fake names like `layui-icon-order` render blank in the sidebar. |
 | `table` | Yes | `url` (data endpoint), `cols` (columns) |
+| `form` | **Yes — never omit** | Fields for the add/edit modal. See **Required `form` key** below. |
 | `actions` | Yes | Row-level action buttons (edit, delete, custom) |
 | `search` | No | Search fields above the table |
 | `toolbar` | No | Buttons in the toolbar (add, export, etc.) |
-| `form` | Yes | Fields for the add/edit modal form |
 | `api` | Yes | Endpoint URLs for CRUD operations |
 | `tips` | No | Custom tip messages (e.g., delete warning) |
+
+### Required `form` key (CRUD Designer + renderer)
+
+**Every CrudConfig page method must include a `form` key.** This applies to list-only / read-only modules too (orders, logs, inventory browse, etc.).
+
+- Custom iframe / View-mode pages use the **view-admin** skill — they are **not** CrudConfig page methods and do not need `form`.
+- For standard CrudConfig pages: if there is no add/edit modal, still write `'form' => []`. Do **not** leave `form` out of the array.
+
+Why: `public/admin/crud-designer.html` treats a page as “特殊页面 / 不支持可视化编辑” when:
+
+```js
+!pageConfig.table || !pageConfig.form || pageConfig.page.type === 'form'
+```
+
+Missing `form` (key absent → falsy) triggers that tip even when `table` / `actions` / `search` are complete. An empty array `[]` is truthy in JS, so Designer opens normally.
+
+```php
+// ✅ List-only module (no create/edit via CRUD modal)
+public static function orders()
+{
+    return [
+        'page' => [ /* ... */ ],
+        'form' => [],   // required even when empty
+        'table' => [ /* ... */ ],
+        'actions' => [ /* ... */ ],
+        'search' => [ /* ... */ ],
+        'api' => [ 'list' => '/api/admin/orders' ],
+    ];
+}
+
+// ❌ Same page but omit form → Designer shows “此页面不支持可视化编辑”
+```
+
+Checklist when adding or reviewing a CrudConfig method: `page` + `table` + `form` (array, possibly empty) are always present.
 
 ### Available Field Types
 
@@ -356,6 +390,7 @@ When you add a module to `CrudConfig::getMenus()`, the permission system (`getAl
 For a module called "products":
 
 - [ ] `app/api/admin/ProductController.php` — 4 static methods (list, create, update, delete)
-- [ ] `app/config/CrudConfig.php` — new `products()` static method + menu entry in `getMenus()`
+- [ ] `app/config/CrudConfig.php` — new `products()` static method + menu entry in `getMenus()` (**must include `form` key**; use `'form' => []` if list-only)
 - [ ] `app/bootstrap.php` — 4 route registrations (GET list, POST create, POST update/@id, DELETE delete/@id)
 - [ ] Database table `og_products` created
+- [ ] Menu / page `icon` is a real Layui icon class (verify against `public/admin/assets/css/layui*.css` if unsure)

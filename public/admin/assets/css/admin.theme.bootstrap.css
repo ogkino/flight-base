@@ -1,0 +1,660 @@
+/* ═══════════════════════════════════════════════════════════
+   Flight Base Admin Theme — bootstrap
+   仿 Bootstrap 5：主色 #0d6efd、浅灰底、圆角卡片与文档站侧栏
+   入口：login_bootstrap.html
+═══════════════════════════════════════════════════════════ */
+
+:root {
+    --bs-blue: #0d6efd;
+    --bs-blue-hover: #0b5ed7;
+    --bs-indigo: #6610f2;
+    --bs-purple: #6f42c1;
+    --bs-red: #dc3545;
+    --bs-orange: #fd7e14;
+    --bs-yellow: #ffc107;
+    --bs-green: #198754;
+    --bs-teal: #20c997;
+    --bs-cyan: #0dcaf0;
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #343a40;
+    --bs-gray-900: #212529;
+    --bs-body: #212529;
+    --bs-border-radius: .375rem;
+    --bs-border-radius-lg: .5rem;
+    --bs-box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    --bs-box-shadow-lg: 0 .5rem 1rem rgba(0, 0, 0, .15);
+
+    --bg: var(--bs-gray-100);
+    --bg-elevated: #fff;
+    --ink: var(--bs-body);
+    --ink-soft: var(--bs-gray-600);
+    --ink-mute: var(--bs-gray-500);
+    --line: var(--bs-gray-300);
+    --line-strong: var(--bs-gray-400);
+    --brand: var(--bs-blue);
+    --brand-strong: var(--bs-blue-hover);
+    --brand-soft: #e7f1ff;
+    --brand-ink: #084298;
+    --menu-active-bg: var(--brand);
+    --menu-active-color: #fff;
+    --sidebar: var(--bs-gray-900);
+    --sidebar-elevated: #2b3035;
+    --sidebar-text: rgba(255, 255, 255, .75);
+    --sidebar-text-strong: #fff;
+    --danger: var(--bs-red);
+    --radius: var(--bs-border-radius);
+    --radius-sm: .25rem;
+    --shadow: var(--bs-box-shadow);
+    --shadow-lg: var(--bs-box-shadow-lg);
+    --header-h: 56px;
+    --sidebar-w: 260px;
+    --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+        'Noto Sans', 'Liberation Sans', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background: var(--bg) !important;
+    color: var(--ink) !important;
+    font-family: var(--font) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.admin-header {
+    left: var(--sidebar-w) !important;
+    height: var(--header-h) !important;
+    padding: 0 1.25rem !important;
+    background: #fff !important;
+    color: var(--ink) !important;
+    border-bottom: 1px solid var(--line) !important;
+    box-shadow: none !important;
+}
+
+.admin-header .logo,
+.admin-header .user-info .username {
+    color: var(--ink) !important;
+    font-weight: 500 !important;
+}
+
+.admin-header .user-info .username::before {
+    background: var(--brand) !important;
+}
+
+.admin-header .locale-switcher,
+.admin-header .store-switcher,
+.admin-header .store-switcher-label {
+    color: var(--ink) !important;
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    height: 32px !important;
+    line-height: 30px !important;
+}
+
+.admin-header .locale-switcher:hover,
+.admin-header .store-switcher:hover {
+    border-color: var(--brand) !important;
+}
+
+.admin-header .locale-switcher option {
+    color: var(--ink) !important;
+    background: #fff !important;
+}
+
+.admin-header .user-info .layui-btn-danger {
+    background: var(--danger) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    height: 32px !important;
+    line-height: 32px !important;
+}
+.admin-header .user-info .layui-btn-danger:hover {
+    background: #bb2d3b !important;
+    transform: none !important;
+}
+
+.menu-toggle-btn {
+    background: var(--bs-gray-100) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+}
+.menu-toggle-icon {
+    background: var(--ink) !important;
+    box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink) !important;
+}
+
+/* ── Sidebar：仿 Bootstrap Docs 深色导航 ── */
+.admin-sidebar {
+    width: var(--sidebar-w) !important;
+    background: var(--sidebar) !important;
+    border-right: none !important;
+    box-shadow: none !important;
+}
+
+.admin-sidebar .sidebar-logo {
+    height: var(--header-h) !important;
+    background: var(--sidebar) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+    padding: 0 1rem !important;
+}
+
+.admin-sidebar .sidebar-logo i {
+    color: #fff !important;
+    background: var(--brand) !important;
+    width: 28px;
+    height: 28px;
+    border-radius: .35rem;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px !important;
+}
+
+.admin-sidebar .sidebar-logo span {
+    color: #fff !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+}
+
+.admin-sidebar,
+.admin-sidebar .layui-nav-tree,
+.admin-sidebar .layui-nav-child,
+.admin-sidebar .layui-nav-item {
+    background: var(--sidebar) !important;
+}
+
+.admin-sidebar .layui-nav-bar { display: none !important; }
+
+.layui-nav-tree { padding: .75rem .75rem !important; }
+
+.layui-nav-tree .layui-nav-item > a {
+    color: rgba(255, 255, 255, .55) !important;
+    font-size: .75rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+    padding: .85rem .75rem .35rem !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-item > a:hover {
+    color: rgba(255, 255, 255, .85) !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-item > a .layui-nav-more {
+    color: rgba(255, 255, 255, .45) !important;
+}
+
+.layui-nav-tree .layui-nav-child {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a {
+    color: var(--sidebar-text) !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    margin: 2px 0 !important;
+    border-radius: var(--radius) !important;
+    padding: 0 .85rem !important;
+    background: transparent !important;
+    font-size: .9rem !important;
+    font-weight: 400 !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a:hover {
+    color: #fff !important;
+    background: var(--sidebar-elevated) !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a i {
+    color: inherit !important;
+    opacity: .85 !important;
+}
+
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: var(--brand) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    border-radius: var(--radius) !important;
+    font-weight: 500 !important;
+}
+
+/* ── Content ── */
+.admin-content {
+    margin-left: var(--sidebar-w) !important;
+    margin-top: var(--header-h) !important;
+    padding: 1.25rem !important;
+    min-height: calc(100vh - var(--header-h)) !important;
+    width: calc(100% - var(--sidebar-w)) !important;
+    background: var(--bg) !important;
+}
+
+.view-toolbar .view-title {
+    color: var(--ink) !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+}
+
+.card,
+.layui-card,
+.stat-card,
+.search-bar,
+.table-container,
+.chart-card {
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--bs-border-radius-lg) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.card-title,
+.layui-card-header {
+    color: var(--ink) !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid var(--bs-gray-200) !important;
+}
+
+.card-title i,
+.layui-card-header::before {
+    color: var(--brand) !important;
+    background: var(--brand) !important;
+}
+
+.stat-card .title { color: var(--ink-soft) !important; }
+.stat-card .value { color: var(--ink) !important; font-weight: 600 !important; }
+
+.stat-card .icon.blue,
+.stat-card .icon.green,
+.stat-card .icon.orange,
+.stat-card .icon.purple,
+.stat-card .icon.red,
+.stat-card .icon.teal {
+    background: var(--brand-soft) !important;
+    color: var(--brand) !important;
+    border-radius: var(--radius) !important;
+}
+
+#dashboardRangeGroup .layui-btn-normal {
+    background: var(--brand) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+#dashboardRangeGroup .layui-btn-primary {
+    background: #fff !important;
+    border-color: var(--line) !important;
+    color: var(--ink-soft) !important;
+}
+
+/* ── Buttons：Bootstrap btn / btn-primary ── */
+.layui-btn {
+    border-radius: var(--radius) !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+    letter-spacing: 0 !important;
+}
+
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled),
+.layui-btn-normal {
+    background: var(--brand) !important;
+    background-image: none !important;
+    border: 1px solid var(--brand) !important;
+    color: #fff !important;
+}
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled):hover,
+.layui-btn-normal:hover {
+    background: var(--brand-strong) !important;
+    border-color: var(--brand-strong) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.layui-btn-danger {
+    background: var(--danger) !important;
+    border: 1px solid var(--danger) !important;
+    color: #fff !important;
+}
+.layui-btn-danger:hover {
+    background: #bb2d3b !important;
+    border-color: #b02a37 !important;
+    box-shadow: none !important;
+}
+
+.layui-btn-warm {
+    background: var(--bs-yellow) !important;
+    border: 1px solid var(--bs-yellow) !important;
+    color: #000 !important;
+}
+
+.layui-btn-primary {
+    background: #fff !important;
+    border: 1px solid var(--line-strong) !important;
+    color: var(--ink) !important;
+}
+.layui-btn-primary:hover {
+    background: var(--bs-gray-100) !important;
+    border-color: var(--bs-gray-400) !important;
+    color: var(--ink) !important;
+}
+
+/* ── Tables ── */
+.layui-table thead tr,
+.layui-table-header,
+.layui-table-view .layui-table th {
+    background: var(--bs-gray-100) !important;
+}
+
+.layui-table th {
+    color: var(--bs-gray-700) !important;
+    font-weight: 600 !important;
+    font-size: .8125rem !important;
+    border-color: var(--line) !important;
+}
+
+.layui-table td {
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+}
+
+.layui-table tr:hover td { background: rgba(13, 110, 253, .04) !important; }
+
+.layui-table-click,
+.layui-table-hover { background-color: var(--brand-soft) !important; }
+.layui-table-click td,
+.layui-table-hover td {
+    background: var(--brand-soft) !important;
+    color: var(--ink) !important;
+}
+
+/* ── Forms ── */
+.layui-input,
+.layui-textarea,
+.layui-select,
+.layui-form-select .layui-input {
+    border-radius: var(--radius) !important;
+    border-color: var(--line-strong) !important;
+    color: var(--ink) !important;
+}
+
+.layui-input:focus,
+.layui-textarea:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25) !important;
+}
+
+.layui-form-onswitch {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i,
+.layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover,
+.layui-form-radioed > i { color: var(--brand) !important; }
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: var(--brand) !important;
+}
+.layui-laypage a:hover {
+    background: var(--brand-soft) !important;
+    color: var(--brand) !important;
+    border-color: var(--brand) !important;
+}
+
+.layui-layer {
+    border-radius: var(--bs-border-radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+.layui-layer-title {
+    background: #fff !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    font-weight: 600 !important;
+}
+.layui-layer-btn .layui-layer-btn0 {
+    background: var(--brand) !important;
+    border-color: var(--brand) !important;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; }
+    .admin-sidebar.sidebar-open { left: 0 !important; }
+    .admin-header { left: 0 !important; }
+    .admin-content { margin-left: 0 !important; width: 100% !important; }
+}
+
+/* ═══════════════════════════════════════════
+   Login：仿 Bootstrap 示例 — 浅灰底 + 白卡片
+═══════════════════════════════════════════ */
+body.login-page.login-layout-bootstrap {
+    min-height: 100vh !important;
+    background: var(--bs-gray-100) !important;
+    display: block !important;
+    overflow: auto !important;
+}
+
+body.login-page.login-layout-bootstrap::before,
+body.login-page.login-layout-bootstrap::after { display: none !important; }
+
+.login-layout-bootstrap .locale-switcher-wrap {
+    position: fixed !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    z-index: 20;
+}
+
+.login-layout-bootstrap .locale-switcher {
+    color: var(--ink) !important;
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+}
+
+.login-bootstrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.login-bootstrap-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: var(--bs-gray-900);
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    z-index: 10;
+}
+
+.login-bootstrap-topbar .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.login-bootstrap-topbar .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: .35rem;
+    background: var(--bs-blue);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.login-bootstrap-card {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 40px;
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--bs-border-radius-lg) !important;
+    box-shadow: var(--shadow) !important;
+    padding: 1.75rem !important;
+    animation: none !important;
+}
+
+.login-bootstrap-card .login-logo {
+    text-align: left !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.login-bootstrap-card .login-logo .logo-icon { display: none !important; }
+
+.login-bootstrap-card .login-logo h2 {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+    margin: 0 0 .35rem !important;
+}
+
+.login-bootstrap-card .login-logo p {
+    color: var(--ink-soft) !important;
+    margin: 0 !important;
+    font-size: .95rem !important;
+}
+
+.login-bootstrap-card .login-field-label {
+    display: block;
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: .4rem;
+}
+
+.login-bootstrap-card .input-wrap {
+    background: #fff !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+}
+
+.login-bootstrap-card .input-wrap:focus-within {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25) !important;
+}
+
+.login-bootstrap-card .input-icon { color: var(--ink-mute) !important; }
+
+.login-bootstrap-card .layui-input {
+    background: transparent !important;
+    border: none !important;
+    height: 42px !important;
+    font-size: 1rem !important;
+}
+
+.login-bootstrap-card .captcha-row .layui-input {
+    background: #fff !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: var(--radius) !important;
+    height: 42px !important;
+}
+
+.login-bootstrap-card .captcha-row .layui-input:focus {
+    border-color: #86b7fe !important;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25) !important;
+}
+
+.login-bootstrap-card .captcha-img-box {
+    height: 42px !important;
+    width: 120px !important;
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--line) !important;
+}
+
+.login-bootstrap-card .login-btn {
+    height: 42px !important;
+    line-height: 42px !important;
+    border-radius: var(--radius) !important;
+    background: var(--brand) !important;
+    border: 1px solid var(--brand) !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+    margin-top: .5rem;
+    width: 100%;
+}
+
+.login-bootstrap-card .login-btn:hover {
+    background: var(--brand-strong) !important;
+    border-color: var(--brand-strong) !important;
+    transform: none !important;
+}
+
+.login-bootstrap-card .login-footer {
+    display: none !important;
+}
+
+.login-bootstrap-footnote {
+    margin-top: 1.25rem;
+    font-size: .8125rem;
+    color: var(--ink-mute);
+    text-align: center;
+}
+
+.login-layout-bootstrap #login-err {
+    background: #f8d7da !important;
+    border: 1px solid #f5c2c7 !important;
+    color: #842029 !important;
+    border-radius: var(--radius) !important;
+    font-size: .875rem !important;
+}
+
+/* ── Toast / layer.msg（Layui 2.8 用字体图标 layui-icon-success，不是旧 ico 雪碧图） ── */
+.layui-layer.layui-layer-msg,
+.layui-layer-dialog.layui-layer-msg {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,.18)) !important;
+}
+.layui-layer.layui-layer-msg .layui-layer-content,
+.layui-layer-dialog.layui-layer-msg .layui-layer-content {
+    color: var(--ink) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-success,
+.layui-layer-msg .layui-icon-success,
+.layui-layer-face.layui-icon-success {
+    color: var(--brand) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-error,
+.layui-layer-msg .layui-icon-error,
+.layui-layer-face.layui-icon-error {
+    color: var(--danger, #dc3545) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-tips,
+.layui-layer-msg .layui-icon-tips {
+    color: var(--brand-strong, var(--brand)) !important;
+}

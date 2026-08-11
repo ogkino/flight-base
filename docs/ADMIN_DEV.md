@@ -1543,6 +1543,12 @@ public static function changePassword()
 - ✅ **高复用**：一套渲染器通用
 - ✅ **易维护**：修改配置即可
 
+### 相关文档
+
+- [ADMIN_THEMES.md](ADMIN_THEMES.md) — 管理后台多皮肤：如何定制 `login_xxx` + `admin.theme.xxx.css`
+- [FIELD_TYPES.md](FIELD_TYPES.md) — 字段类型详解
+- [PERMISSIONS.md](PERMISSIONS.md) — 权限系统
+
 ---
 
 ## 🚀 下一步

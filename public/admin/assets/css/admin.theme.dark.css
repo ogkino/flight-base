@@ -1,0 +1,748 @@
+/* ═══════════════════════════════════════════════════════════
+   Flight Base Admin Theme — dark
+   加载方式：在 admin.css 之后引入（theme.js / _head.php）
+   入口：login_dark.html
+═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg: #0b0f14;
+    --bg-elevated: #151b24;
+    --bg-soft: #1c2430;
+    --ink: #e8eef7;
+    --ink-soft: #9aa8bc;
+    --ink-mute: #6b7a90;
+    --line: #243041;
+    --line-strong: #334155;
+    --brand: #38bdf8;
+    --brand-strong: #0ea5e9;
+    --brand-soft: rgba(56, 189, 248, .14);
+    --brand-ink: #7dd3fc;
+    --menu-active-bg: rgba(56, 189, 248, .1);
+    --menu-active-color: var(--brand-ink);
+    --sidebar: #070a0f;
+    --sidebar-elevated: #10161f;
+    --sidebar-text: rgba(232,238,247,.68);
+    --sidebar-text-strong: #fff;
+    --danger: #f87171;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 0 rgba(255,255,255,.04), 0 12px 32px rgba(0,0,0,.35);
+    --shadow-lg: 0 18px 48px rgba(0,0,0,.45);
+    --header-h: 60px;
+    --sidebar-w: 220px;
+    --font: 'IBM Plex Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background: var(--bg) !important;
+    color: var(--ink) !important;
+    font-family: var(--font) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+.admin-header {
+    left: var(--sidebar-w) !important;
+    height: var(--header-h) !important;
+    padding: 0 24px !important;
+    background: rgba(11, 15, 20, .88) !important;
+    color: var(--ink) !important;
+    border-bottom: 1px solid var(--line) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: none !important;
+}
+
+.admin-header .logo,
+.admin-header .user-info .username { color: var(--ink) !important; }
+
+.admin-header .user-info .username::before {
+    background: var(--brand) !important;
+}
+
+.locale-switcher,
+.admin-header .store-switcher,
+.admin-header .locale-switcher {
+    background: var(--bg-elevated) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+    /* 让系统原生下拉按深色渲染，避免选项黑字贴黑底 */
+    color-scheme: dark;
+}
+
+.locale-switcher option,
+.store-switcher option,
+.admin-header select option {
+    background-color: #151b24 !important;
+    color: #e8eef7 !important;
+}
+
+.locale-switcher option:checked,
+.store-switcher option:checked,
+.admin-header select option:checked {
+    background-color: #0ea5e9 !important;
+    color: #041018 !important;
+}
+
+.admin-header .store-switcher-label {
+    color: var(--ink) !important;
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+}
+
+.admin-sidebar {
+    width: var(--sidebar-w) !important;
+    background: var(--sidebar) !important;
+    border-right: 1px solid var(--line) !important;
+}
+
+.admin-sidebar .sidebar-logo {
+    height: var(--header-h) !important;
+    border-bottom: 1px solid var(--line) !important;
+    background: transparent !important;
+    padding: 0 16px !important;
+    gap: 8px !important;
+}
+
+.admin-sidebar .sidebar-logo span {
+    color: var(--ink) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+}
+
+.admin-sidebar .sidebar-logo i {
+    color: var(--brand) !important;
+    font-size: 18px !important;
+}
+
+.admin-sidebar,
+.admin-sidebar .layui-nav-tree,
+.admin-sidebar .layui-nav-child,
+.admin-sidebar .layui-nav-item {
+    background: var(--sidebar) !important;
+}
+
+/* 隐藏 Layui 滑块，改用左侧光条表达选中 */
+.admin-sidebar .layui-nav-bar { display: none !important; }
+
+.layui-nav-tree { padding: 8px 0 !important; }
+
+/* 分组标题：等宽感小标签 */
+.layui-nav-tree .layui-nav-item > a {
+    color: var(--ink-mute) !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: .16em !important;
+    text-transform: uppercase !important;
+    padding: 14px 16px 6px !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-item > a:hover {
+    background: transparent !important;
+    color: var(--brand-ink) !important;
+}
+
+/* 子菜单：扁平列表 + 左侧指示条 */
+.layui-nav-tree .layui-nav-child {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a {
+    color: var(--sidebar-text) !important;
+    height: 38px !important;
+    line-height: 38px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 14px 0 18px !important;
+    border-left: 2px solid transparent !important;
+    background: transparent !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+.layui-nav-tree .layui-nav-child dd a:hover {
+    color: var(--ink) !important;
+    background: rgba(56, 189, 248, .06) !important;
+    border-left-color: rgba(56, 189, 248, .35) !important;
+}
+
+.layui-nav .layui-this > a,
+.layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child dd.layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a,
+.layui-nav-tree .layui-nav-child .layui-this > a:hover,
+.layui-nav-tree .layui-nav-child .layui-this > a:focus {
+    background: rgba(56, 189, 248, .1) !important;
+    color: var(--brand-ink) !important;
+    border-left-color: var(--brand) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.admin-content {
+    margin-left: var(--sidebar-w) !important;
+    margin-top: var(--header-h) !important;
+    background: var(--bg) !important;
+    min-height: calc(100vh - var(--header-h)) !important;
+    padding: 20px 22px 32px !important;
+}
+
+.card,
+.layui-card,
+.stat-card,
+.search-bar,
+.table-container,
+.chart-card {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+    color: var(--ink) !important;
+}
+
+.card-title,
+.layui-card-header,
+.view-toolbar .view-title,
+.stat-card .value {
+    color: var(--ink) !important;
+}
+
+.card-title i { color: var(--brand) !important; }
+
+/* 弹层顶栏 meta：避免浅底浅字 / 深底深字 */
+.view-meta-title { color: var(--ink) !important; }
+.view-meta-title > .layui-icon { color: var(--brand) !important; }
+.view-meta-tag {
+    background: var(--bg-soft) !important;
+    color: var(--ink-soft) !important;
+    border-color: var(--line) !important;
+}
+.view-meta-desc { color: var(--ink-mute) !important; }
+
+.layui-card-header::before {
+    background: var(--brand) !important;
+}
+
+.stat-card .title { color: var(--ink-mute) !important; }
+
+.stat-card .icon.blue,
+.stat-card .icon.green,
+.stat-card .icon.orange,
+.stat-card .icon.purple,
+.stat-card .icon.red,
+.stat-card .icon.teal {
+    background: var(--brand-soft) !important;
+    color: var(--brand) !important;
+}
+
+.view-toolbar .view-title { font-size: 20px !important; letter-spacing: -.02em; }
+
+#dashboardRangeGroup .layui-btn-normal {
+    background: var(--brand-strong) !important;
+    color: #041018 !important;
+    border: none !important;
+}
+
+#dashboardRangeGroup .layui-btn-primary {
+    background: var(--bg-soft) !important;
+    border-color: var(--line) !important;
+    color: var(--ink-soft) !important;
+}
+
+.layui-btn {
+    border-radius: var(--radius-sm) !important;
+    font-weight: 600 !important;
+}
+
+.layui-btn:not([class*="layui-btn-"]) {
+    background: #334155 !important;
+    color: var(--ink) !important;
+}
+
+.layui-btn-normal {
+    background: var(--brand-strong) !important;
+    color: #041018 !important;
+}
+.layui-btn-normal:hover {
+    background: var(--brand) !important;
+    box-shadow: 0 8px 24px rgba(14, 165, 233, .28) !important;
+}
+
+.layui-btn-danger { background: #dc2626 !important; }
+
+.layui-btn-primary {
+    background: transparent !important;
+    border: 1px solid var(--line-strong) !important;
+    color: var(--ink-soft) !important;
+}
+.layui-btn-primary:hover {
+    border-color: var(--brand) !important;
+    color: var(--brand) !important;
+    background: var(--brand-soft) !important;
+}
+
+.layui-table,
+.layui-table-view {
+    background: transparent !important;
+    color: var(--ink) !important;
+}
+
+.layui-table thead tr,
+.layui-table-header,
+.layui-table-view .layui-table th {
+    background: var(--bg-soft) !important;
+}
+
+.layui-table th {
+    color: var(--ink-soft) !important;
+    border-color: var(--line) !important;
+}
+
+.layui-table td {
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+    background: transparent !important;
+}
+
+/* Layui 默认 click/hover 是浅灰底，暗色下会把浅色字「吃掉」 */
+.layui-table-mend {
+    background-color: var(--bg-elevated) !important;
+}
+
+.layui-table-click,
+.layui-table-hover,
+.layui-table[lay-even] tbody tr:nth-child(even) {
+    background-color: var(--bg-soft) !important;
+}
+
+.layui-table-click td,
+.layui-table-hover td,
+.layui-table tr:hover td,
+.layui-table[lay-even] tbody tr:nth-child(even) td {
+    background: rgba(56, 189, 248, .08) !important;
+    color: var(--ink) !important;
+}
+
+.layui-table-checked {
+    background-color: rgba(56, 189, 248, .12) !important;
+}
+.layui-table-checked td {
+    background: transparent !important;
+    color: var(--ink) !important;
+}
+.layui-table-checked.layui-table-click,
+.layui-table-checked.layui-table-hover {
+    background-color: rgba(56, 189, 248, .18) !important;
+}
+.layui-table-checked.layui-table-click td,
+.layui-table-checked.layui-table-hover td {
+    background: transparent !important;
+    color: var(--ink) !important;
+}
+
+.layui-table-view .layui-table-body { background: var(--bg-elevated) !important; }
+
+.layui-input,
+.layui-textarea,
+.layui-select,
+.layui-form-select .layui-input {
+    background: var(--bg-soft) !important;
+    color: var(--ink) !important;
+    border-color: var(--line-strong) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+.layui-input:focus,
+.layui-textarea:focus {
+    border-color: var(--brand) !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, .18) !important;
+}
+
+.layui-layer {
+    background: var(--bg-elevated) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--shadow-lg) !important;
+    color: var(--ink) !important;
+}
+.layui-layer-title {
+    background: var(--bg-elevated) !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+}
+.layui-layer-content { color: var(--ink) !important; }
+
+/* 关闭按钮：原 icon 雪碧图在深色底上看不见 */
+.layui-layer-setwin .layui-layer-close1 {
+    background: none !important;
+    width: 22px !important;
+    height: 22px !important;
+    line-height: 20px !important;
+    text-align: center !important;
+    font-size: 0 !important;
+    opacity: 1 !important;
+}
+.layui-layer-setwin .layui-layer-close1::before {
+    content: '×';
+    display: block;
+    font-size: 22px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--ink-soft);
+}
+.layui-layer-setwin .layui-layer-close1:hover::before {
+    color: var(--ink) !important;
+}
+.layui-layer-setwin .layui-layer-min,
+.layui-layer-setwin .layui-layer-max {
+    filter: invert(1) brightness(1.4);
+    opacity: .75;
+}
+.layui-layer-setwin .layui-layer-min:hover,
+.layui-layer-setwin .layui-layer-max:hover {
+    opacity: 1;
+}
+
+.layui-layer .layui-form-label {
+    color: var(--ink-soft) !important;
+}
+.layui-layer .layui-form-mid,
+.layui-layer .layui-word-aux {
+    color: var(--ink-mute) !important;
+}
+
+/* 分页：共 N 条 / 到第 N 页 等文字 */
+.layui-laypage {
+    color: var(--ink-soft) !important;
+}
+.layui-laypage a,
+.layui-laypage span {
+    background: var(--bg-soft) !important;
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+}
+.layui-laypage a:hover {
+    background: var(--brand-soft) !important;
+    color: var(--brand-ink) !important;
+    border-color: var(--brand) !important;
+}
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: var(--brand-strong) !important;
+}
+.layui-laypage .layui-laypage-curr em {
+    color: #041018 !important;
+}
+.layui-laypage .layui-laypage-count,
+.layui-laypage .layui-laypage-skip,
+.layui-laypage .layui-laypage-limits {
+    color: var(--ink-soft) !important;
+    background: transparent !important;
+    border: none !important;
+}
+.layui-laypage .layui-laypage-skip input,
+.layui-laypage input {
+    background: var(--bg-soft) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+}
+.layui-laypage button {
+    background: var(--bg-elevated) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+}
+.layui-laypage select,
+.layui-laypage .layui-laypage-limits select {
+    background: var(--bg-elevated) !important;
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+}
+
+.menu-toggle-btn .menu-toggle-icon,
+.menu-toggle-btn .menu-toggle-icon::before,
+.menu-toggle-btn .menu-toggle-icon::after {
+    background: var(--ink) !important;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar { left: calc(var(--sidebar-w) * -1) !important; width: var(--sidebar-w) !important; }
+    .admin-sidebar.sidebar-open { left: 0 !important; }
+    .admin-header { left: 0 !important; }
+    .admin-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* ── Login：居中控制台（与 teal 分栏、ocean 顶部 Hero 不同） ── */
+body.login-page {
+    min-height: 100vh !important;
+    background: #05080c !important;
+    display: block !important;
+    overflow: auto !important;
+}
+
+body.login-page::before,
+body.login-page::after { display: none !important; }
+
+.login-page .locale-switcher-wrap {
+    position: fixed !important;
+    top: 20px !important;
+    right: 24px !important;
+    z-index: 20;
+}
+
+.login-page .locale-switcher {
+    color: var(--ink) !important;
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 4px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    font-size: 12px !important;
+}
+
+.login-console {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    position: relative;
+    isolation: isolate;
+}
+
+.login-console-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 50% 40% at 50% 30%, rgba(14,165,233,.18), transparent 60%),
+        linear-gradient(rgba(56,189,248,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,.05) 1px, transparent 1px);
+    background-size: auto, 48px 48px, 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 20%, transparent 75%);
+    pointer-events: none;
+}
+
+.login-console-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    background: rgba(15, 22, 32, .92) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 4px !important;
+    box-shadow:
+        0 0 0 1px rgba(56,189,248,.08),
+        0 24px 64px rgba(0,0,0,.55) !important;
+    padding: 28px 28px 24px !important;
+    animation: none !important;
+}
+
+.login-console-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    color: var(--brand-ink);
+    margin-bottom: 22px;
+}
+
+.login-console-status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--brand);
+    box-shadow: 0 0 10px var(--brand);
+    animation: dark-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes dark-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .35; }
+}
+
+.login-layout-console .login-logo {
+    text-align: left !important;
+    margin-bottom: 22px !important;
+}
+
+.login-layout-console .login-logo .logo-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 4px !important;
+    background: transparent !important;
+    border: 1px solid var(--brand) !important;
+    color: var(--brand) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    margin: 0 0 14px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-layout-console .login-logo h2 {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: var(--ink) !important;
+    margin: 0 0 6px !important;
+    letter-spacing: -.01em !important;
+}
+
+.login-layout-console .login-logo p {
+    color: var(--ink-mute) !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+}
+
+.login-field-label {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+}
+
+.login-layout-console .input-wrap {
+    background: #0a1018 !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: 2px !important;
+}
+
+.login-layout-console .input-wrap:focus-within {
+    border-color: var(--brand) !important;
+    box-shadow: 0 0 0 1px rgba(56,189,248,.35) !important;
+}
+
+.login-layout-console .input-icon { color: var(--ink-mute) !important; }
+
+.login-layout-console .layui-input {
+    background: transparent !important;
+    border: none !important;
+    height: 44px !important;
+    color: var(--ink) !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    font-size: 13px !important;
+}
+
+.login-layout-console .captcha-row .layui-input {
+    background: #0a1018 !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: 2px !important;
+    height: 44px !important;
+    color: var(--ink) !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
+.login-layout-console .captcha-img-box {
+    height: 44px !important;
+    width: 120px !important;
+    border-radius: 2px !important;
+    border: 1px solid var(--line) !important;
+    overflow: hidden;
+    background: #fff;
+}
+
+.login-layout-console .login-btn {
+    height: 44px !important;
+    line-height: 44px !important;
+    border-radius: 2px !important;
+    background: var(--brand-strong) !important;
+    color: #041018 !important;
+    font-weight: 700 !important;
+    letter-spacing: .06em !important;
+    box-shadow: none !important;
+    margin-top: 8px;
+}
+
+.login-layout-console .login-btn:hover {
+    background: var(--brand) !important;
+    transform: none !important;
+}
+
+.login-layout-console .login-footer {
+    color: var(--ink-mute) !important;
+    margin-top: 20px !important;
+    font-size: 12px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.login-footer-sep { opacity: .4; }
+
+.login-layout-console #login-err {
+    background: rgba(248,113,113,.12) !important;
+    border: 1px solid rgba(248,113,113,.35) !important;
+    color: #fecaca !important;
+    border-radius: 2px !important;
+    font-size: 13px !important;
+}
+
+/* ── 表单控件跟随主题色（覆盖 admin.css 写死的蓝） ── */
+.layui-form-onswitch {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: var(--brand) !important;
+    background-color: var(--brand) !important;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i { border-color: var(--brand) !important; }
+.layui-form-checked i,
+.layui-form-checked:hover i { color: var(--brand) !important; }
+.layui-form-radio > i:hover,
+.layui-form-radioed > i { color: var(--brand) !important; }
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: var(--brand) !important;
+}
+
+
+/* 仅有尺寸类的按钮（如搜索）也走主题主色 */
+.layui-btn:not(.layui-btn-primary):not(.layui-btn-danger):not(.layui-btn-warm):not(.layui-btn-disabled) {
+    background: var(--brand-strong) !important;
+    background-image: none !important;
+    border-color: var(--brand-strong) !important;
+    color: #041018 !important;
+}
+.layui-btn-normal {
+    background: var(--brand-strong) !important;
+    background-image: none !important;
+    border-color: var(--brand-strong) !important;
+    color: #041018 !important;
+}
+
+
+/* ── Toast / layer.msg（Layui 2.8 用字体图标 layui-icon-success，不是旧 ico 雪碧图） ── */
+.layui-layer.layui-layer-msg,
+.layui-layer-dialog.layui-layer-msg {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,.18)) !important;
+}
+.layui-layer.layui-layer-msg .layui-layer-content,
+.layui-layer-dialog.layui-layer-msg .layui-layer-content {
+    color: var(--ink) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-success,
+.layui-layer-msg .layui-icon-success,
+.layui-layer-face.layui-icon-success {
+    color: var(--brand) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-error,
+.layui-layer-msg .layui-icon-error,
+.layui-layer-face.layui-icon-error {
+    color: var(--danger, #dc3545) !important;
+}
+.layui-layer-dialog .layui-layer-content .layui-icon-tips,
+.layui-layer-msg .layui-icon-tips {
+    color: var(--brand-strong, var(--brand)) !important;
+}

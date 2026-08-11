@@ -1,5 +1,25 @@
 # 更新日志
 
+## [2.8.0] - 2026-07-23 管理后台多皮肤（Theme）
+
+详见 [ADMIN_THEMES.md](ADMIN_THEMES.md)
+
+### 新增
+- ✅ **多皮肤机制**：`login_{theme}.html` 选型 → 统一 `index.html` 加载 `admin.theme.{theme}.css`
+- ✅ **`theme.js`**：读写 `admin_theme` / `admin_login_entry`（localStorage + Cookie）
+- ✅ **菜单范式层**：`admin.menu-layouts.css` + `html[data-menu-layout]`；主题与范式解耦（pill/fill/edge/capsule/cell/block/rail/minimal/docs）
+- ✅ **`AdminThemeConfig.php`**：PHP 侧主题规范化与菜单映射（与 `theme.js` 同步）
+- ✅ **内置皮肤**：手写 `teal` / `dark` / `ocean` / `wechat` / `bootstrap` / `element`，以及 ant～cyber 等差异化登录布局
+- ✅ **View 同步**：`_head.php` 按 Cookie 挂载主题 CSS + 菜单范式 CSS
+- ✅ **文档**：`docs/ADMIN_THEMES.md`（面向开发者）
+
+### 修改
+- ✅ `index.html`：主题 CSS + 菜单范式自动加载（默认仍只用 `admin.css` + pill）
+- ✅ `login.html`：登录时复位为 `default` 主题（外观不变）
+- ✅ `common.js`：退出/鉴权失败回到对应 `login_xxx.html`
+
+---
+
 ## [2.7.0] - 2026-07-21 多语言支持和系统字典
 
 详见 [i18n.md](i18n.md) [DICT.md](DICT.md)
