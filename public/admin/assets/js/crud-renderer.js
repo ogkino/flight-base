@@ -1,8 +1,8 @@
 /**
- * CRUD 通用渲染器 v2.1
+ * CRUD 通用渲染器 v2.5.4
  * 
  * 根据后端配置自动生成表格、表单、搜索等
- * 新增支持：上传、富文本、日期选择器、开关、颜色选择器等
+ * 新增支持：上传、富文本、日期选择器、开关、颜色选择器、select 联动（depends_on）等
  */
 
 class CrudRenderer {
@@ -751,7 +751,8 @@ class CrudRenderer {
             elem: '#crud-table',
             url: API_BASE + tableConfig.url,
             headers: {
-                'Authorization': getToken()
+                'Authorization': getToken(),
+                'X-Store-Id': (typeof getSelectedStoreId === 'function' ? getSelectedStoreId() : '')
             },
             page: tableConfig.page !== false,
             limit: tableConfig.limit || 10,
@@ -1249,9 +1250,14 @@ class CrudRenderer {
                         dynamicAttrs = ` data-source-url="${API_BASE + field.url}" 
                                          data-value-field="${field.valueField || 'id'}" 
                                          data-label-field="${field.labelField || 'name'}" `;
+                        if (field.depends_on) {
+                            // depend_param 缺省时用父字段名作为查询参数（更通用）；业务可显式覆盖如 role_code
+                            const depParam = field.depend_param || field.depends_on;
+                            dynamicAttrs += ` data-depends-on="${field.depends_on}" data-depend-param="${depParam}" `;
+                        }
                     }
                     
-                    html += `<select name="${field.name}" id="${fieldId}" ${requiredAttr} ${verifyAttr} ${disabled ? 'disabled' : ''} ${dynamicAttrs}>`;
+                    html += `<select name="${field.name}" id="${fieldId}" lay-filter="form-select-${field.name}" ${requiredAttr} ${verifyAttr} ${disabled ? 'disabled' : ''} ${dynamicAttrs}>`;
                     
                     if (!required) {
                         html += `<option value="">${t('crud.please_select', '请选择')}</option>`;
@@ -1964,35 +1970,144 @@ class CrudRenderer {
         // 1. 处理 Select
         const selects = document.querySelectorAll('select[data-source-url]');
         selects.forEach(select => {
-            const url = select.dataset.sourceUrl;
+            const baseUrl = select.dataset.sourceUrl;
             const valueField = select.dataset.valueField;
             const labelField = select.dataset.labelField;
             const fieldName = select.name;
-            // 获取当前选中的值（可能是编辑时的值）
-            const currentValue = rowData ? rowData[fieldName] : (select.value === t('crud.loading', '加载中...') ? '' : select.value);
-            
-            request(url.replace(API_BASE, ''), { method: 'GET' }).then(res => {
-                if (res.code === 0) {
-                    let optionsHtml = `<option value="">${t('crud.please_select', '请选择')}</option>`;
-                    const list = res.data.list || res.data; // 兼容 {code:0, data:[...]} 和 {code:0, data:{list:[...]}}
-                    
-                    if (Array.isArray(list)) {
-                        list.forEach(item => {
-                            const val = item[valueField];
-                            const label = item[labelField];
-                            const selected = val == currentValue ? 'selected' : '';
-                            optionsHtml += `<option value="${val}" ${selected}>${label}</option>`;
-                        });
-                        
-                        select.innerHTML = optionsHtml;
-                        form.render('select'); // 重新渲染下拉框
-                    }
-                } else {
-                    console.error('加载下拉数据失败:', res.msg);
-                    select.innerHTML = '<option value="">加载失败</option>';
-                    form.render('select');
+            const dependsOn = select.dataset.dependsOn || '';
+            const dependParam = select.dataset.dependParam || dependsOn || 'id';
+
+            const fillOptions = (list, preferredValue) => {
+                let optionsHtml = `<option value="">${t('crud.please_select', '请选择')}</option>`;
+                const rolePermsMap = {};
+                const roleCanLoginMap = {};
+                let hasPreferred = false;
+                const pref = (preferredValue === undefined || preferredValue === null) ? '' : preferredValue;
+
+                if (Array.isArray(list)) {
+                    list.forEach(item => {
+                        const val = item[valueField];
+                        const label = item[labelField];
+                        const selected = pref !== '' && val == pref ? 'selected' : '';
+                        if (selected) hasPreferred = true;
+                        optionsHtml += `<option value="${val}" ${selected}>${label}</option>`;
+                        if (fieldName === 'role_id') {
+                            if (item.default_permissions != null) {
+                                rolePermsMap[String(val)] = item.default_permissions;
+                            }
+                            if (item.can_login != null) {
+                                roleCanLoginMap[String(val)] = parseInt(item.can_login, 10) === 1 ? 1 : 0;
+                            }
+                        }
+                    });
                 }
-            });
+
+                // 编辑回填：当前值不在过滤结果中时（历史脏数据 / 权限变更），补一条选项以免显示「请选择」
+                if (pref !== '' && !hasPreferred) {
+                    const fallbackLabel = (rowData && (
+                        rowData[fieldName + '_label']
+                        || rowData.target_name
+                        || rowData.display_name
+                        || rowData[labelField]
+                    )) || ('#' + pref);
+                    optionsHtml += `<option value="${pref}" selected>${fallbackLabel}</option>`;
+                }
+
+                select.innerHTML = optionsHtml;
+                form.render('select');
+
+                if (fieldName === 'role_id') {
+                    form.on('select(form-select-role_id)', function(data) {
+                        const raw = rolePermsMap[String(data.value)];
+                        let permsVal = '';
+                        if (raw != null && raw !== '') {
+                            permsVal = (typeof raw === 'object') ? JSON.stringify(raw) : String(raw);
+                            try {
+                                const parsed = typeof raw === 'object' ? raw : JSON.parse(raw);
+                                if (!parsed || typeof parsed !== 'object' || Object.keys(parsed).length === 0) {
+                                    permsVal = '';
+                                }
+                            } catch (e) { /* keep string */ }
+                        }
+                        const formEl = document.querySelector('form[lay-filter="crudForm"]');
+                        if (!formEl) return;
+
+                        const permInput = formEl.querySelector('input[name="permissions"]');
+                        if (permInput) {
+                            const containerId = permInput.id.replace(/_value$/, '');
+                            const container = document.getElementById(containerId);
+                            if (container && container._allPermissions) {
+                                renderPermissions(containerId, container._allPermissions, permsVal);
+                            } else {
+                                permInput.value = permsVal;
+                            }
+                        }
+
+                        if (Object.prototype.hasOwnProperty.call(roleCanLoginMap, String(data.value))) {
+                            const canLogin = roleCanLoginMap[String(data.value)];
+                            const hidden = formEl.querySelector('input[type="hidden"][name="can_login"]');
+                            const sw = formEl.querySelector('input[lay-filter="switch-can_login"]');
+                            if (hidden) hidden.value = canLogin;
+                            if (sw) {
+                                sw.checked = canLogin === 1;
+                                form.render('checkbox');
+                            }
+                        }
+                    });
+                }
+            };
+
+            const loadSelect = (parentVal, preferredValue) => {
+                let url = baseUrl;
+                if (dependsOn) {
+                    if (!parentVal) {
+                        fillOptions([], preferredValue);
+                        return;
+                    }
+                    const sep = url.indexOf('?') >= 0 ? '&' : '?';
+                    url = url + sep + encodeURIComponent(dependParam) + '=' + encodeURIComponent(parentVal);
+                }
+                request(url.replace(API_BASE, ''), { method: 'GET' }).then(res => {
+                    if (res.code === 0) {
+                        const list = res.data.list || res.data;
+                        fillOptions(list, preferredValue);
+                    } else {
+                        console.error('加载下拉数据失败:', res.msg);
+                        select.innerHTML = '<option value="">加载失败</option>';
+                        form.render('select');
+                    }
+                });
+            };
+
+            // 编辑时勿用 ||，避免合法值被吃掉；动态加载前可能仍是「加载中...」文案
+            let currentValue = '';
+            if (rowData && rowData[fieldName] != null && rowData[fieldName] !== '') {
+                currentValue = rowData[fieldName];
+            } else if (!rowData) {
+                const raw = select.value;
+                currentValue = (raw === t('crud.loading', '加载中...') ? '' : raw);
+            }
+
+            if (dependsOn) {
+                let parentVal = '';
+                if (rowData && rowData[dependsOn] != null && rowData[dependsOn] !== '') {
+                    parentVal = rowData[dependsOn];
+                } else {
+                    const parentSel = document.querySelector('select[name="' + dependsOn + '"]');
+                    if (parentSel) parentVal = parentSel.value || '';
+                }
+                loadSelect(parentVal, currentValue);
+
+                // 忽略 form.render() / 初始化阶段的伪 change，避免把编辑回填清掉
+                let ignoreParentChange = true;
+                setTimeout(function () { ignoreParentChange = false; }, 300);
+                form.on('select(form-select-' + dependsOn + ')', function (data) {
+                    if (ignoreParentChange) return;
+                    loadSelect(data.value, '');
+                });
+            } else {
+                loadSelect('', currentValue);
+            }
         });
         
         // 2. 处理 Radio 和 Checkbox
@@ -2257,6 +2372,10 @@ window.renderCrudPage = function(config, containerId) {
 function renderPermissions(containerId, allPermissions, currentValue) {
     const container = document.getElementById(containerId);
     const valueInput = document.getElementById(containerId + '_value');
+    // 缓存全量权限树，供切换角色时重新勾选
+    if (container) {
+        container._allPermissions = allPermissions;
+    }
     // 生成唯一 filter ID 防止事件冲突
     const filterId = 'perm_change_' + Math.floor(Math.random() * 100000);
     
@@ -2274,8 +2393,11 @@ function renderPermissions(containerId, allPermissions, currentValue) {
         console.error('解析权限配置失败：', e);
     }
     
-    // 确保初始值写入隐藏域
-    valueInput.value = JSON.stringify(currentPermissions);
+    // 确保初始值写入隐藏域：新建且未勾选时保持空字符串，便于后端识别为「未配置」并拷贝角色默认权限
+    // （若写成 "{}"，后端 empty() 会认为已传权限而不再拷贝）
+    valueInput.value = (currentValue && Object.keys(currentPermissions).length > 0)
+        ? JSON.stringify(currentPermissions)
+        : (currentValue || '');
     
     // 渲染权限选择界面
     let html = '<div class="permissions-container" style="max-height: 400px; overflow-y: auto;">';

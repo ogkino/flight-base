@@ -189,6 +189,44 @@
 ]
 ```
 
+**联动父下拉（v2.5.3 新增）**：
+
+子 `select` 必须是动态数据源（有 `url`、无静态 `options`）。父字段变化时，用父当前值作为查询参数重新请求子下拉。
+
+```php
+// 父：静态或动态均可
+[
+    'type' => 'select',
+    'name' => 'category_id',
+    'label' => '分类',
+    'options' => [
+        ['value' => 1, 'label' => '电子'],
+        ['value' => 2, 'label' => '服装'],
+    ],
+],
+// 子：依赖父字段
+[
+    'type' => 'select',
+    'name' => 'product_id',
+    'label' => '商品',
+    'url' => '/api/admin/products/options',
+    'valueField' => 'id',
+    'labelField' => 'name',
+    'depends_on' => 'category_id',   // 监听哪个表单字段（name）
+    // 'depend_param' => 'category_id', // 拼到 URL 的查询参数名；省略时默认等于 depends_on
+],
+```
+
+请求示例：选中分类 `2` 后 → `GET /api/admin/products/options?category_id=2`  
+父未选时子下拉为空「请选择」。编辑回填时若父已有值，会按父值自动加载子选项并选中原值。
+
+| 配置项 | 说明 |
+|---|---|
+| `depends_on` | 父 select 的 `name` |
+| `depend_param` | 查询参数名；省略则用 `depends_on` 的值 |
+
+> 后端 options 接口需支持对应 query 参数过滤；框架只负责拼参与刷新 UI。
+
 **接口返回格式要求**：
 ```json
 {

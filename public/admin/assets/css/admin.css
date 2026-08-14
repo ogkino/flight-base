@@ -447,7 +447,8 @@ body {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
+    /* 勿用 overflow:hidden：工具栏里的 Layui select 下拉会被裁切（角色筛选等） */
+    overflow: visible;
 }
 
 .table-toolbar {
@@ -456,6 +457,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 30;
+    overflow: visible;
+}
+
+/* 表格本体单独圆角裁切，避免影响工具栏下拉 */
+.table-container .layui-table-view {
+    border-radius: 0 0 12px 12px;
 }
 
 /* ═══════════════════════════════════════════
@@ -967,7 +976,8 @@ a { transition: color .2s; }
 
     /* Layui 表格在移动端允许横向滚动；左侧固定 id 列略加阴影便于辨认 */
     .layui-table-view { overflow-x: auto !important; }
-    .table-container { overflow-x: hidden; }
+    /* 保留横向滚动在表格视图上；容器勿 hidden，否则仍会裁切搜索下拉 */
+    .table-container { overflow: visible; }
     .layui-table-fixed-l {
         box-shadow: 4px 0 8px rgba(26, 32, 53, 0.08);
     }

@@ -166,6 +166,13 @@ public static function products()
             // Dynamic select from API
             ['type' => 'select', 'name' => 'category_id', 'placeholder' => '分类',
              'url' => '/api/admin/categories', 'valueField' => 'id', 'labelField' => 'name'],
+
+            // Cascading select: child reloads when parent changes (v2.5.3+)
+            // GET /api/admin/products/options?category_id={parentValue}
+            ['type' => 'select', 'name' => 'product_id', 'label' => '商品',
+             'url' => '/api/admin/products/options', 'valueField' => 'id', 'labelField' => 'name',
+             'depends_on' => 'category_id'],
+            // Optional: 'depend_param' => 'category_id'  // query key; defaults to depends_on
         ],
 
         'toolbar' => [
@@ -287,6 +294,17 @@ Checklist when adding or reviewing a CrudConfig method: `page` + `table` + `form
 ### Available Field Types
 
 `input`, `password`, `textarea`, `editor` (rich text), `number`, `radio`, `select`, `switch`, `date`, `datetime`, `time`, `timestamp`, `upload`, `image`, `color`, `slider`, `permissions`
+
+### Cascading select (`depends_on`)
+
+Child dynamic `select` can listen to another form field. When the parent value changes, the child reloads from `url` with an extra query param:
+
+| Key | Required | Meaning |
+|-----|----------|---------|
+| `depends_on` | Yes | Parent field `name` |
+| `depend_param` | No | Query param name (default = `depends_on`) |
+
+Parent may be static `options` or dynamic `url`. Child must use `url` (no static `options`). Backend options API must accept the filter query. See `docs/FIELD_TYPES.md` § select.
 
 ### Dictionary-backed fields
 

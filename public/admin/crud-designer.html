@@ -501,6 +501,8 @@
             url: { label: '数据源', type: 'text', placeholder: '/api/admin/...', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
             valueField: { label: '值字段', type: 'text', placeholder: '如：id', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
             labelField: { label: '标签字段', type: 'text', placeholder: '如：name', hint: '适用于：下拉框、单选、多选', depends: ['select', 'radio', 'checkbox'] },
+            depends_on: { label: '联动父字段', type: 'text', placeholder: '如：category_id', hint: '父 select 的 name；变化时用其值作为查询参数重新加载本下拉', depends: ['select'] },
+            depend_param: { label: '联动查询参数名', type: 'text', placeholder: '默认=父字段名', hint: '拼到 url 上，如 ?category_id=1；不填则用「联动父字段」的值', depends: ['select'] },
             options: { label: '静态数据', type: 'textarea', placeholder: '格式：值:标签\n如：\n1:启用\n0:禁用', hint: '适用于：下拉框、单选、多选（不填则使用数据源）', depends: ['select', 'radio', 'checkbox'] },
             text: { label: '开关文本', type: 'text', placeholder: '如：启用|禁用', hint: '适用于：开关', depends: ['switch'] },
             switch_default: { label: '默认状态', type: 'radio', options: [{value: 1, label: '开启'}, {value: 0, label: '关闭'}], depends: ['switch'] },

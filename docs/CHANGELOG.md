@@ -1,5 +1,20 @@
 # 更新日志
 
+## [2.8.1] - 2026-08-14 CRUD 表单 select 联动（depends_on）
+
+### 新增
+- ✅ **表单 select 父子联动**：子下拉配置 `depends_on` / `depend_param`，父字段变化时自动带查询参数刷新子选项
+- ✅ **CRUD 设计器**：表单字段编辑支持「联动父字段」「联动查询参数名」
+- ✅ **文档 / Skill**：`docs/FIELD_TYPES.md`、`.claude/skills/crud-admin/SKILL.md` 补充用法
+
+### 修改
+- ✅ `public/admin/assets/js/crud-renderer.js`（建议版本号 ≥ 2.5.3）
+- ✅ `public/admin/crud-designer.html`
+
+用法示例见 `docs/FIELD_TYPES.md` § select「联动父下拉」。
+
+---
+
 ## [2.8.0] - 2026-07-23 管理后台多皮肤（Theme）
 
 详见 [ADMIN_THEMES.md](ADMIN_THEMES.md)
